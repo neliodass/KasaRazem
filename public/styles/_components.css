@@ -1,0 +1,90 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 4rem;
+    width: 4rem;
+    background-color: var(--color-primary-bg);
+    border-radius: var(--border-radius-full);
+    margin-bottom: 1rem;
+}
+
+.container .material-symbols-outlined {
+    color: var(--color-primary);
+    font-size: 2.5rem;
+}
+.headline {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-text-body);
+    margin-bottom: 0.5rem;
+}
+.body-text {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    font-weight: 400;
+    margin-bottom: 2rem;
+}
+
+.form-group-wrapper {
+    width: 100%;
+}
+
+.form-group-wrapper form {
+    width: 100%;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+}
+
+.input-group input {
+    width: 100%;
+    height: var(--height-input);
+    padding: 0 1rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border-input);
+    background-color: var(--color-bg-input);
+    color: var(--color-text-input);
+    font-size: var(--font-size-base);
+    text-align: left;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input-group input:focus {
+    outline: 0;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-ring);
+}
+.input-group input::placeholder {
+    color: var(--color-icon-inactive);
+}
+.show-password-btn {
+    position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+    color: var(--color-icon-inactive); font-size: 0.875rem; line-height: 1; z-index: 10; padding: 0.5rem;
+}
+.login-button {
+    width: 100%;
+    height: var(--height-input);
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 700;
+    border-radius: var(--border-radius-lg);
+    margin-top: 2rem;
+    transition: background-color 0.15s;
+}
+
+.login-button:hover {
+    background-color: var(--color-primary-hover);
+}
+.messages {
+    color: var(--color-primary);
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
