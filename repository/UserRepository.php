@@ -2,6 +2,14 @@
 require_once "Repository.php";
 class UserRepository extends Repository
 {
+    private static UserRepository $repository;
+    public static function getInstance(): UserRepository
+    {
+        if (!isset(self::$repository)) {
+            self::$repository = new self();
+        }
+        return self::$repository;
+    }
     public function getUsers(): ?array
     {
 

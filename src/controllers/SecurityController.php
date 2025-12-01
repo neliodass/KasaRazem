@@ -3,6 +3,11 @@
 require_once 'AppController.php';
 class SecurityController extends AppController
 {
+    private $userRepository;
+    private function __construct()
+    {
+        $userRepository = UserRepository::getInstance();
+    }
     private static $instance;
     public static function getInstance()
     {
@@ -17,8 +22,18 @@ class SecurityController extends AppController
             return $this->render('login');
         }
         $email = $_POST['email'];
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->render('login', ["message" => "Niewłaściwy email, bądź hasło"]);
+        }
         $password = $_POST['password'];
-        //TODO:authenticate user
+        $user = $this->userRepository->getUserByEmail($email);
+        if (!$user || !password_verify($password, $user['password'])) {
+            return $this->render('login', ["message" => "Niewłaściwy email, bądź hasło"]);
+        }
+        session_start();
+        $_SESSION['user_id'] = $user['id'];
+        header('Location: /dashboard');
+        exit();
     }
 
     public function register()
@@ -33,18 +48,18 @@ class SecurityController extends AppController
         $firstName = $_POST['firstName'] ?? '';
         $lastName = $_POST['lastName'] ?? '';
 
-//        if ($password != $confirmPassword) {
-//            return $this->render('register', ["message" => "Passwords do not match"]);
-//        }
-//        if ($this->userRepository->getUserByEmail($email)) {
-//            return $this->render('register', ["message" => "Email already in use"]);
-//        }
-//        $this->userRepository->createUser(
-//            $email,
-//            password_hash($password, PASSWORD_BCRYPT),
-//            $firstName,
-//            $lastName
-//        );
-//        return $this->render('login', ["message" => "Registration successful. Please log in."]);
+        if ($password != $confirmPassword) {
+            return $this->render('register', ["message" => "Passwords do not match"]);
+        }
+        if ($this->userRepository->getUserByEmail($email)) {
+            return $this->render('register', ["message" => "Email already in use"]);
+        }
+        $this->userRepository->createUser(
+            $email,
+            password_hash($password, PASSWORD_BCRYPT),
+            $firstName,
+            $lastName
+        );
+        return $this->render('login', ["message" => "Registration successful. Please log in."]);
     }
 }
