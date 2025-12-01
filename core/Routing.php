@@ -1,11 +1,14 @@
 <?php
 
 require_once 'src/controllers/SecurityController.php';
+require_once 'src/controllers/GroupController.php';
 class Routing
 {
     public static $routes = [
         "login" => ["controller" => "SecurityController", "action" => "login"],
+        "logout" => ["controller" => "SecurityController", "action" => "logout"],
         "register" => ["controller" => "SecurityController", "action" => "register"],
+        "groups" => ["controller" => "GroupController", "action" => "groups"],
     ];
     public static function run(string $path)
     {
@@ -23,6 +26,7 @@ class Routing
             include("public/views/404.html");
             return;
         }
+
         if(!method_exists($controllerName, "getInstance")) {
             throw new Exception("Controller does not implement getInstance method");
         }

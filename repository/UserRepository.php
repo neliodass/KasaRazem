@@ -10,6 +10,10 @@ class UserRepository extends Repository
         }
         return self::$repository;
     }
+    private function __construct()
+    {
+        parent::__construct();
+    }
     public function getUsers(): ?array
     {
 
