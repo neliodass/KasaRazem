@@ -1,0 +1,30 @@
+:root {
+    --font-display: "Manrope", sans-serif;
+    --font-size-base: 1rem;
+    --font-size-xl: 2rem;
+    --border-radius-lg: 0.5rem;
+    --border-radius-full: 9999px;
+    --height-input: 3.5rem;
+    --color-primary: #4CAF50;
+    --color-primary-hover: #45a049;
+    --color-primary-ring: rgba(76, 175, 80, 0.5);
+    --color-primary-bg: rgba(76, 175, 80, 0.2);
+}
+.theme-light {
+    --color-background: #F5F5F7;
+    --color-text-body: #333333;
+    --color-text-secondary: #9ca3af;
+    --color-text-input: #333333;
+    --color-border-input: #d1d5db;
+    --color-bg-input: var(--color-background);
+    --color-icon-inactive: #9ca3af;
+}
+.theme-dark {
+    --color-background: #10221c;
+    --color-text-body: #e5e7eb;
+    --color-text-secondary: #9ca3af;
+    --color-text-input: #e5e7eb;
+    --color-border-input: #4b5563;
+    --color-bg-input: #1f2937;
+    --color-icon-inactive: #6b7280;
+}

@@ -1,0 +1,30 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    min-height: 100dvh;
+    background-color: var(--color-background);
+    font-family: var(--font-display);
+    color: var(--color-text-body);
+    margin: 0;
+    transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1, p {
+    margin: 0;
+}
+
+button {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-primary);
+    transition: color 0.15s;
+}
