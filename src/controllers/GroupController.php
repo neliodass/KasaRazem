@@ -1,7 +1,9 @@
 <?php
 require_once "core/Auth.php";
+require_once "repository/GroupRepository.php";
 class GroupController extends AppController
 {
+    private $groupRepository;
     private static $controller;
     public static function getInstance()
     {
@@ -11,13 +13,20 @@ class GroupController extends AppController
         }
         return $instance;
     }
+    private function __construct()
+    {
+        $this->groupRepository = GroupRepository::getInstance();
+    }
     public function groups()
     {
         Auth::requireLogin();
         $userId = Auth::userId();
-//        $groupRepository = GroupRepository::getInstance();
-//        $groups = $groupRepository->getGroupsByUserId($userId);
-        //$this->render('groups', ['groups' => $groups]);
-        $this->render('groups');
+        if($userId === null){
+            header('Location: /login');
+            exit();
+        }
+        $groupRepository = GroupRepository::getInstance();
+        $groups = $groupRepository->getGroupsByUserId($userId);
+        $this->render('groups', ['groups' => $groups]);
     }
 }

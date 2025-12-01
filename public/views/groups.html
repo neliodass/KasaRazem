@@ -19,7 +19,8 @@
 <body class="theme-light">
 <div class="page-wrapper">
     <header class="app-bar">
-        <div style="width: 48px; height: 48px;"></div> <h1>Moje grupy</h1>
+        <div style="width: 48px; height: 48px;"></div>
+        <h1>Moje grupy</h1>
         <div style="width: 48px; height: 48px; display: flex; justify-content: flex-end;">
             <button type="button">
                 <span class="material-symbols-outlined">settings</span>
@@ -28,51 +29,32 @@
     </header>
 
     <main class="page-groups">
+        <?php
+        if(!empty($groups)):
+            foreach ($groups as $group):
+?>
         <a href="#" class="group-list-item">
             <div class="item-content">
                 <div class="item-icon-wrapper">
                     <span class="material-symbols-outlined">home</span>
                 </div>
                 <div class="item-text-wrapper">
-                    <p class="item-name">Mieszkanie 1</p>
-                    <p class="item-members">3 członków</p>
+                    <p class="item-name"><?= $group['name'] ?></p>
+                    <p class="item-members">Liczba osób: <?= $group['member_count'] ?></p>
                 </div>
             </div>
             <div class="chevron-icon">
                 <span class="material-symbols-outlined">chevron_right</span>
             </div>
         </a>
-
-        <a href="#" class="group-list-item">
-            <div class="item-content">
-                <div class="item-icon-wrapper">
-                    <span class="material-symbols-outlined">directions_car</span>
-                </div>
-                <div class="item-text-wrapper">
-                    <p class="item-name">Samochód</p>
-                    <p class="item-members">2 członków</p>
-                </div>
-            </div>
-            <div class="chevron-icon">
-                <span class="material-symbols-outlined">chevron_right</span>
-            </div>
-        </a>
-
-        <a href="#" class="group-list-item">
-            <div class="item-content">
-                <div class="item-icon-wrapper">
-                    <span class="material-symbols-outlined">flight</span>
-                </div>
-                <div class="item-text-wrapper">
-                    <p class="item-name">Wyjazd wakacyjny</p>
-                    <p class="item-members">5 członków</p>
-                </div>
-            </div>
-            <div class="chevron-icon">
-                <span class="material-symbols-outlined">chevron_right</span>
-            </div>
-        </a>
-
+        <?php
+        endforeach;
+    else:
+    ?>
+        <p class="body-text" style="text-align: center; padding-top: 2rem;">Nie należysz jeszcze do żadnej grupy.</p>
+        <?php
+    endif;
+    ?>
     </main>
 
     <div class="bottom-actions">
