@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="public/styles/_theme.css" type="text/css" rel="stylesheet"/>
+    <link href="public/styles/_base.css" type="text/css" rel="stylesheet"/>
+    <link href="public/styles/_components.css" type="text/css" rel="stylesheet"/>
+    <link href="public/styles/login.css" type="text/css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+    <title>Logowanie</title>
+</head>
+<body class="theme-light">
+<div class="page-wrapper">
+    <div class="login-box">
+            <div class="container">
+                <span class="material-symbols-outlined">shopping_cart</span>
+            </div>
+                <h1 class="headline">Witaj ponownie!</h1>
+                <p class="body-text">Zaloguj sie, aby zarządzać wydatkami</p>
+        <div class="form-group-wrapper">
+            <form method="post" action="/login">
+                <?php if(isset($message)): ?>
+                <p class="messages">
+                    <?= $message; ?>
+                </p>
+                <?php endif; ?>
+                <div class="input-group">
+                    <label for="email" class="sr-only">Email</label>
+                    <input name="email" type="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password" class="sr-only">Hasło</label>
+                    <input name="password" type="password" id="password" placeholder="Hasło" required>
+                    <button type="button" class="show-password-btn">Pokaż</button>
+                </div>
+                <button type="submit" class="login-button">
+                    Zaloguj się
+                </button>
+                <div class="forgot-password">
+                    <a href="#">Nie pamiętam hasła</a>
+                </div>
+            </form>
+        </div>
+        <div class="end-section">
+            <span>Nie masz konta?</span>
+            <a href="/register">Zarejestruj się</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
