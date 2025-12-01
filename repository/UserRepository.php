@@ -33,6 +33,10 @@ class UserRepository extends Repository
         $query->execute();
 
         $user = $query->fetch(PDO::FETCH_ASSOC);
+        if(!$user)
+        {
+            return null;
+        }
         return $user;
     }
     public function getUserById(string $id): ?array
@@ -60,7 +64,7 @@ class UserRepository extends Repository
         $query = $this->conn->prepare(
             "
                     INSERT INTO users (firstname, lastname, email, password, bio, enabled)
-                    VALUES (?,?,?,?,?);
+                    VALUES (?,?,?,?,?,?);
                   "
         );
         $query->execute(

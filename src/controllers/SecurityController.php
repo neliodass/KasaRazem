@@ -1,12 +1,13 @@
 <?php
 
 require_once 'AppController.php';
+require_once 'repository/UserRepository.php';
 class SecurityController extends AppController
 {
     private $userRepository;
     private function __construct()
     {
-        $userRepository = UserRepository::getInstance();
+        $this->userRepository = UserRepository::getInstance();
     }
     private static $instance;
     public static function getInstance()
