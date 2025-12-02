@@ -1,9 +1,12 @@
 <?php
 require_once "core/Auth.php";
 require_once "repository/GroupRepository.php";
+require_once "repository/ExpenseRepository.php";
+require_once "src/IconsHelper.php";
 class GroupController extends AppController
 {
     private $groupRepository;
+    private $expenseRepository;
     private static $controller;
     public static function getInstance()
     {
@@ -16,6 +19,7 @@ class GroupController extends AppController
     private function __construct()
     {
         $this->groupRepository = GroupRepository::getInstance();
+        $this->expenseRepository = ExpenseRepository::getInstance();
     }
     public function groups()
     {
@@ -97,11 +101,18 @@ class GroupController extends AppController
             header("Location: /groups");
             exit;
         }
-        $group = $this->groupRepository->getGroupById($groupId);
+        $group = $this->groupRepository->getGroupDetailsById($groupId);
         if ($group === null) {
             header("Location: /groups");
             exit;
         }
-        $this->render('groupDetails', ['group' => $group]);
+        $expenses = $this->expenseRepository->getExpensesByGroupId($groupId);
+        foreach ($expenses as &$expense) {
+            $expense['icon'] = IconsHelper::$expenseIcon[$expense['category_id']];
+        }
+        $this->render('groupDetails', [
+            'group' => $group,
+            'expenses' => $expenses
+        ]);
     }
 }

@@ -64,6 +64,21 @@ WHERE gm_filter.user_id = :userId;'
 
         return $group !== false ? $group : null;
     }
+    public function getGroupDetailsById(int $id): ?array
+    {
+        $query = $this->conn->prepare(
+            'SELECT g.* FROM groups g WHERE g.id = :id'
+        );
+
+        $query->bindParam(':id', $id, PDO::PARAM_STR);
+        $query->execute();
+
+        $group = $query->fetch(PDO::FETCH_ASSOC);
+        if ($group === false) {
+            return null;
+        }
+        return $group;
+    }
 
     public function isUserInGroup(int $groupId, int $userId): bool
     {

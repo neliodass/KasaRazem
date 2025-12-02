@@ -80,4 +80,16 @@ class ExpenseRepository extends Repository
 
 
     }
+    public function getExpensesByGroupId(int $groupId): ?array
+    {
+        $expensesQuery = $this->conn->prepare(
+            'SELECT e.* FROM expenses e 
+         WHERE e.group_id = :group_id
+         ORDER BY e.date_incurred DESC'
+        );
+        $expensesQuery->bindParam(':group_id', $groupId);
+        $expensesQuery->execute();
+        return $expensesQuery->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }
