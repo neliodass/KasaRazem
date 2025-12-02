@@ -1,0 +1,99 @@
+.page-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+@media (min-width: 640px) {
+    .page-container {
+        max-width: 480px;
+    }
+}
+.page-form-container {
+    padding-top: 5rem;
+    padding-bottom: 8rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 100%;
+}
+.form-header-group {
+    padding: 1.5rem 0 1rem 0;
+}
+.input-suffix-wrapper {
+    position: relative;
+}
+.input-suffix-text {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-icon-inactive);
+    font-weight: 500;
+    pointer-events: none;
+}
+.input-suffix-wrapper .material-symbols-outlined {
+    right: 0.5rem;
+    color: var(--color-text-body);
+}
+.grid-2-col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+.split-user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.user-split-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius-lg);
+    background-color: var(--color-bg-input);
+}
+.split-user-details {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.user-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--border-radius-full);
+    object-fit: cover;
+}
+.checkbox-style {
+    height: 1.5rem;
+    width: 1.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--color-border-input);
+    accent-color: var(--color-primary);
+}
+.split-mode-toggle-wrapper {
+    padding: 1rem 0;
+}
+.split-mode-toggle {
+    display: flex;
+    width: 100%;
+    background-color: var(--color-bg-input);
+    border-radius: var(--border-radius-lg);
+    padding: 0.25rem;
+}
+.split-mode-toggle button {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius-lg);
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.15s ease-in-out;
+    color: var(--color-text-secondary);
+    background-color: transparent;
+}
+.split-mode-toggle button.active-mode {
+    background-color: var(--color-background);
+    color: var(--color-text-body);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}

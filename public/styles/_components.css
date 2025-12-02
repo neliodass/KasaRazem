@@ -229,3 +229,79 @@ textarea.input-group-text {
     height: auto;
     padding: 1rem;
 }
+.list-card-item {
+    background-color: var(--color-bg-input);
+    padding: 1rem;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    transition: background-color 0.15s;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+.list-card-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.list-card-left-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-grow: 1;
+}
+.list-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-full);
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+}
+.list-icon-wrapper .material-symbols-outlined {
+    font-size: 1.5rem;
+}
+.list-text-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.list-text-details p {
+    margin: 0;
+}
+.list-item-primary-text {
+    font-weight: 600;
+    color: var(--color-text-body);
+}
+.list-item-secondary-text {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+.list-card-right-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+.list-item-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text-body);
+    line-height: 1.2;
+}
+.list-item-action-btn {
+    margin-top: 0.25rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-full);
+}
+.list-item-action-btn .material-symbols-outlined {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+}

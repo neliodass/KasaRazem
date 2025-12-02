@@ -2,6 +2,7 @@
 
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/GroupController.php';
+require_once 'src/controllers/ExpenseController.php';
 class Router
 {
     private $routes = [];

@@ -1,3 +1,6 @@
+<?php
+    require_once 'src/IconsHelper.php';
+?>
 <!doctype html>
 <html lang="pl">
 <head>
@@ -17,6 +20,11 @@
 </head>
 
 <body class="theme-light whole-page-group-details">
+
+<script>
+    const groupId = <?php echo json_encode($group['id']); ?>;
+</script>
+
 <script src="/public/scripts/groupTabs.js"></script>
 <div class="page-wrapper group-details-page-wrapper">
 
@@ -46,12 +54,36 @@
 
             <div class="tab-panel active" data-tab-content="expenses">
                 <h2>Wydatki</h2>
-                <div class="p-4 bg-gray-100 rounded-lg">Lista ostatnich wydatków...</div>
-
+                <?php
+                    if(!empty($expenses)):
+                        foreach ($expenses as $expense):
+                ?>
+                <div class="list-card-item">
+                    <div class="list-card-content">
+                        <div class="list-card-left-section">
+                            <div class="list-icon-wrapper" style="background-color: #fff4d8;">
+                                <span class="material-symbols-outlined" style="color: #f79009;"><?= $expense['icon'] ?></span>
+                            </div>
+                            <div class="list-text-details">
+                                <p class="list-item-primary-text"><?= $expense['description']  ?></p>
+                                <p class="list-item-secondary-text"><?= $expense['date_incurred']  ?></p>
+                            </div>
+                        </div>
+                        <div class="list-card-right-section">
+                            <p class="list-item-value"><?= $expense['amount']  ?> zł</p>
+                            <button type="button" class="list-item-action-btn">
+                                <span class="material-symbols-outlined">more_vert</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <?php
+                        endforeach; endif;
+                ?>
                 <div class="column-action-button-wrapper desktop-only">
-                    <button type="button" class="action-button primary">
+                    <a href="/groups/<?= $group['id'] ?>/addExpense" type="button" class="action-button primary">
                         + Dodaj Wydatek
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -80,9 +112,9 @@
         </main>
     </div> <div class="bottom-actions mobile-only" id="mobile-bottom-actions">
     <div class="action-buttons-wrapper">
-        <button type="button" class="action-button primary" id="mobile-add-button">
+        <a type="button" class="action-button primary" id="mobile-add-button">
             + Dodaj (Dynamicznie)
-        </button>
+        </a>
     </div>
 </div>
 </div>

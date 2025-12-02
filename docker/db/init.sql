@@ -59,7 +59,7 @@ CREATE TABLE expenses (
                           description VARCHAR(255) NOT NULL,
                           category_id INTEGER REFERENCES categories(id),
                           photo_url VARCHAR(255),
-                          date_incurred TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                          date_incurred DATE DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE expense_splits (

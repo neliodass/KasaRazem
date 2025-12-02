@@ -1,0 +1,161 @@
+<!doctype html>
+
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nowy Wydatek</title>
+
+    <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/addExpense.css" type="text/css" rel="stylesheet"/>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+</head>
+
+<body class="theme-light whole-page-group-details">
+<div class="page-wrapper">
+    <header class="app-bar">
+        <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
+            <a href="/groups/<?= $groupId ?>" style="color: inherit; text-decoration: none; display: flex;">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+        </div>
+        <h1>Nowy wydatek</h1>
+        <div style="width: 48px; height: 48px;"></div>
+    </header>
+
+    <form action="/groups/<?= $groupId ?>/addExpense" method="POST" style="display: contents;">
+        <main class="page-form-container page-container">
+            <div class="form-header-group">
+                <h1 class="headline-text">Nowy wydatek</h1>
+            </div>
+
+            <div class="input-field-wrapper">
+                <label class="form-label" for="expense_name">Nazwa</label>
+                <input
+                        id="expense_name"
+                        name="name"
+                        type="text"
+                        class="input-group-text"
+                        placeholder="np. Zakupy spożywcze"
+                        required
+                />
+            </div>
+
+            <div class="input-field-wrapper">
+                <label class="form-label" for="amount">Kwota</label>
+                <div class="input-suffix-wrapper">
+                    <input
+                            id="amount"
+                            name="amount"
+                            type="number"
+                            step="0.01"
+                            class="input-group-text"
+                            placeholder="0.00"
+                            required
+                    />
+                    <span class="input-suffix-text">PLN</span>
+                </div>
+            </div>
+
+            <div class="grid-2-col">
+                <div class="input-field-wrapper">
+                    <label class="form-label" for="category">Kategoria</label>
+                    <div class="input-suffix-wrapper">
+                        <select class="input-group-text" name="category" id="category" required>
+                            <option disabled="" selected="" value="">Wybierz</option>
+                            <?php if(!empty($categories)):
+            foreach ($categories as $category):
+?>
+                            <option value="<?= $category['id'] ?>"><?= $category['name'] ?></option>
+                            <?php endforeach;
+    endif;
+    ?>
+                        </select>
+                        <span class="material-symbols-outlined input-suffix-text"
+                              style="right: 0.5rem;">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="input-field-wrapper">
+                    <label class="form-label" for="date">Data</label>
+                    <input
+                            id="date"
+                            name="date"
+                            type="date"
+                            class="input-group-text"
+                            value="<?php echo date('Y-m-d'); ?>"
+                            required
+                    />
+                </div>
+
+            </div>
+            <div class="input-field-wrapper">
+                <label class="form-label" for="paidBy">Zapłacono przez:</label>
+                <select id="paidBy" name="paidBy" class="input-group-text" required>
+                    <?php
+        if(!empty($users)):
+            foreach ($users as $user):
+?>
+                    <option <?php if($user['id'] == $userId) echo 'selected'; ?>
+                            value="<?= $user['id'] ?>"><?= $user['firstname'] ?> <?= $user['lastname'] ?></option>
+                    <?php endforeach;
+    endif;
+    ?>
+                </select>
+            </div>
+            <div>
+                <p class="form-label" style="padding-bottom: 0.75rem;">Podziel pomiędzy</p>
+                <div class="split-user-list">
+                    <?php
+        if(!empty($users)):
+            foreach ($users as $user):
+?>
+                    <div class="user-split-item">
+                        <div class="split-user-details">
+                            <img class="user-avatar" alt="Avatar of user 1"
+                                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIspL8uVDwe572-ePv26dWXcOQbcJMq_UwUF7_929Mu_LSA4hhrzykzZmlaz_AlocYt3hD-_lUx8BvjXP4SrNOPCBHEQlW5G_I8pJRSkvDyucTI22JiMp1Jt7CnzTth43iNB6tqzbHUd71XpqS04ak3UGUQT5CISRDd3MIiFHWSz6lmAnyL0jCz2_piOiY9E_oCJmjW8i_RU2jDzI5UEp2uxWAdfdZTrVqHxomDaAR9QgsLL-RAih7B3-zM26Vw39W_3Jn03aAvs-L"/>
+                            <span style="font-weight: 600;"><?= $user['firstname'] ?> <?= $user['lastname'] ?></span>
+                        </div>
+                        <input checked="" class="checkbox-style" type="checkbox" name="split_user_<?= $user['id'] ?>" value="1"/>
+                    </div>
+                    <?php endforeach;
+    endif;
+    ?>
+                </div>
+            </div>
+
+            <div class="split-mode-toggle-wrapper">
+                <div class="split-mode-toggle">
+                    <button type="button" class="active-mode">Podziel równo</button>
+                    <button type="button">Niestandardowo</button>
+                </div>
+            </div>
+        </main>
+
+        <div class="bottom-actions">
+            <div class="action-buttons-wrapper">
+                <button type="submit" class="action-button primary">
+                    Dodaj wydatek
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
