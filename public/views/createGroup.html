@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stwórz nową grupę</title>
+
+    <!-- Używamy tylko ogólnych stylów dla spójności -->
+    <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/login.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/groups.css" type="text/css" rel="stylesheet"/>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+    <style>
+        /* Upewnienie się, że ikony są stylowane globalnie */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+</head>
+
+<body class="theme-light">
+<div class="page-wrapper">
+    <header class="app-bar">
+        <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
+            <a href="/groups" style="color: inherit; text-decoration: none; display: flex;">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+        </div>
+        <h1>Nowa Grupa</h1>
+        <div style="width: 48px; height: 48px;"></div>
+    </header>
+
+    <form action="/groups/create" method="POST" style="display: contents;">
+        <main class="page-form-container">
+
+            <div class="form-header-group">
+                <h1 class="headline-text">Stwórz nową grupę</h1>
+                <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
+                    Wypełnij pola, aby utworzyć nową przestrzeń do rozliczania wydatków.
+                </p>
+            </div>
+
+            <?php if(isset($message)): ?>
+            <p class="messages">
+                <?= $message; ?>
+            </p>
+            <?php endif; ?>
+
+            <div class="input-field-wrapper">
+                <label class="form-label" for="group_name">Nazwa grupy</label>
+                <input
+                        id="group_name"
+                        name="group_name"
+                        type="text"
+                        class="input-group-text"
+                        placeholder="np. Domownicy, Współlokatorzy"
+                        value="<?= isset($name) ? htmlspecialchars($name) : '' ?>"
+                        required
+                />
+            </div>
+        </main>
+        <div class="bottom-actions">
+            <div class="action-buttons-wrapper">
+                <button type="submit" class="action-button primary">
+                    Utwórz grupę
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

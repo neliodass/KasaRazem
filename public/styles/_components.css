@@ -100,7 +100,7 @@
     font-weight: 500;
 }
 
-/* --- REUSABLE UI ELEMENTS --- */
+
 
 .app-bar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 10;
@@ -169,4 +169,63 @@
     padding-bottom: 8rem;
     min-height: 100vh;
     display: flex; flex-direction: column;
+}
+
+
+.page-form-container {
+    padding-top: 5rem;
+    padding-bottom: 8rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.form-header-group {
+    padding: 1.5rem 0 1rem 0;
+}
+
+.headline-text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-body);
+    margin-bottom: 0.5rem;
+}
+
+.input-field-wrapper {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: var(--color-text-body);
+    padding-bottom: 0.5rem;
+}
+
+.input-group-text,
+.form-input-text {
+    width: 100%;
+    height: var(--height-input, 3.5rem);
+    padding: 0 1rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border-input);
+    background-color: var(--color-bg-input);
+    color: var(--color-text-input);
+    font-size: var(--font-size-base);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input-group-text:focus,
+.form-input-text:focus {
+    outline: 0;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-ring);
+}
+
+
+textarea.input-group-text {
+    min-height: 9rem;
+    height: auto;
+    padding: 1rem;
 }

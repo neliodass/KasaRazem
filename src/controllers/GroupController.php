@@ -66,4 +66,12 @@ class GroupController extends AppController
         }
         $this->render('joinGroup', ['message' => 'Wystąpił nieznany błąd podczas dołączania.']);
     }
+
+    public function createGroup()
+    {
+        Auth::requireLogin();
+
+        $this->render('createGroup');
+        return;
+    }
 }

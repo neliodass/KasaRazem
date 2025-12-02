@@ -15,5 +15,6 @@ $router->add('GET', 'groups/add', ['controller' => 'GroupController', 'action' =
 $router->add('GET', 'groups/join', ['controller' => 'GroupController', 'action' => 'joinGroup']);
 $router->add('GET', 'groups/join/{code}', ['controller' => 'GroupController', 'action' => 'joinGroup']);
 $router->add('POST', 'groups/join', ['controller' => 'GroupController', 'action' => 'joinGroup']);
+$router->add('GET','groups/create',['controller' => 'GroupController', 'action' => 'createGroup']);
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->run($path,$_SERVER['REQUEST_METHOD']);
