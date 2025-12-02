@@ -9,6 +9,7 @@ class Routing
         "logout" => ["controller" => "SecurityController", "action" => "logout"],
         "register" => ["controller" => "SecurityController", "action" => "register"],
         "groups" => ["controller" => "GroupController", "action" => "groups"],
+        "groups/join" => ["controller" => "GroupController", "action" => "join"],
     ];
     public static function run(string $path)
     {
