@@ -2,6 +2,7 @@
 require_once('core/Router.php');
 require_once ('src/controllers/GroupController.php');
 require_once ('src/controllers/SecurityController.php');
+require_once ('src/controllers/ExpenseController.php');
 
 $router = new Router();
 
@@ -18,5 +19,6 @@ $router->add('POST', 'groups/join', ['controller' => 'GroupController', 'action'
 $router->add('GET','groups/create',['controller' => 'GroupController', 'action' => 'createGroup']);
 $router->add('POST','groups/create',['controller' => 'GroupController', 'action' => 'createGroup']);
 $router->add("GET",'groups/{groupId}',['controller' => 'GroupController', 'action' => 'groupDetails']);
+$router->add('GET','groups/{groupId}/addExpense',['controller' => 'ExpenseController', 'action' => 'addExpense']);
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->run($path,$_SERVER['REQUEST_METHOD']);
