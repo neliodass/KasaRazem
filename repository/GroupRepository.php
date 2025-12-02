@@ -5,7 +5,7 @@ class GroupRepository extends Repository
 {
     private static $instance;
 
-    public static function getInstance(): GroupRepository
+    public static function getInstance(): self
     {
         if (!isset(self::$instance)) {
             self::$instance = new self();

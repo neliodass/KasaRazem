@@ -27,36 +27,41 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (targetTab === 'shopping-lists') {
                 buttonText = '+ Dodaj Listę';
             }
-            mobileAddButton.textContent = buttonText;
+            let hrefLink = '#';
+            if (targetTab === 'expenses') {
+                hrefLink = '/groups/'+groupId+'/addExpense';
+                mobileAddButton.textContent = buttonText;
+                mobileAddButton.href = hrefLink;
+            }}
         }
-    }
 
-    if (window.innerWidth < 1024) {
-        switchTab('expenses');
-    } else {
-        tabPanels.forEach(panel => panel.classList.remove('active'));
-    }
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const targetTab = this.getAttribute('data-tab');
-            switchTab(targetTab);
-        });
-    });
-
-    window.addEventListener('resize', () => {
         if (window.innerWidth < 1024) {
-            const activeTab = document.querySelector('.tab-button.active')?.getAttribute('data-tab') || 'expenses';
-            switchTab(activeTab);
+            switchTab('expenses');
         } else {
             tabPanels.forEach(panel => panel.classList.remove('active'));
-            const mobileActions = document.getElementById('mobile-bottom-actions');
-            if (mobileActions) mobileActions.style.display = 'none';
         }
-    });
 
-    if (window.innerWidth < 1024) {
-        const mobileActions = document.getElementById('mobile-bottom-actions');
-        if (mobileActions) mobileActions.style.display = 'flex';
-    }
-});
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const targetTab = this.getAttribute('data-tab');
+                switchTab(targetTab);
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 1024) {
+                const activeTab = document.querySelector('.tab-button.active')?.getAttribute('data-tab') || 'expenses';
+                switchTab(activeTab);
+            } else {
+                tabPanels.forEach(panel => panel.classList.remove('active'));
+                const mobileActions = document.getElementById('mobile-bottom-actions');
+                if (mobileActions) mobileActions.style.display = 'none';
+            }
+        });
+
+        if (window.innerWidth < 1024) {
+            const mobileActions = document.getElementById('mobile-bottom-actions');
+            if (mobileActions) mobileActions.style.display = 'flex';
+        }
+
+    });

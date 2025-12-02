@@ -17,6 +17,11 @@
 </head>
 
 <body class="theme-light whole-page-group-details">
+
+<script>
+    const groupId = <?php echo json_encode($group['id']); ?>;
+</script>
+
 <script src="/public/scripts/groupTabs.js"></script>
 <div class="page-wrapper group-details-page-wrapper">
 
@@ -80,9 +85,9 @@
         </main>
     </div> <div class="bottom-actions mobile-only" id="mobile-bottom-actions">
     <div class="action-buttons-wrapper">
-        <button type="button" class="action-button primary" id="mobile-add-button">
+        <a type="button" class="action-button primary" id="mobile-add-button">
             + Dodaj (Dynamicznie)
-        </button>
+        </a>
     </div>
 </div>
 </div>

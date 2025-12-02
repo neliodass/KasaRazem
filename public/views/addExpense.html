@@ -31,7 +31,7 @@
 <div class="page-wrapper">
     <header class="app-bar">
         <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
-            <a href="/groups" style="color: inherit; text-decoration: none; display: flex;">
+            <a href="/groups/<?= $groupId ?>" style="color: inherit; text-decoration: none; display: flex;">
                 <span class="material-symbols-outlined">arrow_back</span>
             </a>
         </div>
@@ -39,7 +39,7 @@
         <div style="width: 48px; height: 48px;"></div>
     </header>
 
-    <form action="/expenses/add" method="POST" style="display: contents;">
+    <form action="/groups/<?= $groupId ?>/addExpense" method="POST" style="display: contents;">
         <main class="page-form-container page-container">
             <div class="form-header-group">
                 <h1 class="headline-text">Nowy wydatek</h1>
@@ -79,12 +79,16 @@
                     <div class="input-suffix-wrapper">
                         <select class="input-group-text" name="category" id="category" required>
                             <option disabled="" selected="" value="">Wybierz</option>
-                            <option value="groceries">Spożywcze</option>
-                            <option value="bills">Rachunki</option>
-                            <option value="entertainment">Rozrywka</option>
-                            <option value="transport">Transport</option>
+                            <?php if(!empty($categories)):
+            foreach ($categories as $category):
+?>
+                            <option value="<?= $category['id'] ?>"><?= $category['name'] ?></option>
+                            <?php endforeach;
+    endif;
+    ?>
                         </select>
-                        <span class="material-symbols-outlined input-suffix-text" style="right: 0.5rem;">expand_more</span>
+                        <span class="material-symbols-outlined input-suffix-text"
+                              style="right: 0.5rem;">expand_more</span>
                     </div>
                 </div>
 
@@ -99,32 +103,40 @@
                             required
                     />
                 </div>
-            </div>
 
+            </div>
+            <div class="input-field-wrapper">
+                <label class="form-label" for="paidBy">Zapłacono przez:</label>
+                <select id="paidBy" name="paidBy" class="input-group-text" required>
+                    <?php
+        if(!empty($users)):
+            foreach ($users as $user):
+?>
+                    <option <?php if($user['id'] == $userId) echo 'selected'; ?>
+                            value="<?= $user['id'] ?>"><?= $user['firstname'] ?> <?= $user['lastname'] ?></option>
+                    <?php endforeach;
+    endif;
+    ?>
+                </select>
+            </div>
             <div>
                 <p class="form-label" style="padding-bottom: 0.75rem;">Podziel pomiędzy</p>
                 <div class="split-user-list">
+                    <?php
+        if(!empty($users)):
+            foreach ($users as $user):
+?>
                     <div class="user-split-item">
                         <div class="split-user-details">
-                            <img class="user-avatar" alt="Avatar of user 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIspL8uVDwe572-ePv26dWXcOQbcJMq_UwUF7_929Mu_LSA4hhrzykzZmlaz_AlocYt3hD-_lUx8BvjXP4SrNOPCBHEQlW5G_I8pJRSkvDyucTI22JiMp1Jt7CnzTth43iNB6tqzbHUd71XpqS04ak3UGUQT5CISRDd3MIiFHWSz6lmAnyL0jCz2_piOiY9E_oCJmjW8i_RU2jDzI5UEp2uxWAdfdZTrVqHxomDaAR9QgsLL-RAih7B3-zM26Vw39W_3Jn03aAvs-L"/>
-                            <span style="font-weight: 600;">Ty</span>
+                            <img class="user-avatar" alt="Avatar of user 1"
+                                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIspL8uVDwe572-ePv26dWXcOQbcJMq_UwUF7_929Mu_LSA4hhrzykzZmlaz_AlocYt3hD-_lUx8BvjXP4SrNOPCBHEQlW5G_I8pJRSkvDyucTI22JiMp1Jt7CnzTth43iNB6tqzbHUd71XpqS04ak3UGUQT5CISRDd3MIiFHWSz6lmAnyL0jCz2_piOiY9E_oCJmjW8i_RU2jDzI5UEp2uxWAdfdZTrVqHxomDaAR9QgsLL-RAih7B3-zM26Vw39W_3Jn03aAvs-L"/>
+                            <span style="font-weight: 600;"><?= $user['firstname'] ?> <?= $user['lastname'] ?></span>
                         </div>
-                        <input checked="" class="checkbox-style" type="checkbox" name="split_user_0" value="0"/>
+                        <input checked="" class="checkbox-style" type="checkbox" name="split_user_<?= $user['id'] ?>" value="1"/>
                     </div>
-                    <div class="user-split-item">
-                        <div class="split-user-details">
-                            <img class="user-avatar" alt="Avatar of user 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGcc9r1fyWQnjcbsdU2XJTyKw45I-DQkcUJO4uPdim0BdiJX6E8cbg0vbiQ-XGNd9bpu-x6HpHFwVIevsQ-1QuekTD12cDTeYagFM6R67xKBu-5EMoxpmkTuBTM0o-sVmkfdi4FQswRebOYAApJ1hxhvRlZGYV-6pmi5frmTWDDEnTFjAQ7pXOjEpTAaJ8FhWfBLQxFvq_q6zXqFBDFykDEk_qGiP4IIG94Y0gpkNiZx_EcZnUr-Ku3q0WYj9iANBzLtNRgz9mZRty"/>
-                            <span style="font-weight: 600;">Anna Kowalska</span>
-                        </div>
-                        <input checked="" class="checkbox-style" type="checkbox" name="split_user_1" value="1"/>
-                    </div>
-                    <div class="user-split-item">
-                        <div class="split-user-details">
-                            <img class="user-avatar" alt="Avatar of user 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf1pzywDJfDoC_eOcAz_zq8H6T_WCbNA5yumm0IVEdSrfwsh65dFGKqM1N8QUsVkJRr5wsLF8z895w41lQtAsExxFgdYIXO47Sro9UXwuJtYcS1fzrafEwRvA8BXYdmrjpKG0Q0USpd-_JEX4yop3gOkREpBQRFR8I-ZtxbYFrO32gW6E69_wei65TCAc7t89wUAgRkbK2_FbONYjHE8JB9rlYQ3o4Zb0wa587Xjl0O3zG_Niesytb1kRK9LeJ7wy2Q_grRXLHI0GG"/>
-                            <span style="font-weight: 600;">Jan Nowak</span>
-                        </div>
-                        <input class="checkbox-style" type="checkbox" name="split_user_2" value="2"/>
-                    </div>
+                    <?php endforeach;
+    endif;
+    ?>
                 </div>
             </div>
 
