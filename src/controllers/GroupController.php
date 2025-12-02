@@ -88,4 +88,20 @@ class GroupController extends AppController
             return;
         }
     }
+    public function groupDetails($groupId)
+    {
+        Auth::requireLogin();
+        $groupId = (int)$groupId;
+        $userId = (int)Auth::userId();
+        if (!$this->groupRepository->isUserInGroup($groupId, $userId)) {
+            header("Location: /groups");
+            exit;
+        }
+        $group = $this->groupRepository->getGroupById($groupId);
+        if ($group === null) {
+            header("Location: /groups");
+            exit;
+        }
+        $this->render('groupDetails', ['group' => $group]);
+    }
 }
