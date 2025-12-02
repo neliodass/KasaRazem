@@ -1,3 +1,7 @@
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
 .container {
     display: flex;
     align-items: center;
@@ -13,12 +17,14 @@
     color: var(--color-primary);
     font-size: 2.5rem;
 }
+
 .headline {
     font-size: var(--font-size-xl);
     font-weight: 700;
     color: var(--color-text-body);
     margin-bottom: 0.5rem;
 }
+
 .body-text {
     color: var(--color-text-secondary);
     font-size: var(--font-size-base);
@@ -56,18 +62,22 @@
     text-align: left;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
+
 .input-group input:focus {
     outline: 0;
     border-color: var(--color-primary);
     box-shadow: 0 0 0 2px var(--color-primary-ring);
 }
+
 .input-group input::placeholder {
     color: var(--color-icon-inactive);
 }
+
 .show-password-btn {
     position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
     color: var(--color-icon-inactive); font-size: 0.875rem; line-height: 1; z-index: 10; padding: 0.5rem;
 }
+
 .login-button {
     width: 100%;
     height: var(--height-input);
@@ -82,9 +92,140 @@
 .login-button:hover {
     background-color: var(--color-primary-hover);
 }
+
 .messages {
     color: var(--color-primary);
     text-align: center;
     margin-bottom: 1rem;
     font-weight: 500;
+}
+
+
+
+.app-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    background-color: var(--color-background);
+    border-bottom: 1px solid var(--color-border-input);
+    padding: 1rem; display: flex; align-items: center; justify-content: space-between;
+}
+
+.app-bar h1 {
+    flex-grow: 1; text-align: center; font-size: 1.25rem; font-weight: 700;
+    color: var(--color-text-body);
+}
+
+.app-bar a,
+.app-bar button {
+    color: var(--color-text-body);
+    padding: 0.5rem;
+    border-radius: var(--border-radius-full);
+    transition: background-color 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; border: none; background: transparent; cursor: pointer;
+}
+
+.app-bar a:hover,
+.app-bar button:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.bottom-actions {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+    background-color: var(--color-background);
+    padding: 1rem; display: flex; flex-direction: column; align-items: center;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -2px rgba(0, 0, 0, 0.06);
+}
+
+.action-buttons-wrapper {
+    width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 0.75rem;
+}
+
+.action-button {
+    width: 100%; height: 3rem; border-radius: var(--border-radius-lg);
+    font-weight: 700; font-size: var(--font-size-base); transition: background-color 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; cursor: pointer; border: none;
+}
+
+.action-button.primary {
+    background-color: var(--color-primary); color: white;
+}
+
+.action-button.primary:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.action-button.secondary {
+    background-color: var(--color-border-input);
+    color: var(--color-text-body);
+}
+
+.action-button.secondary:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+
+.page-content-padded {
+    padding-top: 5rem;
+    padding-bottom: 8rem;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+}
+
+
+.page-form-container {
+    padding-top: 5rem;
+    padding-bottom: 8rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.form-header-group {
+    padding: 1.5rem 0 1rem 0;
+}
+
+.headline-text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text-body);
+    margin-bottom: 0.5rem;
+}
+
+.input-field-wrapper {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: var(--color-text-body);
+    padding-bottom: 0.5rem;
+}
+
+.input-group-text,
+.form-input-text {
+    width: 100%;
+    height: var(--height-input, 3.5rem);
+    padding: 0 1rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border-input);
+    background-color: var(--color-bg-input);
+    color: var(--color-text-input);
+    font-size: var(--font-size-base);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input-group-text:focus,
+.form-input-text:focus {
+    outline: 0;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-ring);
+}
+
+
+textarea.input-group-text {
+    min-height: 9rem;
+    height: auto;
+    padding: 1rem;
 }

@@ -33,8 +33,13 @@ CREATE TABLE groups (
                         id SERIAL PRIMARY KEY,
                         name VARCHAR(255) NOT NULL,
                         created_by_user_id INTEGER NOT NULL REFERENCES users(id),
+                        invite_id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
                         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+INSERT INTO groups (name, created_by_user_id) VALUES
+                                                  ('Konto Wspólne', 1),
+                                                  ('Wyjazd Firmowy 2024', 1),
+                                                  ('Remont Mieszkania', 1);
 
 CREATE TABLE group_members (
                                group_id INTEGER NOT NULL REFERENCES groups(id),
@@ -42,7 +47,10 @@ CREATE TABLE group_members (
                                joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                                PRIMARY KEY (group_id, user_id)
 );
-
+INSERT INTO group_members (group_id, user_id) VALUES
+                                                  (1, 1), -- Bartek w 'Konto Wspólne'
+                                                  (2, 1), -- Bartek w 'Wyjazd Firmowy 2024'
+                                                  (3, 1); -- Bartek w 'Remont Mieszkania'
 CREATE TABLE expenses (
                           id SERIAL PRIMARY KEY,
                           group_id INTEGER NOT NULL REFERENCES groups(id),

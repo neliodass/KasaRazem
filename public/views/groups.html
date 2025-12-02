@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Moje grupy</title>
+    <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/login.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/groups.css" type="text/css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          rel="stylesheet"/>
+</head>
+<body class="theme-light">
+<div class="page-wrapper">
+    <header class="app-bar">
+        <div style="width: 48px; height: 48px;"></div>
+        <h1>Moje grupy</h1>
+        <div style="width: 48px; height: 48px; display: flex; justify-content: flex-end;">
+            <button type="button">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="page-groups">
+        <?php
+        if(!empty($groups)):
+            foreach ($groups as $group):
+?>
+        <a href="/groups/<?= $group['id'] ?>" class="group-list-item">
+            <div class="item-content">
+                <div class="item-icon-wrapper">
+                    <span class="material-symbols-outlined">home</span>
+                </div>
+                <div class="item-text-wrapper">
+                    <p class="item-name"><?= $group['name'] ?></p>
+                    <p class="item-members">Liczba osób: <?= $group['member_count'] ?></p>
+                </div>
+            </div>
+            <div class="chevron-icon">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </div>
+        </a>
+        <?php
+        endforeach;
+    else:
+    ?>
+        <p class="body-text" style="text-align: center; padding-top: 2rem;">Nie należysz jeszcze do żadnej grupy.</p>
+        <?php
+    endif;
+    ?>
+    </main>
+
+    <div class="bottom-actions">
+        <div class="action-buttons-wrapper">
+            <a href="/groups/create" type="button" class="action-button primary">
+                Stwórz nową grupę
+            </a>
+            <a href="/groups/join" type="button" class="action-button secondary">
+                Dołącz do grupy
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

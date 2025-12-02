@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dołącz do grupy</title>
+    <title>Stwórz nową grupę</title>
+
+    <!-- Używamy tylko ogólnych stylów dla spójności -->
     <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
@@ -17,77 +19,51 @@
 
 </head>
 
-<style>
-    .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24
-    }
-    .join-container {
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-    .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-    }
-    .form-input {
-        width: 100%;
-        padding: 1rem;
-        border-radius: 12px;
-        border: 1px solid #ccc;
-        font-size: 1rem;
-        color:  var(--color-text-input);
-        background: var(--color-bg-input);
-    }
-
-</style>
 <body class="theme-light">
 <div class="page-wrapper">
-<header class="app-bar">
+    <header class="app-bar">
         <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
             <a href="/groups" style="color: inherit; text-decoration: none; display: flex;">
-                <span class="material-symbols-outlined">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined">arrow_back</span>
             </a>
         </div>
-<h1>Dołącz do grupy</h1>
-
+        <h1>Nowa Grupa</h1>
         <div style="width: 48px; height: 48px;"></div>
     </header>
 
-    <form action="/groups/join" method="POST" style="display: contents;">
-        <main class="join-container">
-            <div>
-                <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Wpisz kod zaproszenia</h1>
-                <p class="body-text" style="opacity: 0.7;">
-                    Kod otrzymasz od administratora grupy lub znajomego.
+    <form action="/groups/create" method="POST" style="display: contents;">
+        <main class="page-form-container">
+
+            <div class="form-header-group">
+                <h1 class="headline-text">Stwórz nową grupę</h1>
+                <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
+                    Wypełnij pola, aby utworzyć nową przestrzeń do rozliczania wydatków.
                 </p>
             </div>
+
             <?php if(isset($message)): ?>
             <p class="messages">
                 <?= $message; ?>
             </p>
             <?php endif; ?>
-            <div>
-                <label class="form-label">Kod zaproszenia</label>
+
+            <div class="input-field-wrapper">
+                <label class="form-label" for="group_name">Nazwa grupy</label>
                 <input
+                        id="group_name"
+                        name="group_name"
                         type="text"
-                        name="code"
-                        class="form-input"
-                        placeholder="Np. x8s-12a"
-                        value="<?= isset($code) ? $code : '' ?>"
+                        class="input-group-text"
+                        placeholder="np. Domownicy, Współlokatorzy"
+                        value="<?= isset($name) ? htmlspecialchars($name) : '' ?>"
                         required
-                >
+                />
             </div>
         </main>
         <div class="bottom-actions">
             <div class="action-buttons-wrapper">
                 <button type="submit" class="action-button primary">
-                    Dołącz do grupy
+                    Utwórz grupę
                 </button>
             </div>
         </div>

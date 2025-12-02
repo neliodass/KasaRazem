@@ -33,7 +33,7 @@ class SecurityController extends AppController
         }
         session_start();
         $_SESSION['user_id'] = $user['id'];
-        header('Location: /dashboard');
+        header('Location: /groups');
         exit();
     }
 
