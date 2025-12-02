@@ -32,11 +32,38 @@ class GroupController extends AppController
     public function addGroup()
     {
         Auth::requireLogin();
+
         $this->render('addGroup');
+        return;
     }
-    public function joinGroup()
+    public function joinGroup($inviteCode = null)
     {
         Auth::requireLogin();
-        $this->render('joinGroup');
+        if (!$this->isPost()) {
+            $this->render('joinGroup', ['code'=> $inviteCode?? null,'message'=> $message?? null]);
+            return;
+        }
+        $code = $_POST['code'];
+        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $code)) {
+            $message = "Nieprawidłowy kod zaproszenia.";
+            $this->render('joinGroup', ['code'=> $code,'message'=> $message]);
+            return;
+        }
+        $groupId = $this->groupRepository->getGroupIdByInviteCode($code);
+        if ($groupId === null) {
+            $message = "Nieprawidłowy kod zaproszenia.";
+            $this->render('joinGroup', ['code'=> $code,'message'=> $message]);
+            return;
+        }
+        if($this->groupRepository->isUserInGroup($groupId, (int)Auth::userId())){
+            $message = "Już jesteś członkiem tej grupy.";
+            $this->render('joinGroup', ['code'=> $code,'message'=> $message]);
+            return;
+        }
+        if ($this->groupRepository->addUserToGroup($groupId, (int)Auth::userId())) {
+            header("Location: /groups");
+            exit;
+        }
+        $this->render('joinGroup', ['message' => 'Wystąpił nieznany błąd podczas dołączania.']);
     }
 }

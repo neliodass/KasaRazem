@@ -33,4 +33,41 @@ WHERE gm_filter.user_id = :userId;'
 
         return $groups;
     }
+    public function getGroupIdByInviteCode(string $inviteCode): ?int
+    {
+        $query = $this->conn->prepare(
+            'SELECT id FROM groups WHERE invite_id = :inviteCode'
+        );
+
+        $query->bindParam(':inviteCode', $inviteCode, PDO::PARAM_STR);
+        $query->execute();
+
+        $id = $query->fetchColumn();
+
+        return $id !== false ? (int)$id : null;
+    }
+    public function isUserInGroup(int $groupId, int $userId): bool
+    {
+        $query = $this->conn->prepare(
+            'SELECT COUNT(*) FROM group_members WHERE group_id = :groupId AND user_id = :userId'
+        );
+
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $query->execute();
+        return (bool)$query->fetchColumn();
+    }
+    public function addUserToGroup(int $groupId, int $userId): bool
+    {
+        $query = $this->conn->prepare(
+            'INSERT INTO group_members (group_id, user_id) 
+         VALUES (:groupId, :userId)'
+        );
+
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->bindParam(':userId', $userId, PDO::PARAM_INT);
+
+        return $query->execute();
+    }
+
 }
