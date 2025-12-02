@@ -91,5 +91,44 @@ class ExpenseRepository extends Repository
         $expensesQuery->execute();
         return $expensesQuery->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getDebtDataByGroupId(int $groupId): array
+    {
+        $debtorsQuery = $this->conn->prepare(
+            'SELECT es.user_id AS debtor_id, SUM(es.amount_owed) AS total_owed
+         FROM expense_splits es
+         JOIN expenses e ON es.expense_id = e.id
+         WHERE e.group_id = :groupId
+         GROUP BY es.user_id'
+        );
+        $debtorsQuery->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $debtorsQuery->execute();
+        $debtors = $debtorsQuery->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        $creditorsQuery = $this->conn->prepare(
+            'SELECT paid_by_user_id AS creditor_id, SUM(amount) AS total_paid
+         FROM expenses
+         WHERE group_id = :groupId
+         GROUP BY paid_by_user_id'
+        );
+        $creditorsQuery->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $creditorsQuery->execute();
+        $creditors = $creditorsQuery->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        return [
+            'owed' => $debtors,
+            'paid' => $creditors,
+        ];
+    }
+    public function getSettlementsByGroupId(int $groupId): array
+    {
+        $query = $this->conn->prepare(
+            'SELECT payer_user_id, payee_user_id, amount 
+         FROM settlements 
+         WHERE group_id = :groupId'
+        );
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 }
