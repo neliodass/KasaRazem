@@ -51,8 +51,29 @@
 
             <div class="tab-panel active" data-tab-content="expenses">
                 <h2>Wydatki</h2>
-                <div class="p-4 bg-gray-100 rounded-lg">Lista ostatnich wydatków...</div>
-
+                <?php
+                    if(!empty($groups)):
+                        foreach ($groups as $group):
+                ?>
+                <div class="list-card-item">
+                    <div class="list-card-content">
+                        <div class="list-card-left-section">
+                            <div class="list-icon-wrapper" style="background-color: #fff4d8;">
+                                <span class="material-symbols-outlined" style="color: #f79009;">shopping_cart</span>
+                            </div>
+                            <div class="list-text-details">
+                                <p class="list-item-primary-text">Zakupy w Biedronce</p>
+                                <p class="list-item-secondary-text">24 Sie 2023</p>
+                            </div>
+                        </div>
+                        <div class="list-card-right-section">
+                            <p class="list-item-value">124,50 zł</p>
+                            <button type="button" class="list-item-action-btn">
+                                <span class="material-symbols-outlined">more_vert</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="column-action-button-wrapper desktop-only">
                     <a href="/groups/<?= $group['id'] ?>/addExpense" type="button" class="action-button primary">
                         + Dodaj Wydatek
