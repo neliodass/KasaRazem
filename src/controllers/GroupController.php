@@ -29,4 +29,14 @@ class GroupController extends AppController
         $groups = $groupRepository->getGroupsByUserId($userId);
         $this->render('groups', ['groups' => $groups]);
     }
+    public function addGroup()
+    {
+        Auth::requireLogin();
+        $this->render('addGroup');
+    }
+    public function joinGroup()
+    {
+        Auth::requireLogin();
+        $this->render('joinGroup');
+    }
 }

@@ -33,6 +33,7 @@ CREATE TABLE groups (
                         id SERIAL PRIMARY KEY,
                         name VARCHAR(255) NOT NULL,
                         created_by_user_id INTEGER NOT NULL REFERENCES users(id),
+                        invite_id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
                         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 INSERT INTO groups (name, created_by_user_id) VALUES
