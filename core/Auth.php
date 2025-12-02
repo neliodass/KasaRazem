@@ -7,7 +7,6 @@ class Auth
         self::ensureSessionStarted();
         if (!isset($_SESSION['user_id'])) {
             header('Location: /login');
-            echo "TESTasddddddddddddddddddddddddddddddddddddddddddddddddd";
             exit();
         }
     }
