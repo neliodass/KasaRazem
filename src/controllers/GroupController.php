@@ -70,8 +70,22 @@ class GroupController extends AppController
     public function createGroup()
     {
         Auth::requireLogin();
-
-        $this->render('createGroup');
-        return;
+        if (!$this->isPost()) {
+            $this->render('createGroup');
+            return;
+        }
+        $groupName = $_POST['group_name'];
+        if (empty($groupName) || strlen($groupName) > 100) {
+            $this->render('createGroup', ['message' => 'Nazwa grupy musi mieć od 1 do 100 znaków.']);
+            return;
+        }
+        $newGroupId = $this->groupRepository->createGroup($groupName, (int)Auth::userId());
+        if ($newGroupId !== null) {
+            header("Location: /groups");
+            exit;
+        } else {
+            $this->render('createGroup', ['message' => 'Wystąpił nieznany błąd podczas tworzenia grupy.']);
+            return;
+        }
     }
 }

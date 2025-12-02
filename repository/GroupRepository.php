@@ -1,7 +1,10 @@
 <?php
 require_once "repository/Repository.php";
-class GroupRepository extends Repository {
+
+class GroupRepository extends Repository
+{
     private static $instance;
+
     public static function getInstance(): GroupRepository
     {
         if (!isset(self::$instance)) {
@@ -9,6 +12,7 @@ class GroupRepository extends Repository {
         }
         return self::$instance;
     }
+
     private function __construct()
     {
         parent::__construct();
@@ -33,6 +37,7 @@ WHERE gm_filter.user_id = :userId;'
 
         return $groups;
     }
+
     public function getGroupIdByInviteCode(string $inviteCode): ?int
     {
         $query = $this->conn->prepare(
@@ -46,6 +51,7 @@ WHERE gm_filter.user_id = :userId;'
 
         return $id !== false ? (int)$id : null;
     }
+
     public function isUserInGroup(int $groupId, int $userId): bool
     {
         $query = $this->conn->prepare(
@@ -57,6 +63,7 @@ WHERE gm_filter.user_id = :userId;'
         $query->execute();
         return (bool)$query->fetchColumn();
     }
+
     public function addUserToGroup(int $groupId, int $userId): bool
     {
         $query = $this->conn->prepare(
@@ -68,6 +75,33 @@ WHERE gm_filter.user_id = :userId;'
         $query->bindParam(':userId', $userId, PDO::PARAM_INT);
 
         return $query->execute();
+    }
+
+    public function createGroup(string $name, int $createdByUserId): ?int
+    {
+        $this->conn->beginTransaction();
+        $query = $this->conn->prepare(
+            'INSERT INTO groups (name, created_by_user_id) 
+                 VALUES (:name, :createdByUserId)
+                 RETURNING id'
+        );
+
+        $query->bindParam(':name', $name, PDO::PARAM_STR);
+        $query->bindParam(':createdByUserId', $createdByUserId, PDO::PARAM_INT);
+        $query->execute();
+
+        $newGroupId = $query->fetchColumn();
+
+        if (!$newGroupId) {
+            $this->conn->rollBack();
+            return null;
+        }
+        $this->addUserToGroup((int)$newGroupId, $createdByUserId);
+        $this->conn->commit();
+
+        return (int)$newGroupId;
+
+
     }
 
 }
