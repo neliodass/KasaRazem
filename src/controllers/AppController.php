@@ -29,4 +29,9 @@ class AppController
         }
         echo $output;
     }
+    protected function redirect(string $url)
+    {
+        header("Location: " . $url);
+        exit();
+    }
 }

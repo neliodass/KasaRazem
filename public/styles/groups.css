@@ -13,6 +13,8 @@
     padding-top: 5rem;
     padding-bottom: 8rem;
     width: 100%;
+    max-width:600px;
+    margin: 0 auto;
 }
 
 .group-list-item {
@@ -58,24 +60,27 @@
 .whole-page-group-details{
     justify-content: flex-start;
     padding:0;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
 }
 .group-details-content-wrapper {
     padding-top: 5rem;
     width: 100%;
-    max-width: 100%;
-
     margin: 0 auto;
 }
 .group-details-page-wrapper
 {
     width: 100%;
-    max-width: 1400px;
+    max-width: 600px;
     margin: 0 auto;
     padding-left: 1rem;
     padding-right: 1rem;
+    position: relative;
 }
 .desktop-only {
-    display: none;
+    display: none !important;
 }
 .mobile-only {
 
@@ -93,6 +98,7 @@
     border-bottom: 1px solid var(--color-border-input);
     margin-bottom: 1rem;
     padding:0;
+    background-color: var(--color-background);
 }
 
 .tab-button {
@@ -104,102 +110,66 @@
     border-bottom: 3px solid transparent;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    text-decoration: none;
 }
 
 .tab-button.active {
     color: var(--color-primary);
     border-bottom-color: var(--color-primary);
 }
+.tab-button:hover {
+    background-color: rgba(0,0,0,0.02);
+}
 
 .tab-content-area {
     padding: 0 0 8rem 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
 }
 
 .tab-panel {
     display: none;
+    width: 100%;
 }
 
 .tab-panel.active {
     display: block;
+    animation: fadeIn 0.3s ease-in-out;
 }
-.whole-page-group-details
-{
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.bottom-actions{
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 600px;
+    z-index: 100;
+    background-color: var(--color-background);
+    padding: 1rem;
     display: flex;
     flex-direction: column;
-    justify-content: start;
     align-items: center;
-    min-height: 100vh;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -2px rgba(0, 0, 0, 0.06);
+    border-top: 1px solid var(--color-border-input);
 }
-
+.mobile-only {
+    display: flex !important;
+}
 @media (min-width: 1024px) {
-    .tabs-navigation {
-        display: none;
+    .bottom-actions {
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+        margin-bottom: 0;
     }
-
-    .group-details-main {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 1.5rem;
-        width: 100%;
-    }
-    .group-details-content-wrapper {
-        padding-left: 2rem;
-        padding-right: 2rem;
-        width: 100%;
-        max-width: 1400px;
-    }
-
-    .group-details-header {
-        padding: 5rem 2rem 1rem;
-    }
-
-    .tab-panel {
-        display: flex !important;
-        flex-direction: column;
-        background-color: var(--color-bg-input);
-        border-radius: var(--border-radius-lg);
-        padding: 1rem;
-        height: calc(100vh - 150px);
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .tab-content-area {
-        padding: 0;
-    }
-
-    .tab-panel > h2 {
-        flex-shrink: 0;
-        margin-top: 0;
-    }
-
-    .tab-panel > div:not(.column-action-button-wrapper) {
-        flex-grow: 1;
-    }
-
-    .column-action-button-wrapper {
-        flex-shrink: 0;
-        padding-top: 1rem;
-        border-top: 1px solid var(--color-border-input);
-        margin-top: auto;
-        width: 100%;
-        background-color: var(--color-bg-input);
-        position: sticky;
-        bottom: 0;
-        z-index: 10;
-    }
-    .column-action-button-wrapper .action-button {
-        margin-top: 0;
-    }
-
-    .desktop-only {
-        display: block !important;
-    }
-    .mobile-only {
-        display: none !important;
+    .app-bar {
+        max-width: 600px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-right: 1px solid var(--color-border-input);
+        border-left: 1px solid var(--color-border-input);
     }
 }

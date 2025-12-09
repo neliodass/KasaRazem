@@ -7,7 +7,6 @@ class GroupController extends AppController
 {
     private $groupRepository;
     private $expenseRepository;
-    private static $controller;
     public static function getInstance()
     {
         static $instance = null;
@@ -92,27 +91,10 @@ class GroupController extends AppController
             return;
         }
     }
+
     public function groupDetails($groupId)
     {
-        Auth::requireLogin();
-        $groupId = (int)$groupId;
-        $userId = (int)Auth::userId();
-        if (!$this->groupRepository->isUserInGroup($groupId, $userId)) {
-            header("Location: /groups");
-            exit;
-        }
-        $group = $this->groupRepository->getGroupDetailsById($groupId);
-        if ($group === null) {
-            header("Location: /groups");
-            exit;
-        }
-        $expenses = $this->expenseRepository->getExpensesByGroupId($groupId);
-        foreach ($expenses as &$expense) {
-            $expense['icon'] = IconsHelper::$expenseIcon[$expense['category_id']];
-        }
-        $this->render('groupDetails', [
-            'group' => $group,
-            'expenses' => $expenses
-        ]);
+        $this->redirect('/groups/' . $groupId . '/expenses');
     }
+
 }
