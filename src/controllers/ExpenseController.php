@@ -1,13 +1,18 @@
 <?php
+
+
+
+require_once "src/services/GroupService.php";
 require_once "core/Auth.php";
 require_once "repository/ExpenseRepository.php";
 
 class ExpenseController extends AppController
 {
     private static $instance;
-    private $expenseRepository;
-    private $groupRepository;
-    private $groupController;
+    private ExpenseRepository $expenseRepository;
+    private GroupRepository $groupRepository;
+    private GroupController $groupController;
+    private GroupService $groupService;
     public static function getInstance()
     {
         if (self::$instance == null) {
@@ -20,6 +25,7 @@ class ExpenseController extends AppController
         $this->groupRepository = GroupRepository::getInstance();
         $this->expenseRepository = ExpenseRepository::getInstance();
         $this->groupController = GroupController::getInstance();
+        $this->groupService = GroupService::getInstance();
     }
     public function expenses($groupId)
     {
@@ -38,7 +44,8 @@ class ExpenseController extends AppController
         $this->render('expenses', [
             'groupId' => $groupId,
             'expenses' => $expenses,
-            'activeTab' => 'expenses'
+            'activeTab' => 'expenses',
+            'groupName' => $this->groupService->getGroupName((string)$groupId)
         ]);
         exit();
     }

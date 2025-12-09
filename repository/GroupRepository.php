@@ -131,5 +131,18 @@ WHERE gm_filter.user_id = :userId;'
 
 
     }
+    public function getGroupNameById(int $groupId): ?string
+    {
+        $query = $this->conn->prepare(
+            'SELECT name FROM groups WHERE id = :groupId'
+        );
+
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->execute();
+
+        $name = $query->fetchColumn();
+
+        return $name !== false ? $name : null;
+    }
 
 }
