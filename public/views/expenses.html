@@ -1,0 +1,39 @@
+<?php include 'public/views/groupHeader.html'; ?>
+
+<div class="tab-panel active">
+    <h2>Wydatki</h2>
+    <?php if(!empty($expenses)): foreach ($expenses as $expense): ?>
+    <div class="list-card-item">
+        <div class="list-card-content">
+            <div class="list-card-left-section">
+                <div class="list-icon-wrapper" style="background-color: #fff4d8;">
+                    <span class="material-symbols-outlined" style="color: #f79009;"><?= $expense['icon'] ?></span>
+                </div>
+                <div class="list-text-details">
+                    <p class="list-item-primary-text"><?= $expense['description']  ?></p>
+                    <p class="list-item-secondary-text"><?= $expense['date_incurred']  ?></p>
+                </div>
+            </div>
+            <div class="list-card-right-section">
+                <p class="list-item-value"><?= $expense['amount']  ?> zł</p>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; endif; ?>
+
+    <div class="column-action-button-wrapper desktop-only">
+        <a href="/groups/<?= $groupId ?>/addExpense" class="action-button primary">+ Dodaj Wydatek</a>
+    </div>
+</div>
+
+</main>
+</div>
+
+<div class="bottom-actions mobile-only">
+    <div class="action-buttons-wrapper">
+        <a href="/groups/<?= $groupId ?>/addExpense" class="action-button primary">+ Dodaj Wydatek</a>
+    </div>
+</div>
+</div>
+</body>
+</html>

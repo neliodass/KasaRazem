@@ -21,6 +21,27 @@ class ExpenseController extends AppController
         $this->expenseRepository = ExpenseRepository::getInstance();
         $this->groupController = GroupController::getInstance();
     }
+    public function expenses($groupId)
+    {
+        Auth::requireLogin();
+        $groupId = (int)$groupId;
+        $userId = (int)Auth::userId();
+        if (!$this->groupRepository->isUserInGroup($groupId, $userId)) {
+            header("Location: /groups");
+            exit;
+        }
+
+        $expenses = $this->expenseRepository->getExpensesByGroupId($groupId);
+        foreach ($expenses as &$expense) {
+            $expense['icon'] = IconsHelper::$expenseIcon[$expense['category_id']];
+        }
+        $this->render('expenses', [
+            'groupId' => $groupId,
+            'expenses' => $expenses,
+            'activeTab' => 'expenses'
+        ]);
+        exit();
+    }
     public function addExpense($groupId)
     {
         Auth::requireLogin();

@@ -1,6 +1,5 @@
 <?php
 
-namespace controllers;
 
 class BalanceController extends AppController
 {
@@ -13,9 +12,9 @@ class BalanceController extends AppController
         return self::$instance;
     }
 
-    public function groupBalance()
+    public function balance($groupId)
     {
-
+        $this->render('moneyBalance',["activeTab"=>"balance","gr","groupId"=>$groupId]);
     }
 
 }
