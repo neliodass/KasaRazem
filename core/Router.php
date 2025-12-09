@@ -33,6 +33,7 @@ class Router
             }
         }
         include("public/views/404.html");
+        exit();
     }
 
     private function dispatch($controllerName, $actionName, $params): void
