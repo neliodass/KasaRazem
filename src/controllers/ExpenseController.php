@@ -63,29 +63,12 @@ class ExpenseController extends AppController
         if (!$this->isPost()) {
             $users = $this->expenseRepository->getUsersByGroupId($groupId);
             $categories = $this->expenseRepository->getCategories();
+            $userId = (int)Auth::userId();
             $this->render("addExpense", ["users" => $users, "categories" => $categories, "groupId" => $groupId, "userId" => $userId]);
             return;
         }
         $selectedUserIds = [];
-        $prefix = 'split_user_';
-
-        foreach ($_POST as $key => $value) {
-            if (str_starts_with($key, $prefix) && $value > 0) {
-                $userId = substr($key, strlen($prefix));
-                $selectedUserIds[] = (int)$userId;
-            }
-        }
-        $N = count($selectedUserIds);
-        $splitUsers = [];
-        if ($N > 0) {
-            $fraction = 1.0 / $N;
-            foreach ($selectedUserIds as $userId) {
-                $splitUsers[] = [
-                    'id' => $userId,
-                    'fraction' => $fraction,
-                ];
-            }
-        }
+        $splitUsers = $this->getSplitUsers($selectedUserIds);
         $this->expenseRepository->addExpense(
             $_POST['name'],
             $groupId,
@@ -175,6 +158,21 @@ class ExpenseController extends AppController
             $this->redirect("/groups/" . $groupId . "/expenses/" . $expenseId . "/edit");
             return;
         }
+        $splitUsers = $this->getSplitUsers($selectedUserIds);
+        $success = $this->expenseRepository->updateExpense(
+            $expenseId,
+            $name,
+            $paidBy,
+            $amount,
+            $dateIncurred,
+            $categoryId,
+            $splitUsers
+        );
+        $this->redirect("/groups/" . $groupId . "/expenses");
+    }
+
+    private function getSplitUsers(array $selectedUserIds): array
+    {
         $prefix = 'split_user_';
         foreach ($_POST as $key => $value) {
             if (str_starts_with($key, $prefix) && $value > 0) {
@@ -194,16 +192,7 @@ class ExpenseController extends AppController
                 ];
             }
         }
-        $success = $this->expenseRepository->updateExpense(
-            $expenseId,
-            $name,
-            $paidBy,
-            $amount,
-            $dateIncurred,
-            $categoryId,
-            $splitUsers
-        );
-        $this->redirect("/groups/" . $groupId . "/expenses");
+        return $splitUsers;
     }
 
 }
