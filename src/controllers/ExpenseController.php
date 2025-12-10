@@ -5,6 +5,8 @@
 require_once "src/services/GroupService.php";
 require_once "core/Auth.php";
 require_once "repository/ExpenseRepository.php";
+require_once "src/IconsHelper.php";
+require_once "src/ColorHelper.php";
 
 class ExpenseController extends AppController
 {
@@ -40,6 +42,9 @@ class ExpenseController extends AppController
         $expenses = $this->expenseRepository->getExpensesByGroupId($groupId);
         foreach ($expenses as &$expense) {
             $expense['icon'] = IconsHelper::$expenseIcon[$expense['category_id']];
+            $colors = ColorHelper::generatePastelColorSet();
+            $expense['icon_bg_color'] = $colors['background'];
+            $expense['icon_color'] = $colors['icon'];
         }
         $this->render('expenses', [
             'groupId' => $groupId,
