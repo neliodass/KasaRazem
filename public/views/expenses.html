@@ -1,8 +1,19 @@
 <?php include 'public/views/groupHeader.html'; ?>
 
 <div class="tab-panel active">
+    <?php
+        $lastDate = null;
+    ?>
     <h2>Wydatki</h2>
     <?php if(!empty($expenses)): foreach ($expenses as $expense): ?>
+    <?php if ($expense['date_incurred'] !== $lastDate): ?>
+    <div class="date-header" style="padding: 1rem 0 0.5rem 0.5rem;">
+        <h3 style="color: var(--color-text-secondary); font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">
+            <?= $expense['date_incurred'] ?>
+        </h3>
+    </div>
+    <?php $lastDate = $expense['date_incurred']; ?>
+    <?php endif; ?>
     <div class="list-card-item">
         <div class="list-card-content">
             <div class="list-card-left-section">
@@ -10,8 +21,11 @@
                     <span class="material-symbols-outlined" style="color: <?= $expense['icon_color'] ?>;"><?= $expense['icon'] ?></span>
                 </div>
                 <div class="list-text-details">
-                    <p class="list-item-primary-text"><?= $expense['description']  ?></p>
-                    <p class="list-item-secondary-text"><?= $expense['date_incurred']  ?></p>
+                    <p class="list-item-primary-text" style="margin-bottom: 0.25rem"><?= $expense['description']  ?></p>
+                    <div style="display: flex; flex-direction: column; align-items: start; ">
+                    <p class="list-item-secondary-text">Zapłacone przez:  </p>
+                        <p class="list-item-secondary-text" style="font-weight:bold"> <?= $expense['paidBy']  ?></p>
+                    </div>
                 </div>
             </div>
             <div class="list-card-right-section">

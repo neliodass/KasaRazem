@@ -45,6 +45,7 @@ class ExpenseController extends AppController
             $colors = ColorHelper::generatePastelColorSet();
             $expense['icon_bg_color'] = $colors['background'];
             $expense['icon_color'] = $colors['icon'];
+            $expense['paidBy'] = $expense['firstname'].' '.$expense['lastname'];
         }
         $this->render('expenses', [
             'groupId' => $groupId,

@@ -83,7 +83,8 @@ class ExpenseRepository extends Repository
     public function getExpensesByGroupId(int $groupId): ?array
     {
         $expensesQuery = $this->conn->prepare(
-            'SELECT e.* FROM expenses e 
+            'SELECT e.*,u.firstname,u.lastname FROM expenses e 
+           join users u on e.paid_by_user_id = u.id
          WHERE e.group_id = :group_id
          ORDER BY e.date_incurred DESC'
         );
