@@ -83,7 +83,8 @@ class ExpenseRepository extends Repository
     public function getExpensesByGroupId(int $groupId): ?array
     {
         $expensesQuery = $this->conn->prepare(
-            'SELECT e.* FROM expenses e 
+            'SELECT e.*,u.firstname,u.lastname FROM expenses e 
+           join users u on e.paid_by_user_id = u.id
          WHERE e.group_id = :group_id
          ORDER BY e.date_incurred DESC'
         );
@@ -129,6 +130,104 @@ class ExpenseRepository extends Repository
         $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getExpenseDetails(int $expenseId): ?array
+    {
+        $query = $this->conn->prepare(
+            'SELECT 
+                e.id,
+                e.description AS name,
+                e.amount,
+                e.date_incurred,
+                e.paid_by_user_id,
+                e.category_id,
+                e.group_id,
+                payer.firstname AS payer_firstname,
+                payer.lastname AS payer_lastname,
+                c.name AS category_name
+            FROM expenses e
+            JOIN users payer ON e.paid_by_user_id = payer.id
+            LEFT JOIN categories c ON e.category_id = c.id
+            WHERE e.id = :expenseId'
+        );
+        $query->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
+        $query->execute();
+        $expense = $query->fetch(PDO::FETCH_ASSOC);
+        if(!$expense)
+        {
+            return null;
+        }
+        $querySplits = $this->conn->prepare(
+            'SELECT 
+                es.user_id,
+                u.firstname,
+                u.lastname,
+                es.amount_owed
+            FROM expense_splits es
+            JOIN users u ON es.user_id = u.id
+            WHERE es.expense_id = :expenseId'
+        );
+        $querySplits->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
+        $querySplits->execute();
+        $splits = $querySplits->fetchAll(PDO::FETCH_ASSOC);
+        $expense['splits'] = $splits;
+        return $expense;
+    }
+    public function deleteExpense(int $expenseId): bool
+    {
+        $query = $this->conn->prepare(
+            'DELETE FROM expenses WHERE id = :expenseId'
+        );
+        $query->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
+        return $query->execute();
+    }
+    public function updateExpense(int $expenseId, string $name, int $paidByUserId, float $amount, $date, int $categoryId, array $splitUsers): bool
+    {
+        $this->conn->beginTransaction();
+
+        $updateExpenseQuery = $this->conn->prepare(
+            'UPDATE expenses 
+             SET description = :name, paid_by_user_id = :paidByUserId, amount = :amount, date_incurred = :dateIncurred, category_id = :categoryId
+             WHERE id = :expenseId'
+        );
+
+        $updateExpenseQuery->bindParam(':name', $name, PDO::PARAM_STR);
+        $updateExpenseQuery->bindParam(':paidByUserId', $paidByUserId, PDO::PARAM_INT);
+        $updateExpenseQuery->bindParam(':amount', $amount);
+        $updateExpenseQuery->bindParam(':dateIncurred', $date);
+        $updateExpenseQuery->bindParam(':categoryId', $categoryId, PDO::PARAM_INT);
+        $updateExpenseQuery->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
+
+        if (!$updateExpenseQuery->execute()) {
+            $this->conn->rollBack();
+            return false;
+        }
+
+        $deleteSplitsQuery = $this->conn->prepare(
+            'DELETE FROM expense_splits WHERE expense_id = :expenseId'
+        );
+        $deleteSplitsQuery->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
+        if (!$deleteSplitsQuery->execute()) {
+            $this->conn->rollBack();
+            return false;
+        }
+
+        foreach ($splitUsers as $user) {
+            $insertSplitQuery = $this->conn->prepare(
+                'INSERT INTO expense_splits (expense_id, user_id, amount_owed) 
+                 VALUES (:expenseId, :userId, :amount_owed)'
+            );
+            $amount_owed = $amount * $user['fraction'];
+            $insertSplitQuery->bindParam(':amount_owed', $amount_owed);
+            $insertSplitQuery->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
+            $insertSplitQuery->bindParam(':userId', $user['id'], PDO::PARAM_INT);
+            if (!$insertSplitQuery->execute()) {
+                $this->conn->rollBack();
+                return false;
+            }
+        }
+        $this->conn->commit();
+        return true;
     }
 
 }

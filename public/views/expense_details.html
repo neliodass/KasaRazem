@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pl" xmlns:link="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?= $expenseDetails['name'] ?? 'Szczegóły wydatku' ?></title>
+
+    <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/groups.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/expense.css" type="text/css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 }
+    </style>
+</head>
+
+<body class="theme-light whole-page-group-details">
+
+<?php
+
+    $date = new DateTime($expenseDetails['date_incurred'] ?? 'now');
+    $formattedDate = $date->format('l, d F Y');
+
+$bgColor = $expenseDetails['icon_bg_color'] ?? 'var(--color-primary-bg)';
+$iconColor = $expenseDetails['icon_color'] ?? 'var(--color-primary)';
+?>
+
+<div class="page-wrapper group-details-page-wrapper">
+    <script src="/public/scripts/expandMenu.js" defer></script>
+    <header class="app-bar">
+        <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
+            <a href="/groups/<?= $groupId ?>/expenses" style="color: inherit; text-decoration: none; display: flex;">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+        </div>
+        <h1></h1> <div class="dropdown-menu-wrapper">
+        <button type="button" id="dropdown-toggle" aria-expanded="false" aria-controls="context-menu">
+            <span class="material-symbols-outlined">more_vert</span>
+        </button>
+
+        <div id="context-menu" class="dropdown-menu">
+            <a href="/groups/<?= $groupId ?>/expense/<?= $expenseDetails['id'] ?>/edit" class="dropdown-item">
+                <span class="material-symbols-outlined">edit</span> Edytuj
+            </a>
+            <a href="/groups/<?= $groupId ?>/expense/<?= $expenseDetails['id'] ?>/delete" class="dropdown-item delete-action">
+                <span class="material-symbols-outlined">delete</span> Usuń
+            </a>
+        </div>
+    </div>
+    </header>
+
+    <main class="page-groups" style="padding-top: 5rem;">
+
+        <div class="expense-header-section">
+
+            <div class="item-icon-wrapper expense-icon-large"
+                 style="background-color: <?= $expenseIconColors['background']?? 'var(--color-primary-bg)'; ?>;">
+                <span class="material-symbols-outlined" style="color: <?= $expenseIconColors['icon'] ?? 'var(--color-primary)'; ?>;">
+                    <?= $expenseIcon ?? 'attach_money' ?>
+                </span>
+            </div>
+
+            <h1 class="expense-amount">
+                <?= $expenseDetails['name'] ?? 'Brak nazwy' ?>
+            </h1>
+
+            <p class="expense-name">
+                <?= number_format($expenseDetails['amount'] ?? 0, 2, ',', ' ') ?> zł
+
+            </p>
+
+            <p class="list-item-secondary-text">
+                <?= $formattedDate ?>
+            </p>
+        </div>
+
+        <div class="expense-detail-card">
+
+            <div class="expense-detail-row">
+                <p class="detail-label">Zapłacone przez</p>
+                <p class="detail-value"><?= $expenseDetails['payer_firstname'] ?? '?' ?> <?= $expenseDetails['payer_lastname'] ?? '' ?></p>
+            </div>
+
+            <div class="expense-detail-row">
+                <p class="detail-label">Kategoria</p>
+                <p class="detail-value"><?= $expenseDetails['category_name'] ?? 'Brak' ?></p>
+            </div>
+        </div>
+
+        <div class="expense-detail-card">
+            <p class="detail-value" style="margin-bottom: 0.5rem;">
+                Podzielone pomiędzy
+            </p>
+
+            <?php if (!empty($expenseDetails['splits'])): ?>
+            <?php foreach ($expenseDetails['splits'] as $split): ?>
+            <div class="expense-detail-row split-row" style="border-top: none;">
+                <div class="split-details-left">
+                    <img class="user-avatar"
+                         alt="<?= $split['firstname'] ?? '?' ?> avatar"
+                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIspL8uVDwe572-ePv26dWXcOQbcJMq_UwUF7_929Mu_LSA4hhrzykzZmlaz_AlocYt3hD-_lUx8BvjXP4SrNOPCBHEQlW5G_I8pJRSkvDyucTI22JiMp1Jt7CnzTth43iNB6tqzbHUd71XpqS04ak3UGUQT5CISRDd3MIiFHWSz6lmAnyL0jCz2_piOiY9E_oCJmjW8i_RU2jDzI5UEp2uxWAdfdZTrVqHxomDaAR9QgsLL-RAih7B3-zM26Vw39W_3Jn03aAvs-L"/>
+                    <p style="font-weight: 500; color: var(--color-text-body);"><?= $split['firstname'] ?> <?= $split['lastname'] ?></p>
+                </div>
+                <p class="split-amount-negative">
+                    - <?= number_format($split['amount_owed'] ?? 0, 2, ',', ' ') ?> zł
+                </p>
+            </div>
+            <?php endforeach; ?>
+            <?php else: ?>
+            <p class="list-item-secondary-text">Wydatek nie został podzielony.</p>
+            <?php endif; ?>
+        </div>
+
+        <div style="height: 3rem;"></div>
+
+    </main>
+
+
+
+</div>
+<div id="delete-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Potwierdź usunięcie</h3>
+        <p>Czy na pewno chcesz to usunąć? Tej operacji nie można cofnąć.</p>
+
+        <form id="delete-form" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+
+            <div class="modal-actions">
+                <button type="button" class="action-button secondary" id="modal-cancel">
+                    Anuluj
+                </button>
+                <button type="submit" class="action-button primary">
+                    Usuń
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
