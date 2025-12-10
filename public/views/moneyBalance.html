@@ -2,30 +2,36 @@
 
 <div class="tab-panel active">
     <h2>Bilans</h2>
+    <a href="/groups">
     <div class="list-card-item">
         <div class="list-card-content">
             <div class="list-card-left-section">
                 <div class="list-icon-wrapper" style="background-color: #fff4d8;">
-                    <p class="emoji">💸</p>
+                    <p class="emoji"><?= $currentUserBalanceEmoji ?></p>
                 </div>
                 <div class="list-text-details">
                     <?php switch ($currentUserNetBalance > 0) {
                         case true:
                             $statusText = "Masz do odebrania";
                             $currentUserStringBalance = "$currentUserNetBalance zł";
-                            break;
+                            $contextText = "Od kogo?";
+
+                    break;
                         case false:
                             $statusText = "Jesteś winien";
                             $currentUserStringBalance = "$currentUserNetBalance zł";
-                            break;
+                    $contextText = "Dla kogo?";
+                    break;
                         default:
                             $statusText = "Jesteś na zero";
                             $currentUserStringBalance = "";
+                            $contextText = "";
+                    break;
                     }
 
                     ?>
                     <h3 class="list-item-primary-text"><?= $statusText ?> <?= $currentUserStringBalance ?> </h3>
-                    <p class="list-item-secondary-text">Dla</p>
+                    <p class="list-item-secondary-text"><?= $contextText ?></p>
                 </div>
             </div>
             <div class="list-card-right-section">
@@ -35,8 +41,7 @@
             </div>
         </div>
     </div>
-    <? var_dump($balance); ?>
-    <? var_dump($currentUserNetBalance); ?>
+    </a>
     <h3>Salda</h3>
     <?php if(!empty($balance)): foreach ($balance as $balanceItem): ?>
     <div class="p-4 bg-gray-100 rounded-lg">
@@ -65,8 +70,11 @@
                 </div>
             </div>
         </div>
-        <?php endforeach; endif; ?>
+        <?php endforeach;
+         else: ?>
         <p>Tutaj pojawi się podsumowanie: Ty wisisz X, Tobie wiszą Y.</p>
+         <?php endif; ?>
+
     </div>
 
     <div class="column-action-button-wrapper desktop-only">

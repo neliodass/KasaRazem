@@ -10,12 +10,14 @@ class BalanceService
     private UserRepository $userRepository;
     private GroupRepository $groupRepository;
     private static $instance = null;
+
     private function __construct()
     {
         $this->expenseRepository = ExpenseRepository::getInstance();
         $this->userRepository = UserRepository::getInstance();
         $this->groupRepository = GroupRepository::getInstance();
     }
+
     public static function getInstance()
     {
         if (self::$instance == null) {
@@ -23,11 +25,13 @@ class BalanceService
         }
         return self::$instance;
     }
+
     public function getSettlementForGroup(string $groupId): array
     {
         return [];
     }
-    public function getBalanceSummary(string $groupId,string $currentUserId): array
+
+    public function getBalanceSummary(string $groupId, string $currentUserId): array
     {
         $groupId = (int)$groupId;
         $currentUserId = (int)$currentUserId;
@@ -47,21 +51,32 @@ class BalanceService
             $balance[] = [
                 'userId' => $userId,
                 'userName' => $user['firstname'] . ' ' . $user['lastname'],
-                'netBalance' => round($netBalance, 2),
+                'netBalance' => round($netBalance, 3),
                 'isCurrentUser' => $userId === $currentUserId
             ];
 
             if ($userId === $currentUserId) {
-                $currentUserNetBalance = round($netBalance,2);
-            }}
-
-            usort($balance, function ($a, $b) {
-                return $a['netBalance'] <=> $b['netBalance'];
-            });
-            return [
-                'balance' => $balance,
-                'currentUserNetBalance' => $currentUserNetBalance,
-            ];
+                $currentUserNetBalance = round($netBalance, 3);
+            }
         }
+
+        usort($balance, function ($a, $b) {
+            return $a['netBalance'] <=> $b['netBalance'];
+        });
+        return [
+            'balance' => $balance,
+            'currentUserNetBalance' => $currentUserNetBalance,
+        ];
+    }
+    public function getBalanceEmoji(float $amount): string
+    {
+        if ($amount > 0) {
+            return "🤑";
+        } elseif ($amount < 0) {
+            return "💸";
+        } else {
+            return "🤝";
+        }
+    }
 
 }

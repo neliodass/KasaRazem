@@ -293,6 +293,7 @@ textarea.input-group-text {
     flex-direction: column;
     align-items: flex-end;
     flex-shrink: 0;
+    align-self: center;
 }
 .list-item-value {
     font-size: 1.125rem;
