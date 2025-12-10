@@ -46,6 +46,8 @@ class ExpenseController extends AppController
             $expense['icon_bg_color'] = $colors['background'];
             $expense['icon_color'] = $colors['icon'];
             $expense['paidBy'] = $expense['firstname'].' '.$expense['lastname'];
+            $dateToFormat =  date('d-m-Y', strtotime($expense['date_incurred']));
+            $expense['date_incurred'] = str_replace('-', '.', $dateToFormat);
         }
         $this->render('expenses', [
             'groupId' => $groupId,
@@ -101,6 +103,29 @@ class ExpenseController extends AppController
         $this->groupController->groupDetails($groupId);
         return;
 
+    }
+    public function getExpense($groupId,$expenseId)
+    {
+        Auth::requireLogin();
+        $groupId = (int)$groupId;
+        $userId = (int)Auth::userId();
+        if (!$this->groupRepository->isUserInGroup($groupId, $userId)) {
+            header("Location: /groups");
+            exit;
+        }
+        $expenseId = (int)$expenseId;
+        $expenseDetails = $this->expenseRepository->getExpenseDetails($expenseId);
+        if (!$expenseDetails) {
+            $this->redirect("/groups");
+        }
+        $expenseIcon = IconsHelper::$expenseIcon[$expenseDetails['category_id']];
+        $expenseIconColors = ColorHelper::generatePastelColorSet();
+        $this->render('expense_details', [
+            'expenseDetails' => $expenseDetails,
+            'expenseIcon' => $expenseIcon,
+            'expenseIconColors' => $expenseIconColors,
+            'groupId' => $groupId,
+        ]);
     }
 
 }

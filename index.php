@@ -18,11 +18,13 @@ $router->add('GET', 'groups/join', ['controller' => 'GroupController', 'action' 
 $router->add('GET', 'groups/join/{code}', ['controller' => 'GroupController', 'action' => 'joinGroup']);
 $router->add('POST', 'groups/join', ['controller' => 'GroupController', 'action' => 'joinGroup']);
 $router->add('GET','groups/create',['controller' => 'GroupController', 'action' => 'createGroup']);
+$router->add('GET','groups/{groupId}/expense/{expenseId}',['controller' => 'ExpenseController', 'action' => 'getExpense']);
 $router->add('POST','groups/create',['controller' => 'GroupController', 'action' => 'createGroup']);
 $router->add("GET",'groups/{groupId}',['controller' => 'GroupController', 'action' => 'groupDetails']);
 $router->add("GET",'groups/{groupId}/expenses',['controller' => 'ExpenseController', 'action' => 'expenses']);
 $router->add('GET','groups/{groupId}/addExpense',['controller' => 'ExpenseController', 'action' => 'addExpense']);
 $router->add('POST','groups/{groupId}/addExpense',['controller' => 'ExpenseController', 'action' => 'addExpense']);
+
 $router->add("GET",'groups/{groupId}/balance',['controller' => 'BalanceController', 'action' => 'balance']);
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->run($path,$_SERVER['REQUEST_METHOD']);

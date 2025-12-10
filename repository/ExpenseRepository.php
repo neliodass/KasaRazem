@@ -131,5 +131,46 @@ class ExpenseRepository extends Repository
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getExpenseDetails(int $expenseId): ?array
+    {
+        $query = $this->conn->prepare(
+            'SELECT 
+                e.id,
+                e.description AS name,
+                e.amount,
+                e.date_incurred,
+                e.paid_by_user_id,
+                e.category_id,
+                payer.firstname AS payer_firstname,
+                payer.lastname AS payer_lastname,
+                c.name AS category_name
+            FROM expenses e
+            JOIN users payer ON e.paid_by_user_id = payer.id
+            LEFT JOIN categories c ON e.category_id = c.id
+            WHERE e.id = :expenseId'
+        );
+        $query->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
+        $query->execute();
+        $expense = $query->fetch(PDO::FETCH_ASSOC);
+        if(!$expense)
+        {
+            return null;
+        }
+        $querySplits = $this->conn->prepare(
+            'SELECT 
+                es.user_id,
+                u.firstname,
+                u.lastname,
+                es.amount_owed
+            FROM expense_splits es
+            JOIN users u ON es.user_id = u.id
+            WHERE es.expense_id = :expenseId'
+        );
+        $querySplits->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
+        $querySplits->execute();
+        $splits = $querySplits->fetchAll(PDO::FETCH_ASSOC);
+        $expense['splits'] = $splits;
+        return $expense;
+    }
 
 }

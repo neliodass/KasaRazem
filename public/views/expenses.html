@@ -14,6 +14,7 @@
     </div>
     <?php $lastDate = $expense['date_incurred']; ?>
     <?php endif; ?>
+    <a href="/groups/<?= $groupId ?>/expense/<?= $expense['id'] ?>" style="text-decoration: none; color: inherit;">
     <div class="list-card-item">
         <div class="list-card-content">
             <div class="list-card-left-section">
@@ -33,6 +34,7 @@
             </div>
         </div>
     </div>
+    </a>
     <?php endforeach; endif; ?>
 
     <div class="column-action-button-wrapper desktop-only">
