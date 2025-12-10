@@ -1,13 +1,20 @@
 <?php
+
+
+
+require_once "src/services/GroupService.php";
 require_once "core/Auth.php";
 require_once "repository/ExpenseRepository.php";
+require_once "src/IconsHelper.php";
+require_once "src/ColorHelper.php";
 
 class ExpenseController extends AppController
 {
     private static $instance;
-    private $expenseRepository;
-    private $groupRepository;
-    private $groupController;
+    private ExpenseRepository $expenseRepository;
+    private GroupRepository $groupRepository;
+    private GroupController $groupController;
+    private GroupService $groupService;
     public static function getInstance()
     {
         if (self::$instance == null) {
@@ -20,6 +27,7 @@ class ExpenseController extends AppController
         $this->groupRepository = GroupRepository::getInstance();
         $this->expenseRepository = ExpenseRepository::getInstance();
         $this->groupController = GroupController::getInstance();
+        $this->groupService = GroupService::getInstance();
     }
     public function expenses($groupId)
     {
@@ -34,11 +42,15 @@ class ExpenseController extends AppController
         $expenses = $this->expenseRepository->getExpensesByGroupId($groupId);
         foreach ($expenses as &$expense) {
             $expense['icon'] = IconsHelper::$expenseIcon[$expense['category_id']];
+            $colors = ColorHelper::generatePastelColorSet();
+            $expense['icon_bg_color'] = $colors['background'];
+            $expense['icon_color'] = $colors['icon'];
         }
         $this->render('expenses', [
             'groupId' => $groupId,
             'expenses' => $expenses,
-            'activeTab' => 'expenses'
+            'activeTab' => 'expenses',
+            'groupName' => $this->groupService->getGroupName((string)$groupId)
         ]);
         exit();
     }

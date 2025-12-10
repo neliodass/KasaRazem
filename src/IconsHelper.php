@@ -11,4 +11,10 @@ class IconsHelper
         4 => 'joystick',
         5 => 'train',
     ];
+
+    public static $balanceIcon= [
+        "owe" => '💸',
+        "vindicate"=> '🤑',
+        "settle"=> '🤝',
+    ];
 }

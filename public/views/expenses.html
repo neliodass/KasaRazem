@@ -6,8 +6,8 @@
     <div class="list-card-item">
         <div class="list-card-content">
             <div class="list-card-left-section">
-                <div class="list-icon-wrapper" style="background-color: #fff4d8;">
-                    <span class="material-symbols-outlined" style="color: #f79009;"><?= $expense['icon'] ?></span>
+                <div class="list-icon-wrapper" style="background-color:<?= $expense['icon_bg_color'] ?>;">
+                    <span class="material-symbols-outlined" style="color: <?= $expense['icon_color'] ?>;"><?= $expense['icon'] ?></span>
                 </div>
                 <div class="list-text-details">
                     <p class="list-item-primary-text"><?= $expense['description']  ?></p>

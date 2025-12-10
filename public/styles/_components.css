@@ -248,7 +248,8 @@ textarea.input-group-text {
 }
 .list-card-left-section {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: flex-start;
     gap: 1rem;
     flex-grow: 1;
 }
@@ -264,6 +265,9 @@ textarea.input-group-text {
 .list-icon-wrapper .material-symbols-outlined {
     font-size: 1.5rem;
 }
+.list-icon-wrapper .emoji {
+    font-size: 3rem;
+}
 .list-text-details {
     display: flex;
     flex-direction: column;
@@ -271,6 +275,10 @@ textarea.input-group-text {
 }
 .list-text-details p {
     margin: 0;
+}
+.list-text-details h3 {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
 }
 .list-item-primary-text {
     font-weight: 600;
@@ -285,6 +293,7 @@ textarea.input-group-text {
     flex-direction: column;
     align-items: flex-end;
     flex-shrink: 0;
+    align-self: center;
 }
 .list-item-value {
     font-size: 1.125rem;

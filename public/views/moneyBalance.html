@@ -2,8 +2,79 @@
 
 <div class="tab-panel active">
     <h2>Bilans</h2>
+    <a href="/groups">
+    <div class="list-card-item">
+        <div class="list-card-content">
+            <div class="list-card-left-section">
+                <div class="list-icon-wrapper" style="background-color: #fff4d8;">
+                    <p class="emoji"><?= $currentUserBalanceEmoji ?></p>
+                </div>
+                <div class="list-text-details">
+                    <?php switch ($currentUserNetBalance > 0) {
+                        case true:
+                            $statusText = "Masz do odebrania";
+                            $currentUserStringBalance = "$currentUserNetBalance zł";
+                            $contextText = "Od kogo?";
+
+                    break;
+                        case false:
+                            $statusText = "Jesteś winien";
+                            $currentUserStringBalance = "$currentUserNetBalance zł";
+                    $contextText = "Dla kogo?";
+                    break;
+                        default:
+                            $statusText = "Jesteś na zero";
+                            $currentUserStringBalance = "";
+                            $contextText = "";
+                    break;
+                    }
+
+                    ?>
+                    <h3 class="list-item-primary-text"><?= $statusText ?> <?= $currentUserStringBalance ?> </h3>
+                    <p class="list-item-secondary-text"><?= $contextText ?></p>
+                </div>
+            </div>
+            <div class="list-card-right-section">
+                <span class="material-symbols-outlined" style="color: #f79009;">
+                        chevron_right
+                    </span>
+            </div>
+        </div>
+    </div>
+    </a>
+    <h3>Salda</h3>
+    <?php if(!empty($balance)): foreach ($balance as $balanceItem): ?>
     <div class="p-4 bg-gray-100 rounded-lg">
+        <div class="list-card-item">
+            <div class="list-card-content">
+                <div class="list-card-left-section">
+                    <div class="list-icon-wrapper" style="background-color: #fff4d8;">
+<!--                        <span class="material-symbols-outlined" style="color: #f79009;"><?= $expense['icon'] ?></span>-->
+                    </div>
+                    <div class="list-text-details">
+                        <p class="list-item-primary-text"><?= $balanceItem['userName']  ?></p>
+
+                        <?php if($balanceItem['isCurrentUser']): ?>
+                        <p class="list-item-secondary-text">Ja</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="list-card-right-section">
+                    <?php if($balanceItem['netBalance'] > 0): ?>
+                    <p class="list-item-value positive-balance">+<?= $balanceItem['netBalance']  ?> zł</p>
+                    <?php elseif($balanceItem['netBalance'] < 0): ?>
+                    <p class="list-item-value negative-balance"><?= $balanceItem['netBalance']  ?> zł</p>
+                    <?php else: ?>
+                    <p class="list-item-value"><?= $balanceItem['netBalance']  ?> zł</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <?php endforeach;
+         else: ?>
         <p>Tutaj pojawi się podsumowanie: Ty wisisz X, Tobie wiszą Y.</p>
+         <?php endif; ?>
+
     </div>
 
     <div class="column-action-button-wrapper desktop-only">
