@@ -172,5 +172,13 @@ class ExpenseRepository extends Repository
         $expense['splits'] = $splits;
         return $expense;
     }
+    public function deleteExpense(int $expenseId): bool
+    {
+        $query = $this->conn->prepare(
+            'DELETE FROM expenses WHERE id = :expenseId'
+        );
+        $query->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
+        return $query->execute();
+    }
 
 }

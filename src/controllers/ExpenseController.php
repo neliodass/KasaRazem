@@ -127,5 +127,27 @@ class ExpenseController extends AppController
             'groupId' => $groupId,
         ]);
     }
+    public function deleteExpense($groupId,$expenseId)
+    {
+        if(!$this->isPost()){
+            $this->redirect("/groups/".$groupId."/expenses");
+            return;
+        }
+        if (!isset($_POST['_method']) || $_POST['_method'] !== 'DELETE') {
+            $this->redirect("/groups/" . $groupId . "/expenses");
+            return;
+        }
+        Auth::requireLogin();
+        $groupId = (int)$groupId;
+        $userId = (int)Auth::userId();
+        if (!$this->groupRepository->isUserInGroup($groupId, $userId)) {
+            header("Location: /groups");
+            exit;
+        }
+
+        $expenseId = (int)$expenseId;
+        $this->expenseRepository->deleteExpense($expenseId);
+        $this->redirect("/groups/".$groupId."/expenses");
+    }
 
 }

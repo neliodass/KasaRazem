@@ -123,5 +123,24 @@ $iconColor = $expenseDetails['icon_color'] ?? 'var(--color-primary)';
 
 
 </div>
+<div id="delete-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Potwierdź usunięcie</h3>
+        <p>Czy na pewno chcesz to usunąć? Tej operacji nie można cofnąć.</p>
+
+        <form id="delete-form" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+
+            <div class="modal-actions">
+                <button type="button" class="action-button secondary" id="modal-cancel">
+                    Anuluj
+                </button>
+                <button type="submit" class="action-button primary">
+                    Usuń
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>
