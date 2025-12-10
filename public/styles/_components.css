@@ -314,3 +314,7 @@ textarea.input-group-text {
     font-size: 1.25rem;
     color: var(--color-text-secondary);
 }
+
+.small-button{
+    max-width: 40%;
+}

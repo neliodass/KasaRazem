@@ -1,0 +1,114 @@
+<?php include 'public/views/groupHeader.html'; ?>
+
+<div class="tab-panel active">
+
+    <div style="padding: 1rem; text-align: center;">
+        <h2 class="headline" style="margin-bottom: 0.5rem; font-size: 1.8rem;">Rozlicz grupę</h2>
+        <p class="list-item-secondary-text">Minimalna liczba transakcji do zrównania salda.</p>
+    </div>
+
+    <div class="expense-detail-card" style="padding: 0;">
+        <?php if (!empty($settlements)): ?>
+        <?php foreach ($settlements as $settlement): ?>
+        <div class="expense-detail-row" style="padding: 1rem; border-top: 1px dashed var(--color-border-input);">
+
+            <div style="display: flex; flex-direction: column; align-items: flex-start; flex-grow: 1;">
+                <p class="detail-value" style="margin-bottom: 0.25rem;">
+                    <?= $settlement['from_name'] ?> płaci do <?= $settlement['to_name'] ?>
+                </p>
+                <p class="list-item-secondary-text">
+                    Zrównanie długu.
+                </p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                <p class="split-amount-negative" style="font-size: 1.125rem;">
+                    <?= number_format($settlement['amount'] ?? 0, 2, ',', ' ') ?> zł
+                </p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <button type="button"
+                        class="action-button primary small-button"
+                        data-toggle="modal"
+                        data-payer="<?= $settlement['from'] ?>"
+                        data-payee="<?= $settlement['to'] ?>"
+                        data-amount="<?= $settlement['amount'] ?>"
+                        style="height: 2rem; font-size: 0.8rem; margin-top: 0.5rem;">
+                    Uregulowane
+                </button>
+            </div>
+        </div>
+        <?php endforeach; ?>
+        <?php else: ?>
+        <p class="body-text" style="text-align: center; padding: 1rem;">Grupa jest już w pełni rozliczona!</p>
+        <?php endif; ?>
+    </div>
+
+</div>
+
+<div id="settle-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Potwierdź rozliczenie</h3>
+        <p>Czy na pewno chcesz potwierdzić przelew <strong id="modal-from">?</strong> do <strong id="modal-to">?</strong> w kwocie <strong id="modal-amount">?</strong> zł?</p>
+
+        <form id="settle-form" method="POST" action="/groups/<?= $groupId ?>/settleDebt">
+            <input type="hidden" name="payer_id" id="modal-payer-id">
+            <input type="hidden" name="payee_id" id="modal-payee-id">
+            <input type="hidden" name="amount" id="modal-amount-input">
+
+            <div class="modal-actions">
+                <button type="button" class="action-button secondary" id="modal-settle-cancel">
+                    Anuluj
+                </button>
+                <button type="submit" class="action-button primary">
+                    Potwierdź
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</main>
+</div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('settle-modal');
+        const cancelButton = document.getElementById('modal-settle-cancel');
+        const buttons = document.querySelectorAll('[data-toggle="modal"]');
+        const form = document.getElementById('settle-form');
+        const userMap = {
+        <?php foreach ($usersInGroup ?? [] as $user): ?>
+        '<?= $user['id'] ?>': '<?= addslashes($user['firstname'] . ' ' . $user['lastname']) ?>',
+            <?php endforeach; ?>
+    };
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const payerId = this.getAttribute('data-payer');
+                const payeeId = this.getAttribute('data-payee');
+                const amount = parseFloat(this.getAttribute('data-amount')).toFixed(2).replace('.', ',');
+                document.getElementById('modal-from').textContent = userMap[payerId] || payerId;
+                document.getElementById('modal-to').textContent = userMap[payeeId] || payeeId;
+                document.getElementById('modal-amount').textContent = amount;
+                document.getElementById('modal-payer-id').value = payerId;
+                document.getElementById('modal-payee-id').value = payeeId;
+                document.getElementById('modal-amount-input').value = this.getAttribute('data-amount');
+
+                modal.classList.add('visible');
+            });
+        });
+
+        cancelButton.addEventListener('click', function() {
+            modal.classList.remove('visible');
+        });
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.classList.remove('visible');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

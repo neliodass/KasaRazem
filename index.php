@@ -27,7 +27,8 @@ $router->add('GET','groups/{groupId}/addExpense',['controller' => 'ExpenseContro
 $router->add('POST','groups/{groupId}/addExpense',['controller' => 'ExpenseController', 'action' => 'addExpense']);
 $router->add('GET','groups/{groupId}/expense/{expenseId}/edit',['controller' => 'ExpenseController', 'action' => 'editExpense']);
 $router->add('POST','groups/{groupId}/expense/{expenseId}/edit',['controller' => 'ExpenseController', 'action' => 'updateExpense']);
-
+$router->add("GET",'groups/{groupId}/settlements',['controller' => 'BalanceController', 'action' => 'settleDetails']);
+$router->add("POST",'groups/{groupId}/settleDebt',['controller' => 'BalanceController', 'action' => 'settleDebt']);
 $router->add("GET",'groups/{groupId}/balance',['controller' => 'BalanceController', 'action' => 'balance']);
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->run($path,$_SERVER['REQUEST_METHOD']);

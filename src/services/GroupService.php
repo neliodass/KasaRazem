@@ -24,4 +24,8 @@ class GroupService
         }
         return "Grupa";
     }
+    public function getUsersInGroup(string $groupId): array
+    {
+        return $this->groupRepository->getUsersInGroup((int)$groupId);
+    }
 }

@@ -2,7 +2,7 @@
 
 <div class="tab-panel active">
     <h2>Bilans</h2>
-    <a href="/groups">
+    <a href="/groups/<?= $groupId ?>/settlements" style="text-decoration: none; color: inherit;">
     <div class="list-card-item">
         <div class="list-card-content">
             <div class="list-card-left-section">
@@ -78,7 +78,7 @@
     </div>
 
     <div class="column-action-button-wrapper desktop-only">
-        <button class="action-button primary">+ Rozlicz Długi</button>
+        <a href="/groups/<?= $groupId ?>/settlements" class="action-button primary">+ Rozlicz Długi</a>
     </div>
 </div>
 
@@ -87,7 +87,7 @@
 
 <div class="bottom-actions mobile-only">
     <div class="action-buttons-wrapper">
-        <button class="action-button primary">+ Rozlicz Długi</button>
+        <a href="/groups/<?= $groupId ?>/settlements" class="action-button primary">+ Rozlicz Długi</a>
     </div>
 </div>
 </div>

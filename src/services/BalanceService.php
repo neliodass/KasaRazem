@@ -39,7 +39,15 @@ class BalanceService
         $users = $this->groupRepository->getUsersInGroup($groupId);
         $owed = $debtData['owed'];
         $paid = $debtData['paid'];
+        $settlements = $this->expenseRepository->getSettlementsByGroupId($groupId);
+        foreach ($settlements as $settlement) {
+            $payerId = (int)$settlement['payer_user_id'];
+            $payeeId = (int)$settlement['payee_user_id'];
+            $amount = (float)$settlement['amount'];
 
+            $owed[$payerId] = ((float)$owed[$payerId] ?? 0.0) - $amount;
+            $paid[$payeeId] = ((float)$paid[$payeeId] ?? 0.0) - $amount;
+        }
         $balance = [];
         $currentUserNetBalance = 0.0;
         foreach ($users as $user) {
@@ -77,6 +85,46 @@ class BalanceService
         } else {
             return "🤝";
         }
+    }
+    public function calculateSettlements(array $balance): array
+    {
+        $settlements = [];
+        $netBalances = [];
+        foreach ($balance as $entry) {
+            $netBalances[$entry['userId']] = $entry['netBalance'];
+        }
+        $debtors = array_filter($netBalances, fn($balance) => $balance < 0);
+        $creditors = array_filter($netBalances, fn($balance) => $balance > 0);
+
+        while(!empty($debtors) && !empty($creditors)) {
+            $debtorId = array_key_first($debtors);
+            $debt = abs($debtors[$debtorId]);
+            $creditorId = array_key_first($creditors);
+            $credit = $creditors[$creditorId];
+
+            $settlementAmount = min($debt, $credit);
+            $settlementAmount = round($settlementAmount, 2);
+
+            if ($settlementAmount > 0.00) {
+                $settlements[] = [
+                    'from' => (int)$debtorId,
+                    'to' => (int)$creditorId,
+                    'amount' => $settlementAmount,
+                ];
+            }
+            $debtors[$debtorId] += $settlementAmount;
+            $creditors[$creditorId] -= $settlementAmount;
+
+            if (abs($debtors[$debtorId]) < 0.01) {
+                unset($debtors[$debtorId]);
+            }
+            if ($creditors[$creditorId] < 0.01) {
+                unset($creditors[$creditorId]);
+            }
+        }
+
+
+        return $settlements;
     }
 
 }
