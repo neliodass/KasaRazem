@@ -87,6 +87,7 @@ CREATE TABLE shopping_lists (
                                 name VARCHAR(255) NOT NULL,
                                 created_by_user_id INTEGER NOT NULL REFERENCES users(id),
                                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                                --TODO: add updated_at field
 );
 
 
