@@ -15,6 +15,13 @@ function loadList(listId, btnElement) {
     });
     btnElement.classList.remove('list-tab-inactive');
     btnElement.classList.add('list-tab-active');
+    document.querySelectorAll('.list-tab-wrapper.active-list').forEach(el => {
+        el.classList.remove('active-list');
+    });
+    const newWrapper = btnElement.closest('.list-tab-wrapper');
+    if (newWrapper) {
+        newWrapper.classList.add('active-list');
+    }
 
     fetch(`/groups/${window.groupId}/lists/${listId}/items`)
         .then(res => res.json())
@@ -116,33 +123,153 @@ function toggleItem(itemId,currentStatus) {
         });
 }
 
-function deleteItem(itemId, btn) {
-    if(!confirm('Usunąć ten produkt?')) return;
 
-    fetch(`/groups/${window.groupId}/items/${itemId}/delete`, { method: 'POST' })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const row = btn.closest('.shopping-item-row');
-                row.remove();
-            }
-        });
+function openDeleteModal(type, id, name, itemRow = null) {
+    const modal = document.getElementById('delete-modal');
+    const form = document.getElementById('delete-form-action');
+    const targetText = document.getElementById('modal-delete-target');
+
+    targetText.textContent = name;
+    form.setAttribute('data-id', id);
+
+    form.setAttribute('data-action-type', type);
+
+    if (type === 'item' && itemRow) {
+        form.itemRowToDelete = itemRow;
+    } else {
+        form.itemRowToDelete = null;
+    }
+
+    modal.classList.add('visible');
 }
 
+function deleteList(listId) {
+    const list = window.allLists.find(l => l.id == listId);
+    const name = list ? `listę zakupów "${list.name}"` : 'tę listę';
+    openDeleteModal('list', listId, name);
+}
+
+function deleteItem(itemId, btn) {
+
+    const itemRow = btn.closest('.shopping-item-row');
+
+    const itemName = itemRow ? itemRow.querySelector('.item-name').textContent : 'ten produkt';
+
+    openDeleteModal('item', itemId, `produkt "${itemName}"`, itemRow);
+}
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteForm = document.getElementById('delete-form-action');
+    const deleteCancelButton = document.getElementById('modal-delete-cancel');
+
+    if (deleteModal && deleteForm && deleteCancelButton) {
+
+        deleteCancelButton.addEventListener('click', function() {
+            deleteModal.classList.remove('visible');
+        });
+        deleteModal.addEventListener('click', function(event) {
+            if (event.target === deleteModal) {
+                deleteModal.classList.remove('visible');
+            }
+        });
+
+        deleteForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            deleteModal.classList.remove('visible');
+
+            const id = deleteForm.getAttribute('data-id');
+            const type = deleteForm.getAttribute('data-action-type');
+
+            if (!id) return;
+
+            let url;
+            let rowToRemove = deleteForm.itemRowToDelete;
+
+            if (type === 'list') {
+                url = `/groups/${window.groupId}/lists/${id}/delete`;
+            } else if (type === 'item') {
+                url = `/groups/${window.groupId}/items/${id}/delete`;
+            } else {
+                return;
+            }
+
+            fetch(url, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (type === 'list') {
+
+                            location.reload();
+                        } else if (type === 'item') {
+
+                            if (rowToRemove) {
+                                rowToRemove.remove();
+                            }
+                            loadList(window.currentListId, document.querySelector('.list-tab-active'));
+                        }
+                    } else {
+                        alert('Nie udało się usunąć elementu. Spróbuj ponownie.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Błąd podczas usuwania:', err);
+                    alert('Wystąpił błąd komunikacji z serwerem.');
+                });
+        });
+    }
+    const createModal = document.getElementById('create-list-modal');
+    const createForm = document.getElementById('create-list-form');
+    const createCancelButton = document.getElementById('modal-create-cancel');
+    const createNameInput = document.getElementById('new-list-name');
+
+    if (createModal && createForm && createCancelButton) {
+        createCancelButton.addEventListener('click', function() {
+            createModal.classList.remove('visible');
+            createForm.reset();
+        });
+        createModal.addEventListener('click', function(event) {
+            if (event.target === createModal) {
+                createModal.classList.remove('visible');
+                createForm.reset();
+            }
+        });
+
+        createForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            createModal.classList.remove('visible');
+            const name = createNameInput.value.trim();
+            if (name) {
+                fetch(`/groups/${window.groupId}/lists/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Nie udało się utworzyć nowej listy. Spróbuj ponownie.');
+                        }
+                    })
+                    .catch(err => console.error('Błąd podczas tworzenia listy:', err))
+                    .finally(() => {
+                        createForm.reset();
+                    });
+            }
+        });
+    }
+});
 function openNewListModal() {
-    const name = prompt("Podaj nazwę nowej listy:");
-    if (name) {
-        fetch(`/groups/${window.groupId}/lists/add`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name })
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                }
-            });
+    const modal = document.getElementById('create-list-modal');
+    modal.classList.add('visible');
+    const input = document.getElementById('new-list-name');
+    if (input) {
+        input.focus();
     }
 }
 

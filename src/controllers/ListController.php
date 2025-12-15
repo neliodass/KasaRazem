@@ -40,6 +40,7 @@ class ListController extends \AppController
         $this->render('shoppingList', [
             'groupId' => $groupId,
             'items' => $firstListItems,
+            'activeListId' => $activeListId,
             'lists' => $lists,
             'activeTab' => 'shopping-lists',
             'groupName' => $groupName
@@ -72,6 +73,8 @@ class ListController extends \AppController
             $isPurchased = $input["isPurchased"]??false;
 
             $success = $this->listRepository->toggleItemStatus((int)$itemId, $isPurchased);
+            $item = $this->listRepository->getItemById((int)$itemId);
+            $this->listRepository->updateListModificationDate($item['list_id']);
 
             header('Content-Type: application/json');
             echo json_encode(['success' => $success]);
@@ -89,8 +92,9 @@ class ListController extends \AppController
         $this->authService->verifyUserInGroup($groupId);
 
         if ($this->isPost()) {
+            $item = $this->listRepository->getItemById((int)$itemId);
+            $this->listRepository->updateListModificationDate($item['list_id']);
             $success = $this->listRepository->deleteItem((int)$itemId);
-
             header('Content-Type: application/json');
             echo json_encode(['success' => $success]);
             exit();
@@ -117,6 +121,29 @@ class ListController extends \AppController
             }
         }
     }
+    public function deleteList($groupId, $listId)
+    {
+        $listGroupId = $this->listRepository->getGroupIdByListId((int)$listId);
+
+        if ($listGroupId !== (int)$groupId) {
+            header('Content-Type: application/json');
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Unauthorized list access']);
+            exit();
+        }
+        $this->authService->verifyUserInGroup($groupId);
+        if ($this->isPost()) {
+            $success = $this->listRepository->deleteList((int)$listId);
+
+            header('Content-Type: application/json');
+            echo json_encode(['success' => $success]);
+            exit();
+        }
+        header('Content-Type: application/json');
+        http_response_code(405);
+        echo json_encode(['success' => false, 'message' => 'Method not supported']);
+        exit();
+    }
 
     public function addItem($groupId, $listId)
     {
@@ -129,6 +156,7 @@ class ListController extends \AppController
 
             if(!empty($name)){
                 $newId = $this->listRepository->addItem((int)$listId, $name, $subtitle);
+                $this->listRepository->updateListModificationDate((int)$listId);
                 header('Content-Type: application/json');
                 echo json_encode(['success' => true, 'id' => $newId]);
                 exit();

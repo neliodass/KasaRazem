@@ -33,6 +33,7 @@ $router->add("POST",'groups/{groupId}/settleDebt',['controller' => 'BalanceContr
 $router->add("GET",'groups/{groupId}/balance',['controller' => 'BalanceController', 'action' => 'balance']);
 $router->add("GET",'groups/{groupId}/lists',['controller' => 'ListController', 'action' => 'index']);
 $router->add('GET', 'groups/{groupId}/lists/{listId}/items', ['controller' => 'ListController', 'action' => 'getListItems']);
+$router->add('POST', 'groups/{groupId}/lists/{listId}/delete', ['controller' => 'ListController', 'action' => 'deleteList']);
 $router->add('POST', 'groups/{groupId}/items/{itemId}/toggle', ['controller' => 'ListController', 'action' => 'toggleItem']);
 $router->add('POST', 'groups/{groupId}/items/{itemId}/delete', ['controller' => 'ListController', 'action' => 'deleteItem']);
 $router->add('POST', 'groups/{groupId}/lists/add', ['controller' => 'ListController', 'action' => 'addList']);

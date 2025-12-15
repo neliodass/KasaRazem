@@ -15,7 +15,7 @@ class ListRepository extends Repository
     public function getListsHeadersByGroupIdOrderByDate(int $groupId): array
     {
         $query = $this->conn->prepare(
-            'SELECT id,name FROM shopping_lists WHERE group_id = :groupId ORDER BY created_at DESC'
+            'SELECT id,name FROM shopping_lists WHERE group_id = :groupId ORDER BY updated_at DESC'
         );
 
         $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
@@ -55,6 +55,12 @@ class ListRepository extends Repository
             return $query->fetchColumn();
         }
         return null;
+    }
+    public function deleteList(int $listId): bool
+    {
+        $query = $this->conn->prepare('DELETE FROM shopping_lists WHERE id = :listId');
+        $query->bindParam(':listId', $listId, PDO::PARAM_INT);
+        return $query->execute();
     }
     public function addItem(int $listId, string $name, string $subtitle = '', float $quantity = 1.0, string $unit = 'szt.'): ?int
     {
@@ -101,6 +107,41 @@ class ListRepository extends Repository
              WHERE li.id = :itemId'
         );
         $query->bindParam(':itemId', $itemId, PDO::PARAM_INT);
+        $query->execute();
+        $result = $query->fetchColumn();
+        return $result ? (int)$result : null;
+    }
+    public function updateListModificationDate(int $listId): bool
+    {
+        $dateModified = date('Y-m-d H:i:s');
+        $query = $this->conn->prepare(
+            'UPDATE shopping_lists 
+             SET updated_at = :dateModified 
+             WHERE id = :listId'
+        );
+        $query->bindParam(':dateModified', $dateModified);
+        $query->bindParam(':listId', $listId, PDO::PARAM_INT);
+
+        return $query->execute();
+    }
+    public function getItemById(int $itemId): ?array
+    {
+        $query = $this->conn->prepare(
+            'SELECT * FROM list_items WHERE id = :itemId'
+        );
+        $query->bindParam(':itemId', $itemId, PDO::PARAM_INT);
+        $query->execute();
+
+        $item = $query->fetch(PDO::FETCH_ASSOC);
+        return $item ?: null;
+    }
+    public function getGroupIdByListId(int $listId): ?int {
+        $query = $this->conn->prepare(
+            'SELECT group_id 
+             FROM shopping_lists 
+             WHERE id = :listId'
+        );
+        $query->bindParam(':listId', $listId, PDO::PARAM_INT);
         $query->execute();
         $result = $query->fetchColumn();
         return $result ? (int)$result : null;
