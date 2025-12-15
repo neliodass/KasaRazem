@@ -115,7 +115,8 @@
 }
 
 .app-bar a,
-.app-bar button {
+.app-bar button,
+.delete-list-btn{
     color: var(--color-text-body);
     padding: 0.5rem;
     border-radius: var(--border-radius-full);

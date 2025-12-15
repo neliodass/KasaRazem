@@ -1,22 +1,119 @@
 <?php include 'public/views/groupHeader.html'; ?>
 
-<div class="tab-panel active">
-    <h2>Listy Zakupów</h2>
-    <div class="p-4 bg-gray-100 rounded-lg">Tutaj będą Twoje listy...</div>
+<link href="/public/styles/shoppingList.css" type="text/css" rel="stylesheet"/>
 
-    <div class="column-action-button-wrapper desktop-only">
-        <button class="action-button primary">+ Dodaj Listę</button>
+<div class="tab-panel active" style="padding-bottom: 6rem;"> <div class="shopping-list-tabs-container no-scrollbar">
+    <?php if (!empty($lists)): ?>
+    <?php $listCount = count($lists); ?>
+    <?php foreach ($lists as $list): ?>
+    <?php
+    $isActive = $list['id'] == $activeListId;
+    $listClass = $isActive ? 'list-tab-active' : 'list-tab-inactive';
+    $wrapperClass = $isActive ? 'list-tab-wrapper active-list' : 'list-tab-wrapper';
+    ?>
+    <div class="<?= $wrapperClass ?>" data-list-id="<?= $list['id'] ?>">
+        <button
+                onclick="loadList(<?= $list['id'] ?>, this)"
+                class="list-tab-button <?= $listClass ?>"
+                data-list-id="<?= $list['id'] ?>">
+            <?= htmlspecialchars($list['name']) ?>
+        </button>
+        <?php if ($listCount > 1): ?>
+        <button class="delete-list-btn" onclick="deleteList(<?= $list['id'] ?>)">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <?php endif; ?>
     </div>
+    <?php endforeach; ?>
+    <?php endif; ?>
+
+    <button onclick="openNewListModal()"
+            class="list-tab-button new-list-btn">
+        + Nowa lista
+    </button>
 </div>
 
-</main>
-</div>
+    <div id="items-container">
+        <section class="mt-4">
+            <div class="section-header-wrapper">
+                <h2 class="section-title">Do kupienia</h2>
+                <span id="to-buy-count" class="items-count-badge">
+                    0 produktów
+                </span>
+            </div>
+            <div id="active-items-list" class="items-list-container">
+                <p class="empty-state-text">Wybierz listę, aby zobaczyć produkty.</p>
+            </div>
+        </section>
 
-<div class="bottom-actions mobile-only">
-    <div class="action-buttons-wrapper">
-        <button class="action-button primary">+ Dodaj Listę</button>
+        <section class="purchased-section">
+            <h2 class="purchased-header">
+                Kupione
+            </h2>
+            <div id="purchased-items-list" class="items-list-container">
+            </div>
+        </section>
+
+        <div id="delete-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3>Potwierdź usunięcie</h3>
+                <p>Czy na pewno chcesz usunąć <strong id="modal-delete-target">ten element</strong>? Tej operacji nie można cofnąć.</p>
+
+                <form id="delete-form-action" data-item-id="" data-list-id="" data-action-type="" method="POST">
+                    <div class="modal-actions">
+                        <button type="button" class="action-button secondary" id="modal-delete-cancel">
+                            Anuluj
+                        </button>
+                        <button type="submit" class="action-button primary" id="modal-delete-confirm">
+                            Usuń
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="create-list-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3>Nowa lista zakupów</h3>
+                <p>Podaj nazwę nowej listy zakupów.</p>
+
+                <form id="create-list-form" method="POST">
+                    <input type="text" id="new-list-name" name="list_name" placeholder="Nazwa listy" required
+                           class="input-group-text" style="margin-top: 1rem; margin-bottom: 1rem;"/>
+                    <div class="modal-actions">
+                        <button type="button" class="action-button secondary" id="modal-create-cancel">
+                            Anuluj
+                        </button>
+                        <button type="submit" class="action-button primary">
+                            Utwórz listę
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
 </div>
-</div>
+
+<div class="shopping-bottom-actions">
+    <div class="input-field-wrapper">
+        <div class="add-item-wrapper">
+            <input type="text" id="new-item-name" placeholder="Co trzeba kupić?"
+                   class="add-item-input"
+                   onkeypress="handleEnter(event)">
+            <button onclick="addItem()" class="add-item-btn">
+                <span class="material-symbols-outlined">add</span>
+            </button>
+        </div>
+    </div>
+
+    </main> </div>
+<script>
+    window.groupId = <?= $groupId ?>;
+    window.currentListId = <?= $activeListId ?? 'null' ?>;
+    window.initialItems = <?= json_encode($items ?? []) ?>;
+    window.allLists = <?= json_encode($lists ?? []) ?>;
+</script>
+<script src="/public/scripts/shoppingList.js"></script>
 </body>
 </html>
