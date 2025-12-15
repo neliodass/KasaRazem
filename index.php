@@ -4,6 +4,7 @@ require_once ('src/controllers/GroupController.php');
 require_once ('src/controllers/SecurityController.php');
 require_once ('src/controllers/ExpenseController.php');
 require_once ('src/controllers/BalanceController.php');
+require_once ('src/controllers/ListController.php');
 
 $router = new Router();
 
@@ -30,5 +31,12 @@ $router->add('POST','groups/{groupId}/expense/{expenseId}/edit',['controller' =>
 $router->add("GET",'groups/{groupId}/settlements',['controller' => 'BalanceController', 'action' => 'settleDetails']);
 $router->add("POST",'groups/{groupId}/settleDebt',['controller' => 'BalanceController', 'action' => 'settleDebt']);
 $router->add("GET",'groups/{groupId}/balance',['controller' => 'BalanceController', 'action' => 'balance']);
+$router->add("GET",'groups/{groupId}/lists',['controller' => 'ListController', 'action' => 'index']);
+$router->add('GET', 'groups/{groupId}/lists/{listId}/items', ['controller' => 'ListController', 'action' => 'getListItems']);
+$router->add('POST', 'groups/{groupId}/items/{itemId}/toggle', ['controller' => 'ListController', 'action' => 'toggleItem']);
+$router->add('POST', 'groups/{groupId}/items/{itemId}/delete', ['controller' => 'ListController', 'action' => 'deleteItem']);
+$router->add('POST', 'groups/{groupId}/lists/add', ['controller' => 'ListController', 'action' => 'addList']);
+$router->add('POST', 'groups/{groupId}/lists/{listId}/items/add', ['controller' => 'ListController', 'action' => 'addItem']);
+
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->run($path,$_SERVER['REQUEST_METHOD']);

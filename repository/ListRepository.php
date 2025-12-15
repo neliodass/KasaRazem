@@ -15,7 +15,7 @@ class ListRepository extends Repository
     public function getListsHeadersByGroupIdOrderByDate(int $groupId): array
     {
         $query = $this->conn->prepare(
-            'SELECT id,name FROM lists WHERE group_id = :groupId ORDER BY created_at DESC'
+            'SELECT id,name FROM shopping_lists WHERE group_id = :groupId ORDER BY created_at DESC'
         );
 
         $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
@@ -50,6 +50,24 @@ class ListRepository extends Repository
         $query->bindParam(':name', $name, PDO::PARAM_STR);
         $query->bindParam(':creatorId', $creatorId, PDO::PARAM_INT);
         $query->bindParam(':createdAt', $createdAt);
+
+        if ($query->execute()) {
+            return $query->fetchColumn();
+        }
+        return null;
+    }
+    public function addItem(int $listId, string $name, string $subtitle = '', float $quantity = 1.0, string $unit = 'szt.'): ?int
+    {
+        $query = $this->conn->prepare(
+            'INSERT INTO list_items (list_id, name, subtitle, quantity, unit) 
+             VALUES (:listId, :name, :subtitle, :quantity, :unit) 
+             RETURNING id'
+        );
+        $query->bindParam(':listId', $listId, PDO::PARAM_INT);
+        $query->bindParam(':name', $name, PDO::PARAM_STR);
+        $query->bindParam(':subtitle', $subtitle, PDO::PARAM_STR);
+        $query->bindParam(':quantity', $quantity);
+        $query->bindParam(':unit', $unit, PDO::PARAM_STR);
 
         if ($query->execute()) {
             return $query->fetchColumn();

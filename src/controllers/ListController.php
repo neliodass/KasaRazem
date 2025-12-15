@@ -68,6 +68,7 @@ class ListController extends \AppController
         $this->authService->verifyUserInGroup($groupId);
 
         if ($this->isPost()) {
+
             $success = $this->listRepository->toggleItemStatus((int)$itemId);
 
             header('Content-Type: application/json');
@@ -125,7 +126,7 @@ class ListController extends \AppController
             $subtitle = $input['subtitle'] ?? $_POST['subtitle'] ?? '';
 
             if(!empty($name)){
-                $newId = $this->shoppingListRepository->addItem((int)$listId, $name, $subtitle);
+                $newId = $this->listRepository->addItem((int)$listId, $name, $subtitle);
                 header('Content-Type: application/json');
                 echo json_encode(['success' => true, 'id' => $newId]);
                 exit();
