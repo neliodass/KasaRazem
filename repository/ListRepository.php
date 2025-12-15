@@ -12,10 +12,10 @@ class ListRepository extends Repository
         return self::$instance;
     }
 
-    public function getListsHeadersByGroupId(int $groupId): array
+    public function getListsHeadersByGroupIdOrderByDate(int $groupId): array
     {
         $query = $this->conn->prepare(
-            'SELECT id,name, FROM lists WHERE group_id = :groupId'
+            'SELECT id,name FROM lists WHERE group_id = :groupId ORDER BY created_at DESC'
         );
 
         $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
@@ -39,14 +39,17 @@ class ListRepository extends Repository
     }
     public function createList(int $groupId, string $name, int $creatorId): ?int
     {
+        $createdAt = date('Y-m-d H:i:s');
+
         $query = $this->conn->prepare(
-            'INSERT INTO shopping_lists (group_id, name, created_by_user_id) 
-             VALUES (:groupId, :name, :creatorId) 
+            'INSERT INTO shopping_lists (group_id, name, created_by_user_id,created_at) 
+             VALUES (:groupId, :name, :creatorId,:createdAt) 
              RETURNING id'
         );
         $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
         $query->bindParam(':name', $name, PDO::PARAM_STR);
         $query->bindParam(':creatorId', $creatorId, PDO::PARAM_INT);
+        $query->bindParam(':createdAt', $createdAt);
 
         if ($query->execute()) {
             return $query->fetchColumn();
