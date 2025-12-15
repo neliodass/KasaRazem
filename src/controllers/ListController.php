@@ -68,8 +68,10 @@ class ListController extends \AppController
         $this->authService->verifyUserInGroup($groupId);
 
         if ($this->isPost()) {
+            $input = json_decode(file_get_contents('php://input'), true);
+            $isPurchased = $input["isPurchased"]??false;
 
-            $success = $this->listRepository->toggleItemStatus((int)$itemId);
+            $success = $this->listRepository->toggleItemStatus((int)$itemId, $isPurchased);
 
             header('Content-Type: application/json');
             echo json_encode(['success' => $success]);

@@ -81,8 +81,8 @@ class ListRepository extends Repository
              SET is_purchased = :isPurchased 
              WHERE id = :itemId'
         );
-        $val = $isPurchased ? 'true' : 'false';
-        $query->bindParam(':isPurchased', $val);
+        $val = (int)$isPurchased;
+        $query->bindParam(':isPurchased', $val,PDO::PARAM_INT);
         $query->bindParam(':itemId', $itemId, PDO::PARAM_INT);
 
         return $query->execute();

@@ -161,13 +161,13 @@
 
     function toggleItem(itemId,currentStatus) {
 
-
+        const nextStatus = !currentStatus;
 
         fetch(`/groups/${groupId}/items/${itemId}/toggle`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                toggleStatus:currentStatus
+                isPurchased : nextStatus
 
             })
 
