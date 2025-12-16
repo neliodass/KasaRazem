@@ -1,5 +1,6 @@
 <?php
 require_once "Repository.php";
+require_once "src/entities/User.php";
 class UserRepository extends Repository
 {
     private static UserRepository $repository;
@@ -14,20 +15,9 @@ class UserRepository extends Repository
     {
         parent::__construct();
     }
-    public function getUsers(): ?array
-    {
 
-        $query = $this->conn->prepare(
-            'SELECT * FROM users'
-        );
 
-        $query->execute();
-
-        $users = $query->fetchAll(PDO::FETCH_ASSOC);
-        return $users;
-    }
-
-    public function getUserByEmail(string $email): ?array
+    public function getUserByEmail(string $email): ?User
     {
 
         $query = $this->conn->prepare(
@@ -35,15 +25,15 @@ class UserRepository extends Repository
         );
         $query->bindParam(':email', $email, PDO::PARAM_STR);
         $query->execute();
-
-        $user = $query->fetch(PDO::FETCH_ASSOC);
+        $query->setFetchMode(PDO::FETCH_CLASS, User::class);
+        $user = $query->fetch();
         if(!$user)
         {
             return null;
         }
         return $user;
     }
-    public function getUserById(string $id): ?array
+    public function getUserById(string $id): ?User
     {
 
         $query = $this->conn->prepare(
@@ -51,8 +41,12 @@ class UserRepository extends Repository
         );
         $query->bindParam(':id', $id, PDO::PARAM_STR);
         $query->execute();
-
-        $user = $query->fetch(PDO::FETCH_ASSOC);
+        $query->setFetchMode(PDO::FETCH_CLASS, User::class);
+        $user = $query->fetch();
+        if(!$user)
+        {
+            return null;
+        }
         return $user;
     }
 
