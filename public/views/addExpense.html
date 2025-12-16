@@ -126,13 +126,16 @@
         if(!empty($users)):
             foreach ($users as $user):
 ?>
-                    <div class="user-split-item">
+                    <div class="user-split-item" data-user-id="<?= $user->id ?>">
                         <div class="split-user-details">
                             <img class="user-avatar" alt="Avatar of user 1"
                                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIspL8uVDwe572-ePv26dWXcOQbcJMq_UwUF7_929Mu_LSA4hhrzykzZmlaz_AlocYt3hD-_lUx8BvjXP4SrNOPCBHEQlW5G_I8pJRSkvDyucTI22JiMp1Jt7CnzTth43iNB6tqzbHUd71XpqS04ak3UGUQT5CISRDd3MIiFHWSz6lmAnyL0jCz2_piOiY9E_oCJmjW8i_RU2jDzI5UEp2uxWAdfdZTrVqHxomDaAR9QgsLL-RAih7B3-zM26Vw39W_3Jn03aAvs-L"/>
                             <span style="font-weight: 600;"><?= $user->firstname ?> <?= $user->lastname ?></span>
                         </div>
-                        <input checked="" class="checkbox-style" type="checkbox" name="split_user_<?= $user->id ?>" value="1"/>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <input class="split-ratio-input" type="number" min="1" step="1" name="split_ratio_<?= $user->id ?>" value="1" style="display: none; width: 4rem; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--color-border-input); text-align: center; font-weight: 600;"/>
+                            <input checked="" class="checkbox-style split-checkbox" type="checkbox" name="split_user_<?= $user->id ?>" value="1"/>
+                        </div>
                     </div>
                     <?php endforeach;
     endif;
@@ -141,9 +144,10 @@
             </div>
 
             <div class="split-mode-toggle-wrapper">
+                <input type="hidden" name="split_mode" id="split_mode" value="equal"/>
                 <div class="split-mode-toggle">
-                    <button type="button" class="active-mode">Podziel równo</button>
-                    <button type="button">Niestandardowo</button>
+                    <button type="button" class="active-mode" data-mode="equal">Równo</button>
+                    <button type="button" data-mode="ratio">Na części</button>
                 </div>
             </div>
         </main>
@@ -157,5 +161,6 @@
         </div>
     </form>
 </div>
+<script src="/public/scripts/splitMode.js"></script>
 </body>
 </html>
