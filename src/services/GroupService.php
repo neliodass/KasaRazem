@@ -3,6 +3,8 @@
 
 require_once "repository/GroupRepository.php";
 require_once "src/dtos/GroupListDTO.php";
+require_once "src/dtos/CreateGroupRequestDTO.php";
+
 class GroupService
 {
     private static $instance = null;
@@ -28,6 +30,25 @@ class GroupService
     public function getUsersInGroup(string $groupId): array
     {
         return $this->groupRepository->getUsersInGroup((int)$groupId);
+    }
+
+    public function createGroup(CreateGroupRequestDTO $dto): int
+    {
+
+        Auth::requireLogin();
+        $userId = Auth::userId();
+        if ($userId === null) {
+            throw new RuntimeException("Użytkownik nie jest zalogowany.");
+        }
+
+        $newGroupId =  $this->groupRepository->createGroup($dto->name, $userId);
+        if ($newGroupId != null) {
+            return $newGroupId;
+        }
+        {
+            throw new RuntimeException("Nie udało się utworzyć grupy.");
+        }
+
     }
 
     public function getGroupsForUser(int $userId): array

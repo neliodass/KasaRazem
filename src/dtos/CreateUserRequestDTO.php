@@ -8,9 +8,9 @@ class CreateUserRequestDTO
     public string $password;
     public ?string $bio = null;
 
-    private const MIN_PASSWORD_LENGTH = 8;
-    private const PASSWORD_DIGIT_PATTERN = '/\d/';
-    private const PASSWORD_SPECIAL_CHAR_PATTERN = '/[^a-zA-Z0-9\s]/';
+    private const int MIN_PASSWORD_LENGTH = 8;
+    private const string PASSWORD_DIGIT_PATTERN = '/\d/';
+    private const string PASSWORD_SPECIAL_CHAR_PATTERN = '/[^a-zA-Z0-9\s]/';
     public static function fromPost(array $postData): self
     {
         if (empty($postData['password']) || $postData['password'] !== ($postData['password-repeat'] ?? '')) {

@@ -2,6 +2,7 @@
 require_once "core/Auth.php";
 require_once "repository/GroupRepository.php";
 require_once "src/services/GroupService.php";
+require_once "src/dtos/CreateGroupRequestDTO.php";
 require_once "src/IconsHelper.php";
 class GroupController extends AppController
 {
@@ -74,8 +75,25 @@ class GroupController extends AppController
     public function createGroup()
     {
         Auth::requireLogin();
+        try{
+            $dto = CreateGroupRequestDTO::fromPost($_POST);
+            if ($this->groupService->createGroup($dto)) {
+                header("Location: /groups");
+                exit;
+            }
+        }
+        catch (InvalidArgumentException $e) {
+            $this->render('createGroup', ['message' => $e->getMessage()]);
+            return;
+        }
+        catch(Exception $e){
+            $this->render('createGroup', ['message' => 'Wystąpił nieznany błąd podczas tworzenia grupy.']);
+            return;
+        }
+
+
         if (!$this->isPost()) {
-            $this->render('createGroup');
+            $this->render('addGroup');
             return;
         }
         $groupName = $_POST['group_name'];
