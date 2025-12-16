@@ -22,7 +22,7 @@ class CreateUserRequestDTO
         }
 
         $dto = new self();
-        $dto->email = $postData['email'] ?? '';
+        $dto->email = mb_strtolower($postData['email']) ?? '';
         $dto->password = $postData['password'] ?? '';
         $dto->firstname = $postData['firstName'] ?? '';
         $dto->lastname = $postData['lastName'] ?? '';

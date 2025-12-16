@@ -3,6 +3,7 @@ require_once "core/Auth.php";
 require_once "repository/GroupRepository.php";
 require_once "src/services/GroupService.php";
 require_once "src/dtos/CreateGroupRequestDTO.php";
+require_once "src/dtos/GroupJoinByCodeRequestDTO.php";
 require_once "src/IconsHelper.php";
 class GroupController extends AppController
 {
@@ -44,36 +45,39 @@ class GroupController extends AppController
     public function joinGroup($inviteCode = null)
     {
         Auth::requireLogin();
-        if (!$this->isPost()) {
-            $this->render('joinGroup', ['code'=> $inviteCode?? null,'message'=> $message?? null]);
-            return;
+
+        $code = $inviteCode;
+        $message = null;
+
+        if ($this->isPost()) {
+            try {
+                $dto = GroupJoinByCodeRequestDto::fromPost();
+                $code = $dto->code;
+                $userId = (int)Auth::userId();
+
+                if ($this->groupService->joinGroup($code, $userId)) {
+                    header("Location: /groups");
+                    exit;
+                }
+
+            } catch (ValidationException $e) {
+                $message = $e->getMessage();
+                $code = $_POST['code'] ?? $inviteCode;
+
+            } catch (\Exception $e) {
+                $message = $e->getMessage();
+            }
         }
-        $code = $_POST['code'];
-        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $code)) {
-            $message = "Nieprawidłowy kod zaproszenia.";
-            $this->render('joinGroup', ['code'=> $code,'message'=> $message]);
-            return;
-        }
-        $groupId = $this->groupRepository->getGroupIdByInviteCode($code);
-        if ($groupId === null) {
-            $message = "Nieprawidłowy kod zaproszenia.";
-            $this->render('joinGroup', ['code'=> $code,'message'=> $message]);
-            return;
-        }
-        if($this->groupRepository->isUserInGroup($groupId, (int)Auth::userId())){
-            $message = "Już jesteś członkiem tej grupy.";
-            $this->render('joinGroup', ['code'=> $code,'message'=> $message]);
-            return;
-        }
-        if ($this->groupRepository->addUserToGroup($groupId, (int)Auth::userId())) {
-            header("Location: /groups");
-            exit;
-        }
-        $this->render('joinGroup', ['message' => 'Wystąpił nieznany błąd podczas dołączania.']);
+
+        $this->render('joinGroup', ['code' => $code, 'message' => $message]);
     }
 
     public function createGroup()
     {
+        if (!$this->isPost()) {
+            $this->render('addGroup');
+            return;
+        }
         Auth::requireLogin();
         try{
             $dto = CreateGroupRequestDTO::fromPost($_POST);
@@ -91,24 +95,6 @@ class GroupController extends AppController
             return;
         }
 
-
-        if (!$this->isPost()) {
-            $this->render('addGroup');
-            return;
-        }
-        $groupName = $_POST['group_name'];
-        if (empty($groupName) || strlen($groupName) > 100) {
-            $this->render('createGroup', ['message' => 'Nazwa grupy musi mieć od 1 do 100 znaków.']);
-            return;
-        }
-        $newGroupId = $this->groupRepository->createGroup($groupName, (int)Auth::userId());
-        if ($newGroupId !== null) {
-            header("Location: /groups");
-            exit;
-        } else {
-            $this->render('createGroup', ['message' => 'Wystąpił nieznany błąd podczas tworzenia grupy.']);
-            return;
-        }
     }
 
     public function groupDetails($groupId)

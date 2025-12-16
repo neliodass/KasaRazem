@@ -31,7 +31,23 @@ class GroupService
     {
         return $this->groupRepository->getUsersInGroup((int)$groupId);
     }
+    public function joinGroup(string $code, int $userId): bool
+    {
+        $groupId = $this->groupRepository->getGroupIdByInviteCode($code);
+        if ($groupId === null) {
+            throw new \Exception("Nieprawidłowy kod zaproszenia.");
+        }
 
+        if ($this->groupRepository->isUserInGroup($groupId, $userId)) {
+            throw new \Exception("Już jesteś członkiem tej grupy.");
+        }
+
+        if ($this->groupRepository->addUserToGroup($groupId, $userId)) {
+            return true;
+        }
+
+        throw new \Exception('Wystąpił nieznany błąd podczas dołączania.');
+    }
     public function createGroup(CreateGroupRequestDTO $dto): int
     {
 

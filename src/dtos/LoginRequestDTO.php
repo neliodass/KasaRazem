@@ -10,7 +10,7 @@ class LoginRequestDTO
     public static function fromPost(array $postData): self
     {
         $dto = new self();
-        $dto->email = $postData['email'] ?? '';
+        $dto->email = mb_strtolower($postData['email']) ?? '';
         $dto->password = $postData['password'] ?? '';
 
         return $dto;
