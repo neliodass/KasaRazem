@@ -5,6 +5,7 @@ require_once "src/services/GroupService.php";
 require_once "core/Auth.php";
 require_once "repository/ExpenseRepository.php";
 require_once 'src/dtos/ExpenseOutputDTO.php';
+require_once 'src/dtos/CreateExpenseRequestDTO.php';
 
 require_once "src/services/AuthService.php";
 require_once "src/services/ExpenseService.php";
@@ -52,41 +53,29 @@ class ExpenseController extends AppController
     {
         $this->authService->verifyUserInGroup($groupId);
         if (!$this->isPost()) {
-            $users = $this->expenseRepository->getUsersByGroupId($groupId);
-            $categories = $this->expenseRepository->getCategories();
+            $users = $this->expenseService->getGroupUsers($groupId);
+            $categories = $this->expenseService->getCategories();
             $userId = (int)Auth::userId();
             $this->render("addExpense", ["users" => $users, "categories" => $categories, "groupId" => $groupId, "userId" => $userId]);
             return;
         }
-        $selectedUserIds = [];
-        $splitUsers = $this->getSplitUsers($selectedUserIds);
-        $this->expenseRepository->addExpense(
-            $_POST['name'],
-            $groupId,
-            (int)$_POST['paidBy'],
-            (float)$_POST['amount'],
-            $_POST['date'],
-            (int)$_POST['category'],
-            $splitUsers);
+        $dto = CreateExpenseRequestDTO::fromPost();
+        $this->expenseService->createExpense($groupId, $dto);
+
         $this->expenses($groupId);
-        return;
 
     }
 
     public function getExpense($groupId, $expenseId)
     {
         $this->authService->verifyUserInGroup($groupId);
-        $expenseId = (int)$expenseId;
-        $expenseDetails = $this->expenseRepository->getExpenseDetails($expenseId);
-        if (!$expenseDetails) {
+        $expenseDTO = $this->expenseService->getExpenseDetails((int)$groupId, (int)$expenseId);
+        if (!$expenseDTO) {
             $this->redirect("/groups");
+            return;
         }
-        $expenseIcon = IconsHelper::$expenseIcon[$expenseDetails['category_id']];
-        $expenseIconColors = ColorHelper::generatePastelColorSet();
         $this->render('expense_details', [
-            'expenseDetails' => $expenseDetails,
-            'expenseIcon' => $expenseIcon,
-            'expenseIconColors' => $expenseIconColors,
+            'expenseDetails' => $expenseDTO,
             'groupId' => $groupId,
         ]);
     }
