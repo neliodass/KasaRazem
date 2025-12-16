@@ -28,11 +28,11 @@ class SecurityController extends AppController
         }
         $password = $_POST['password'];
         $user = $this->userRepository->getUserByEmail($email);
-        if (!$user || !password_verify($password, $user['password'])) {
+        if (!$user || !password_verify($password, $user->password)) {
             return $this->render('login', ["message" => "Niewłaściwy email, bądź hasło"]);
         }
         session_start();
-        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_id'] = $user->id;
         header('Location: /groups');
         exit();
     }
