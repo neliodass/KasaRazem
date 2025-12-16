@@ -1,10 +1,11 @@
 <?php
 
-require_once "repository/Repository.php";
+require_once "src/entities/Expense.php";
 
 class ExpenseRepository extends Repository
 {
     private static $instance;
+    private UserRepository $userRepository;
 
     public static function getInstance(): self
     {
@@ -12,6 +13,34 @@ class ExpenseRepository extends Repository
             self::$instance = new self();
         }
         return self::$instance;
+    }
+    public function __construct()
+    {
+        parent::__construct();
+        $this->userRepository = UserRepository::getInstance();
+    }
+    private function hydrateExpense(array $data): Expense
+    {
+        $expense = new Expense();
+        $expense->id = (int) $data['id'];
+        $expense->group_id = (int) $data['group_id'];
+        $expense->paid_by_user_id = (int) $data['paid_by_user_id'];
+        $expense->amount = (float) $data['amount'];
+        $expense->description = $data['description'];
+        $expense->category_id = isset($data['category_id']) ? (int) $data['category_id'] : null;
+        $expense->photo_url = $data['photo_url'];
+
+
+        $expense->date_incurred = new DateTimeImmutable($data['date_incurred']);
+
+
+        if (isset($data['paid_by_user_id'])) {
+            $expense->paidBy = $this->userRepository->getUserById((string)$data['paid_by_user_id']);
+        } else {
+            $expense->paidBy = null;
+        }
+
+        return $expense;
     }
 
     public function getUsersByGroupId(int $groupId): ?array
@@ -88,9 +117,15 @@ class ExpenseRepository extends Repository
          WHERE e.group_id = :group_id
          ORDER BY e.date_incurred DESC'
         );
+
         $expensesQuery->bindParam(':group_id', $groupId);
         $expensesQuery->execute();
-        return $expensesQuery->fetchAll(PDO::FETCH_ASSOC);
+        $expenseData =  $expensesQuery->fetchAll(PDO::FETCH_ASSOC);
+        $expenseOutputs = [];
+        foreach ($expenseData as $expense) {
+            $expenseOutputs[] = $this->hydrateExpense($expense);
+        }
+        return $expenseOutputs;
     }
     public function getDebtDataByGroupId(int $groupId): array
     {

@@ -1,26 +1,22 @@
 <?php
 require_once "core/Auth.php";
-require_once "repository/GroupRepository.php";
 require_once "src/services/GroupService.php";
 require_once "src/dtos/CreateGroupRequestDTO.php";
 require_once "src/dtos/GroupJoinByCodeRequestDTO.php";
 require_once "src/IconsHelper.php";
 class GroupController extends AppController
 {
-    private $groupRepository;
-
     private $groupService;
     public static function getInstance()
     {
         static $instance = null;
         if ($instance === null) {
-            $instance = new GroupController();
+            $instance = new self();
         }
         return $instance;
     }
     private function __construct()
     {
-        $this->groupRepository = GroupRepository::getInstance();
         $this->groupService = GroupService::getInstance();
     }
     public function groups()
@@ -35,13 +31,22 @@ class GroupController extends AppController
 
         $this->render('groups', ['groupsData' => $groups]);
     }
+
+
+    public function groupDetails($groupId)
+    {
+        Auth::requireLogin();
+        header('Location: /groups/' . $groupId . '/expenses');
+        exit();
+
+    }
     public function addGroup()
     {
         Auth::requireLogin();
-
         $this->render('addGroup');
         return;
     }
+
     public function joinGroup($inviteCode = null)
     {
         Auth::requireLogin();
@@ -97,9 +102,5 @@ class GroupController extends AppController
 
     }
 
-    public function groupDetails($groupId)
-    {
-        $this->redirect('/groups/' . $groupId . '/expenses');
-    }
 
 }

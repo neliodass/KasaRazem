@@ -4,26 +4,25 @@
 require_once "src/services/GroupService.php";
 require_once "core/Auth.php";
 require_once "repository/ExpenseRepository.php";
-require_once "src/IconsHelper.php";
-require_once "src/ColorHelper.php";
+require_once 'src/dtos/ExpenseOutputDTO.php';
+
 require_once "src/services/AuthService.php";
+require_once "src/services/ExpenseService.php";
 
 class ExpenseController extends AppController
 {
     private static $instance;
     private ExpenseRepository $expenseRepository;
-    private GroupRepository $groupRepository;
-    private GroupController $groupController;
+    private ExpenseService $expenseService;
     private GroupService $groupService;
     private AuthService $authService;
 
     private function __construct()
     {
-        $this->groupRepository = GroupRepository::getInstance();
         $this->expenseRepository = ExpenseRepository::getInstance();
-        $this->groupController = GroupController::getInstance();
         $this->groupService = GroupService::getInstance();
         $this->authService = AuthService::getInstance();
+        $this->expenseService = ExpenseService::getInstance();
     }
 
     public static function getInstance()
@@ -36,21 +35,13 @@ class ExpenseController extends AppController
 
     public function expenses($groupId)
     {
+        Auth::requireLogin();
         $this->authService->verifyUserInGroup($groupId);
+        $expenseOutputDtos = $this->expenseService->getExpensesSummaryList($groupId);
 
-        $expenses = $this->expenseRepository->getExpensesByGroupId($groupId);
-        foreach ($expenses as &$expense) {
-            $expense['icon'] = IconsHelper::$expenseIcon[$expense['category_id']];
-            $colors = ColorHelper::generatePastelColorSet();
-            $expense['icon_bg_color'] = $colors['background'];
-            $expense['icon_color'] = $colors['icon'];
-            $expense['paidBy'] = $expense['firstname'] . ' ' . $expense['lastname'];
-            $dateToFormat = date('d-m-Y', strtotime($expense['date_incurred']));
-            $expense['date_incurred'] = str_replace('-', '.', $dateToFormat);
-        }
         $this->render('expenses', [
             'groupId' => $groupId,
-            'expenses' => $expenses,
+            'expenses' => $expenseOutputDtos,
             'activeTab' => 'expenses',
             'groupName' => $this->groupService->getGroupName((string)$groupId)
         ]);
@@ -77,7 +68,7 @@ class ExpenseController extends AppController
             $_POST['date'],
             (int)$_POST['category'],
             $splitUsers);
-        $this->groupController->groupDetails($groupId);
+        $this->expenses($groupId);
         return;
 
     }
