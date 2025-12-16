@@ -1,6 +1,5 @@
 <?php
 
-namespace entity;
 
 class ExpenseSplit
 {

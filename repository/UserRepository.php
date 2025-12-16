@@ -49,15 +49,11 @@ class UserRepository extends Repository
         }
         return $user;
     }
-
-    public function createUser(
-        string $email,
-        string $hashedPassword,
-        string $firstName,
-        string $lastName,
-        string $bio = ''
-    )
+    public function save(User $user): User
     {
+        //TODO if userId!-null then update
+        if ($user->id !== null) {
+        }
 
         $query = $this->conn->prepare(
             "
@@ -66,15 +62,21 @@ class UserRepository extends Repository
                   "
         );
         $query->execute(
-            [$firstName,
-                $lastName,
-                $email,
-                $hashedPassword,
-                $bio,
-                1]
+            [$user->firstname,
+                $user->lastname,
+                $user->email,
+                $user->password,
+                $user->bio,
+                (int)$user->enabled]
         );
-        return $this->conn->lastInsertId();
+
+        $newId = (int)$this->conn->lastInsertId('users_id_seq');
+        $user->id = $newId;
+
+        return $user;
     }
+
+
 
 
 }

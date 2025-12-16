@@ -1,10 +1,15 @@
 <?php
 
-require_once "repository/Repository.php";
+require_once "src/entities/Expense.php";
+require_once "repository/CategoryRepository.php";
+require_once "src/entities/ExpenseSplit.php";
+require_once "src/entities/Settlement.php";
 
 class ExpenseRepository extends Repository
 {
     private static $instance;
+    private UserRepository $userRepository;
+    private CategoryRepository $categoryRepository;
 
     public static function getInstance(): self
     {
@@ -13,34 +18,87 @@ class ExpenseRepository extends Repository
         }
         return self::$instance;
     }
+    public function __construct()
+    {
+        parent::__construct();
+        $this->userRepository = UserRepository::getInstance();
+        $this->categoryRepository = CategoryRepository::getInstance();
+    }
 
-    public function getUsersByGroupId(int $groupId): ?array
+    private function hydrateExpense(array $data): Expense
+    {
+        $expense = new Expense();
+        $expense->id = (int) $data['id'];
+        $expense->group_id = (int) $data['group_id'];
+        $expense->paid_by_user_id = (int) $data['paid_by_user_id'];
+        $expense->amount = (float) $data['amount'];
+        $expense->description = $data['description'];
+        $expense->category_id = isset($data['category_id']) ? (int) $data['category_id'] : null;
+        $expense->photo_url = $data['photo_url'];
+
+        $expense->date_incurred = new DateTimeImmutable($data['date_incurred']);
+
+        if (isset($data['paid_by_user_id'])) {
+            $expense->paidBy = $this->userRepository->getUserById((string)$data['paid_by_user_id']);
+        } else {
+            $expense->paidBy = null;
+        }
+
+
+        if (isset($expense->category_id)) {
+            $expense->category = $this->categoryRepository->getCategoryById($expense->category_id);
+        } else {
+            $expense->category = null;
+        }
+
+        if (isset($expense->id)) {
+            $expense->splits = $this->getSplitsByExpenseId($expense->id);
+        } else {
+            $expense->splits = [];
+        }
+
+        return $expense;
+    }
+
+    private function getSplitsByExpenseId(int $expenseId): array
     {
         $query = $this->conn->prepare(
-            'SELECT u.* FROM users u
-            JOIN group_members gm ON u.id = gm.user_id
-            WHERE gm.group_id = :groupId'
+            'SELECT es.id, es.expense_id, es.user_id, es.amount_owed, es.split_type,
+                    u.id AS user_id, u.firstname, u.lastname, u.email
+            FROM expense_splits es
+            JOIN users u ON es.user_id = u.id
+            WHERE es.expense_id = :expenseId'
         );
-
-        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
         $query->execute();
+        $splitsData = $query->fetchAll(PDO::FETCH_ASSOC);
 
-        $users = $query->fetchAll(PDO::FETCH_ASSOC);
+        $splits = [];
+        foreach ($splitsData as $sData) {
+            $split = new ExpenseSplit();
+            $split->id = (int)$sData['id'];
+            $split->expense_id = (int)$sData['expense_id'];
+            $split->user_id = (int)$sData['user_id'];
+            $split->amount_owed = (float)$sData['amount_owed'];
+            $split->split_type = $sData['split_type'] ?? 'equal';
 
-        return $users;
+            $splitUser = new User();
+            $splitUser->id = $split->user_id;
+            $splitUser->firstname = $sData['firstname'];
+            $splitUser->lastname = $sData['lastname'];
+            $splitUser->email = $sData['email'];
+
+            $split->user = $splitUser;
+            $splits[] = $split;
+        }
+        return $splits;
     }
-    public function getCategories(): ?array
+
+    public function getCategories(): array
     {
-        $query = $this->conn->prepare(
-            'SELECT * FROM categories'
-        );
-
-        $query->execute();
-
-        $categories = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        return $categories;
+        return $this->categoryRepository->getAll();
     }
+
     public function addExpense(string $name,int $groupId, int $paidByUserId,float $amount,$date,$categoryId,Array $splitUsers): ?int
     {
         $this->conn->beginTransaction();
@@ -88,9 +146,15 @@ class ExpenseRepository extends Repository
          WHERE e.group_id = :group_id
          ORDER BY e.date_incurred DESC'
         );
+
         $expensesQuery->bindParam(':group_id', $groupId);
         $expensesQuery->execute();
-        return $expensesQuery->fetchAll(PDO::FETCH_ASSOC);
+        $expenseData =  $expensesQuery->fetchAll(PDO::FETCH_ASSOC);
+        $expenseOutputs = [];
+        foreach ($expenseData as $expense) {
+            $expenseOutputs[] = $this->hydrateExpense($expense);
+        }
+        return $expenseOutputs;
     }
     public function getDebtDataByGroupId(int $groupId): array
     {
@@ -123,55 +187,41 @@ class ExpenseRepository extends Repository
     public function getSettlementsByGroupId(int $groupId): array
     {
         $query = $this->conn->prepare(
-            'SELECT payer_user_id, payee_user_id, amount 
-         FROM settlements 
-         WHERE group_id = :groupId'
+            'SELECT * FROM settlements WHERE group_id = :groupId'
         );
         $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
         $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        $settlementsData = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        $settlements = [];
+        foreach ($settlementsData as $data) {
+            $settlement = new Settlement();
+            $settlement->id = (int)$data['id'];
+            $settlement->group_id = (int)$data['group_id'];
+            $settlement->payer_user_id = (int)$data['payer_user_id'];
+            $settlement->payee_user_id = (int)$data['payee_user_id'];
+            $settlement->amount = (float)$data['amount'];
+            $settlement->date_settled = new DateTimeImmutable($data['date_settled']);
+            $settlements[] = $settlement;
+        }
+
+        return $settlements;
     }
-    public function getExpenseDetails(int $expenseId): ?array
+    public function getExpenseDetails(int $expenseId): ?Expense
     {
         $query = $this->conn->prepare(
-            'SELECT 
-                e.id,
-                e.description AS name,
-                e.amount,
-                e.date_incurred,
-                e.paid_by_user_id,
-                e.category_id,
-                e.group_id,
-                payer.firstname AS payer_firstname,
-                payer.lastname AS payer_lastname,
-                c.name AS category_name
+            'SELECT e.*
             FROM expenses e
-            JOIN users payer ON e.paid_by_user_id = payer.id
-            LEFT JOIN categories c ON e.category_id = c.id
             WHERE e.id = :expenseId'
         );
         $query->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
         $query->execute();
-        $expense = $query->fetch(PDO::FETCH_ASSOC);
-        if(!$expense)
-        {
+        $data = $query->fetch(PDO::FETCH_ASSOC);
+
+        if (!$data) {
             return null;
         }
-        $querySplits = $this->conn->prepare(
-            'SELECT 
-                es.user_id,
-                u.firstname,
-                u.lastname,
-                es.amount_owed
-            FROM expense_splits es
-            JOIN users u ON es.user_id = u.id
-            WHERE es.expense_id = :expenseId'
-        );
-        $querySplits->bindParam(':expenseId', $expenseId, PDO::PARAM_INT);
-        $querySplits->execute();
-        $splits = $querySplits->fetchAll(PDO::FETCH_ASSOC);
-        $expense['splits'] = $splits;
-        return $expense;
+        return $this->hydrateExpense($data);
     }
     public function deleteExpense(int $expenseId): bool
     {

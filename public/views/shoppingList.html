@@ -7,19 +7,19 @@
     <?php $listCount = count($lists); ?>
     <?php foreach ($lists as $list): ?>
     <?php
-    $isActive = $list['id'] == $activeListId;
+    $isActive = $list->id == $activeListId;
     $listClass = $isActive ? 'list-tab-active' : 'list-tab-inactive';
     $wrapperClass = $isActive ? 'list-tab-wrapper active-list' : 'list-tab-wrapper';
     ?>
-    <div class="<?= $wrapperClass ?>" data-list-id="<?= $list['id'] ?>">
+    <div class="<?= $wrapperClass ?>" data-list-id="<?= $list->id ?>">
         <button
-                onclick="loadList(<?= $list['id'] ?>, this)"
+                onclick="loadList(<?= $list->id ?>, this)"
                 class="list-tab-button <?= $listClass ?>"
-                data-list-id="<?= $list['id'] ?>">
-            <?= htmlspecialchars($list['name']) ?>
+                data-list-id="<?= $list->id ?>">
+            <?= htmlspecialchars($list->name) ?>
         </button>
         <?php if ($listCount > 1): ?>
-        <button class="delete-list-btn" onclick="deleteList(<?= $list['id'] ?>)">
+        <button class="delete-list-btn" onclick="deleteList(<?= $list->id ?>)">
             <span class="material-symbols-outlined">close</span>
         </button>
         <?php endif; ?>

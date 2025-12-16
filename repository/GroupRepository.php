@@ -1,5 +1,6 @@
 <?php
 require_once "repository/Repository.php";
+require_once "src/entities/Group.php";
 
 class GroupRepository extends Repository
 {
@@ -34,8 +35,25 @@ WHERE gm_filter.user_id = :userId;'
         $query->bindParam(':userId', $userId, PDO::PARAM_STR);
         $query->execute();
         $groups = $query->fetchAll(PDO::FETCH_ASSOC);
+        $groupsEntities = [];
+        foreach ($groups as $data) {
+            $group = new Group();
+            $group->id = (int)$data['id'];
+            $group->name = $data['name'];
+            $group->created_by_user_id = (int)$data['created_by_user_id'];
+            $group->invite_id = $data['invite_id'];
+            try {
+                $group->created_at = new DateTimeImmutable($data['created_at']);
+            } catch (Exception $e) {
+                throw new \RuntimeException("Błąd parsowania daty: " . $e->getMessage());
+            }
+            $groupsEntities[] = [
+                'group' => $group,
+                'member_count' => (int)$data['member_count']
+            ];
+        }
 
-        return $groups;
+        return $groupsEntities;
     }
 
     public function getGroupIdByInviteCode(string $inviteCode): ?int
@@ -63,21 +81,6 @@ WHERE gm_filter.user_id = :userId;'
         $group = $query->fetch();
 
         return $group !== false ? $group : null;
-    }
-    public function getGroupDetailsById(int $id): ?array
-    {
-        $query = $this->conn->prepare(
-            'SELECT g.* FROM groups g WHERE g.id = :id'
-        );
-
-        $query->bindParam(':id', $id, PDO::PARAM_STR);
-        $query->execute();
-
-        $group = $query->fetch(PDO::FETCH_ASSOC);
-        if ($group === false) {
-            return null;
-        }
-        return $group;
     }
 
     public function isUserInGroup(int $groupId, int $userId): bool
@@ -126,23 +129,7 @@ WHERE gm_filter.user_id = :userId;'
         }
         $this->addUserToGroup((int)$newGroupId, $createdByUserId);
         $this->conn->commit();
-
         return (int)$newGroupId;
-
-
-    }
-    public function getGroupNameById(int $groupId): ?string
-    {
-        $query = $this->conn->prepare(
-            'SELECT name FROM groups WHERE id = :groupId'
-        );
-
-        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
-        $query->execute();
-
-        $name = $query->fetchColumn();
-
-        return $name !== false ? $name : null;
     }
     public function getUsersInGroup(int $groupId): ?array
     {
@@ -157,6 +144,34 @@ WHERE gm_filter.user_id = :userId;'
         $query->execute();
 
         $users = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        return $users;
+    }
+
+    public function getUsersByGroupId(int $groupId): array
+    {
+        $query = $this->conn->prepare(
+            'SELECT u.* FROM users u
+            JOIN group_members gm ON u.id = gm.user_id
+            WHERE gm.group_id = :groupId'
+        );
+
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->execute();
+
+        $usersData = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        $users = [];
+        foreach ($usersData as $userData) {
+            $user = new User();
+            $user->id = (int)$userData['id'];
+            $user->firstname = $userData['firstname'];
+            $user->lastname = $userData['lastname'];
+            $user->email = $userData['email'];
+            $user->bio = $userData['bio'] ?? null;
+            $user->enabled = (bool)$userData['enabled'];
+            $users[] = $user;
+        }
 
         return $users;
     }

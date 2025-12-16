@@ -4,26 +4,25 @@
 require_once "src/services/GroupService.php";
 require_once "core/Auth.php";
 require_once "repository/ExpenseRepository.php";
-require_once "src/IconsHelper.php";
-require_once "src/ColorHelper.php";
+require_once 'src/dtos/ExpenseOutputDTO.php';
+require_once 'src/dtos/CreateExpenseRequestDTO.php';
+require_once 'src/dtos/UpdateExpenseRequestDTO.php';
+require_once 'src/dtos/ExpenseSplitOutputDTO.php';
 require_once "src/services/AuthService.php";
+require_once "src/services/ExpenseService.php";
 
 class ExpenseController extends AppController
 {
     private static $instance;
-    private ExpenseRepository $expenseRepository;
-    private GroupRepository $groupRepository;
-    private GroupController $groupController;
+    private ExpenseService $expenseService;
     private GroupService $groupService;
     private AuthService $authService;
 
     private function __construct()
     {
-        $this->groupRepository = GroupRepository::getInstance();
-        $this->expenseRepository = ExpenseRepository::getInstance();
-        $this->groupController = GroupController::getInstance();
         $this->groupService = GroupService::getInstance();
         $this->authService = AuthService::getInstance();
+        $this->expenseService = ExpenseService::getInstance();
     }
 
     public static function getInstance()
@@ -36,21 +35,13 @@ class ExpenseController extends AppController
 
     public function expenses($groupId)
     {
+        Auth::requireLogin();
         $this->authService->verifyUserInGroup($groupId);
+        $expenseOutputDtos = $this->expenseService->getExpensesSummaryList($groupId);
 
-        $expenses = $this->expenseRepository->getExpensesByGroupId($groupId);
-        foreach ($expenses as &$expense) {
-            $expense['icon'] = IconsHelper::$expenseIcon[$expense['category_id']];
-            $colors = ColorHelper::generatePastelColorSet();
-            $expense['icon_bg_color'] = $colors['background'];
-            $expense['icon_color'] = $colors['icon'];
-            $expense['paidBy'] = $expense['firstname'] . ' ' . $expense['lastname'];
-            $dateToFormat = date('d-m-Y', strtotime($expense['date_incurred']));
-            $expense['date_incurred'] = str_replace('-', '.', $dateToFormat);
-        }
         $this->render('expenses', [
             'groupId' => $groupId,
-            'expenses' => $expenses,
+            'expenses' => $expenseOutputDtos,
             'activeTab' => 'expenses',
             'groupName' => $this->groupService->getGroupName((string)$groupId)
         ]);
@@ -61,82 +52,64 @@ class ExpenseController extends AppController
     {
         $this->authService->verifyUserInGroup($groupId);
         if (!$this->isPost()) {
-            $users = $this->expenseRepository->getUsersByGroupId($groupId);
-            $categories = $this->expenseRepository->getCategories();
+            $users = $this->expenseService->getGroupUsers($groupId);
+            $categories = $this->expenseService->getCategories();
             $userId = (int)Auth::userId();
             $this->render("addExpense", ["users" => $users, "categories" => $categories, "groupId" => $groupId, "userId" => $userId]);
             return;
         }
-        $selectedUserIds = [];
-        $splitUsers = $this->getSplitUsers($selectedUserIds);
-        $this->expenseRepository->addExpense(
-            $_POST['name'],
-            $groupId,
-            (int)$_POST['paidBy'],
-            (float)$_POST['amount'],
-            $_POST['date'],
-            (int)$_POST['category'],
-            $splitUsers);
-        $this->groupController->groupDetails($groupId);
-        return;
+        $dto = CreateExpenseRequestDTO::fromPost();
+        $this->expenseService->createExpense($groupId, $dto);
+
+        $this->expenses($groupId);
 
     }
 
     public function getExpense($groupId, $expenseId)
     {
         $this->authService->verifyUserInGroup($groupId);
-        $expenseId = (int)$expenseId;
-        $expenseDetails = $this->expenseRepository->getExpenseDetails($expenseId);
-        if (!$expenseDetails) {
+        $expenseDTO = $this->expenseService->getExpenseDetails((int)$groupId, (int)$expenseId);
+        if (!$expenseDTO) {
             $this->redirect("/groups");
+            return;
         }
-        $expenseIcon = IconsHelper::$expenseIcon[$expenseDetails['category_id']];
-        $expenseIconColors = ColorHelper::generatePastelColorSet();
         $this->render('expense_details', [
-            'expenseDetails' => $expenseDetails,
-            'expenseIcon' => $expenseIcon,
-            'expenseIconColors' => $expenseIconColors,
+            'expenseDetails' => $expenseDTO,
             'groupId' => $groupId,
         ]);
     }
 
     public function deleteExpense($groupId, $expenseId)
     {
-        if (!$this->isPost()) {
+        if (!$this->isPost() || !isset($_POST['_method']) || $_POST['_method'] !== 'DELETE') {
             $this->redirect("/groups/" . $groupId . "/expenses");
             return;
         }
-        if (!isset($_POST['_method']) || $_POST['_method'] !== 'DELETE') {
-            $this->redirect("/groups/" . $groupId . "/expenses");
-            return;
-        }
-        $this->authService->verifyUserInGroup($groupId);
 
-        $expenseId = (int)$expenseId;
-        $this->expenseRepository->deleteExpense($expenseId);
+        $this->authService->verifyUserInGroup($groupId);
+        $this->expenseService->deleteExpense((int)$groupId, (int)$expenseId);
         $this->redirect("/groups/" . $groupId . "/expenses");
     }
 
     public function editExpense($groupId, $expenseId)
     {
         $this->authService->verifyUserInGroup($groupId);
-        $expense = $this->expenseRepository->getExpenseDetails((int)$expenseId);
-        if (!$expense || (int)$expense['group_id'] !== (int)$groupId) {
-            echo $expense['group_id'];
-            echo $groupId;
+
+        $expenseDTO = $this->expenseService->getExpenseForEdit((int)$groupId, (int)$expenseId);
+
+        if (!$expenseDTO) {
             $this->redirect("/groups/" . $groupId . "/expenses");
             return;
         }
+
         $userId = (int)Auth::userId();
-        $users = $this->expenseRepository->getUsersByGroupId($groupId);
-        $categories = $this->expenseRepository->getCategories();
-        $splitUserIds = array_column($expense['splits'], 'user_id');
+
         $this->render('editExpense', [
-            'expense' => $expense,
-            'users' => $users,
-            'splitUserIds' => $splitUserIds,
+            'expense' => $expenseDTO,
+            'users' => $expenseDTO->users,
+            'splitUserIds' => $expenseDTO->splitUserIds,
             'groupId' => $groupId,
-            'categories' => $categories,
+            'categories' => $expenseDTO->categories,
             'userId' => $userId,
         ]);
     }
@@ -144,30 +117,26 @@ class ExpenseController extends AppController
     public function updateExpense($groupId, $expenseId)
     {
         $this->authService->verifyUserInGroup($groupId);
+
         if (!$this->isPost()) {
             $this->redirect("/groups/" . $groupId . "/expenses");
             return;
         }
-        $name = $_POST['name'] ?? '';
-        $paidBy = (int)($_POST['paidBy'] ?? 0);
-        $amount = (float)($_POST['amount'] ?? 0);
-        $dateIncurred = $_POST['date'] ?? date('Y-m-d');
-        $categoryId = (int)($_POST['category'] ?? 0);
-        $selectedUserIds = [];
-        if(empty($name)||$paidBy===0||$amount<=0||$categoryId===0){
+
+        $dto = UpdateExpenseRequestDTO::fromPost();
+
+        if (!$dto->validate()) {
             $this->redirect("/groups/" . $groupId . "/expenses/" . $expenseId . "/edit");
             return;
         }
-        $splitUsers = $this->getSplitUsers($selectedUserIds);
-        $success = $this->expenseRepository->updateExpense(
-            $expenseId,
-            $name,
-            $paidBy,
-            $amount,
-            $dateIncurred,
-            $categoryId,
-            $splitUsers
-        );
+
+        $success = $this->expenseService->updateExpense((int)$groupId, (int)$expenseId, $dto);
+
+        if (!$success) {
+            $this->redirect("/groups/" . $groupId . "/expenses/" . $expenseId . "/edit");
+            return;
+        }
+
         $this->redirect("/groups/" . $groupId . "/expenses");
     }
 

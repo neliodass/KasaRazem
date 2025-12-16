@@ -1,100 +1,106 @@
 <?php
 require_once "core/Auth.php";
-require_once "repository/GroupRepository.php";
-require_once "repository/ExpenseRepository.php";
+require_once "src/services/GroupService.php";
+require_once "src/dtos/CreateGroupRequestDTO.php";
+require_once "src/dtos/GroupJoinByCodeRequestDTO.php";
 require_once "src/IconsHelper.php";
 class GroupController extends AppController
 {
-    private $groupRepository;
-    private $expenseRepository;
+    private $groupService;
     public static function getInstance()
     {
         static $instance = null;
         if ($instance === null) {
-            $instance = new GroupController();
+            $instance = new self();
         }
         return $instance;
     }
     private function __construct()
     {
-        $this->groupRepository = GroupRepository::getInstance();
-        $this->expenseRepository = ExpenseRepository::getInstance();
+        $this->groupService = GroupService::getInstance();
     }
     public function groups()
     {
         Auth::requireLogin();
-        $userId = Auth::userId();
+        $userId = (int)Auth::userId();
         if($userId === null){
             header('Location: /login');
             exit();
         }
-        $groupRepository = GroupRepository::getInstance();
-        $groups = $groupRepository->getGroupsByUserId($userId);
-        $this->render('groups', ['groups' => $groups]);
+        $groups = $this->groupService->getGroupsListDtoForUser($userId);
+
+        $this->render('groups', ['groupsData' => $groups]);
+    }
+
+
+    public function groupDetails($groupId)
+    {
+        Auth::requireLogin();
+        header('Location: /groups/' . $groupId . '/expenses');
+        exit();
+
     }
     public function addGroup()
     {
         Auth::requireLogin();
-
         $this->render('addGroup');
         return;
     }
+
     public function joinGroup($inviteCode = null)
     {
         Auth::requireLogin();
-        if (!$this->isPost()) {
-            $this->render('joinGroup', ['code'=> $inviteCode?? null,'message'=> $message?? null]);
-            return;
+
+        $code = $inviteCode;
+        $message = null;
+
+        if ($this->isPost()) {
+            try {
+                $dto = GroupJoinByCodeRequestDto::fromPost();
+                $code = $dto->code;
+                $userId = (int)Auth::userId();
+
+                if ($this->groupService->joinGroup($code, $userId)) {
+                    header("Location: /groups");
+                    exit;
+                }
+
+            } catch (ValidationException $e) {
+                $message = $e->getMessage();
+                $code = $_POST['code'] ?? $inviteCode;
+
+            } catch (\Exception $e) {
+                $message = $e->getMessage();
+            }
         }
-        $code = $_POST['code'];
-        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $code)) {
-            $message = "Nieprawidłowy kod zaproszenia.";
-            $this->render('joinGroup', ['code'=> $code,'message'=> $message]);
-            return;
-        }
-        $groupId = $this->groupRepository->getGroupIdByInviteCode($code);
-        if ($groupId === null) {
-            $message = "Nieprawidłowy kod zaproszenia.";
-            $this->render('joinGroup', ['code'=> $code,'message'=> $message]);
-            return;
-        }
-        if($this->groupRepository->isUserInGroup($groupId, (int)Auth::userId())){
-            $message = "Już jesteś członkiem tej grupy.";
-            $this->render('joinGroup', ['code'=> $code,'message'=> $message]);
-            return;
-        }
-        if ($this->groupRepository->addUserToGroup($groupId, (int)Auth::userId())) {
-            header("Location: /groups");
-            exit;
-        }
-        $this->render('joinGroup', ['message' => 'Wystąpił nieznany błąd podczas dołączania.']);
+
+        $this->render('joinGroup', ['code' => $code, 'message' => $message]);
     }
 
     public function createGroup()
     {
-        Auth::requireLogin();
         if (!$this->isPost()) {
-            $this->render('createGroup');
+            $this->render('addGroup');
             return;
         }
-        $groupName = $_POST['group_name'];
-        if (empty($groupName) || strlen($groupName) > 100) {
-            $this->render('createGroup', ['message' => 'Nazwa grupy musi mieć od 1 do 100 znaków.']);
+        Auth::requireLogin();
+        try{
+            $dto = CreateGroupRequestDTO::fromPost($_POST);
+            if ($this->groupService->createGroup($dto)) {
+                header("Location: /groups");
+                exit;
+            }
+        }
+        catch (InvalidArgumentException $e) {
+            $this->render('createGroup', ['message' => $e->getMessage()]);
             return;
         }
-        $newGroupId = $this->groupRepository->createGroup($groupName, (int)Auth::userId());
-        if ($newGroupId !== null) {
-            header("Location: /groups");
-            exit;
-        } else {
+        catch(Exception $e){
             $this->render('createGroup', ['message' => 'Wystąpił nieznany błąd podczas tworzenia grupy.']);
             return;
         }
+
     }
 
-    public function groupDetails($groupId)
-    {
-        $this->redirect('/groups/' . $groupId . '/expenses');
-    }
 
 }

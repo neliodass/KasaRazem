@@ -1,12 +1,13 @@
 <?php
 
-require_once "repository/ListRepository.php";
+require_once "src/services/ListService.php";
 require_once "src/services/AuthService.php";
 require_once "src/services/GroupService.php";
+
 class ListController extends \AppController
 {
     private static $instance = null;
-    private ListRepository $listRepository;
+    private ListService $listService;
     private AuthService $authService;
     private GroupService $groupService;
 
@@ -20,7 +21,7 @@ class ListController extends \AppController
 
     private function __construct()
     {
-        $this->listRepository = ListRepository::getInstance();
+        $this->listService = ListService::getInstance();
         $this->authService = AuthService::getInstance();
         $this->groupService = GroupService::getInstance();
     }
@@ -28,15 +29,17 @@ class ListController extends \AppController
     public function index($groupId)
     {
         $this->authService->verifyUserInGroup($groupId);
-        $lists = $this ->listRepository->getListsHeadersByGroupIdOrderByDate((int)$groupId);
+
+        $lists = $this->listService->getListHeaders((int)$groupId);
         $groupName = $this->groupService->getGroupName((int)$groupId);
 
         $firstListItems = [];
         $activeListId = null;
         if (!empty($lists)) {
-            $activeListId = $lists[0]['id'];
-            $firstListItems = $this->listRepository->getListItems($activeListId);
+            $activeListId = $lists[0]->id;
+            $firstListItems = $this->listService->getListItems($activeListId);
         }
+
         $this->render('shoppingList', [
             'groupId' => $groupId,
             'items' => $firstListItems,
@@ -45,85 +48,85 @@ class ListController extends \AppController
             'activeTab' => 'shopping-lists',
             'groupName' => $groupName
         ]);
-
     }
+
     public function getListItems($groupId, $listId)
     {
         $this->authService->verifyUserInGroup($groupId);
 
-        $items = $this->listRepository->getListItems((int)$listId);
+        $items = $this->listService->getListItems((int)$listId);
 
         header('Content-Type: application/json');
         echo json_encode($items);
         exit();
     }
+
     public function toggleItem($groupId, $itemId)
     {
-        $itemGroupId = $this->listRepository->getGroupIdByItemId((int)$itemId);
+        $itemGroupId = $this->listService->getGroupIdByItemId((int)$itemId);
 
         if ($itemGroupId !== (int)$groupId) {
             http_response_code(403);
             echo json_encode(['success' => false, 'message' => 'Unauthorized item access']);
             exit();
         }
+
         $this->authService->verifyUserInGroup($groupId);
 
         if ($this->isPost()) {
-            $input = json_decode(file_get_contents('php://input'), true);
-            $isPurchased = $input["isPurchased"]??false;
-
-            $success = $this->listRepository->toggleItemStatus((int)$itemId, $isPurchased);
-            $item = $this->listRepository->getItemById((int)$itemId);
-            $this->listRepository->updateListModificationDate($item['list_id']);
+            $dto = ToggleItemRequestDTO::fromJson();
+            $success = $this->listService->toggleItemStatus((int)$itemId, $dto);
 
             header('Content-Type: application/json');
             echo json_encode(['success' => $success]);
             exit();
         }
     }
+
     public function deleteItem($groupId, $itemId)
     {
-        $itemGroupId = $this->listRepository->getGroupIdByItemId((int)$itemId);
+        $itemGroupId = $this->listService->getGroupIdByItemId((int)$itemId);
 
         if ($itemGroupId !== (int)$groupId) {
             http_response_code(403);
             exit();
         }
+
         $this->authService->verifyUserInGroup($groupId);
 
         if ($this->isPost()) {
-            $item = $this->listRepository->getItemById((int)$itemId);
-            $this->listRepository->updateListModificationDate($item['list_id']);
-            $success = $this->listRepository->deleteItem((int)$itemId);
+            $success = $this->listService->deleteItem((int)$itemId);
+
             header('Content-Type: application/json');
             echo json_encode(['success' => $success]);
             exit();
         }
     }
+
     public function addList($groupId)
     {
         $this->authService->verifyUserInGroup($groupId);
 
         if ($this->isPost()) {
-            $input = json_decode(file_get_contents('php://input'), true);
-            $name = $input['name'] ?? $_POST['name'] ?? '';
+            $dto = CreateListRequestDTO::fromJson();
 
-            if (!empty($name)) {
-                $newId = $this->listRepository->createList(
+            if (!empty($dto->name)) {
+                $newId = $this->listService->createList(
                     (int)$groupId,
-                    $name,
+                    $dto,
                     (int)Auth::userId()
                 );
 
                 header('Content-Type: application/json');
-                echo json_encode(['success' => true, 'id' => $newId, 'name' => $name]);
+                echo json_encode(['success' => true, 'id' => $newId, 'name' => $dto->name]);
                 exit();
             }
         }
     }
+
     public function deleteList($groupId, $listId)
     {
-        $listGroupId = $this->listRepository->getGroupIdByListId((int)$listId);
+        $listGroupId = $this->listService->getGroupIdByListId((int)$listId);
 
         if ($listGroupId !== (int)$groupId) {
             header('Content-Type: application/json');
@@ -131,14 +134,17 @@ class ListController extends \AppController
             echo json_encode(['success' => false, 'message' => 'Unauthorized list access']);
             exit();
         }
+
         $this->authService->verifyUserInGroup($groupId);
+
         if ($this->isPost()) {
-            $success = $this->listRepository->deleteList((int)$listId);
+            $success = $this->listService->deleteList((int)$listId);
 
             header('Content-Type: application/json');
             echo json_encode(['success' => $success]);
             exit();
         }
+
         header('Content-Type: application/json');
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not supported']);
@@ -150,13 +156,11 @@ class ListController extends \AppController
         $this->authService->verifyUserInGroup($groupId);
 
         if ($this->isPost()) {
-            $input = json_decode(file_get_contents('php://input'), true);
-             $name = $input['name'] ?? $_POST['name'] ?? '';
-            $subtitle = $input['subtitle'] ?? $_POST['subtitle'] ?? '';
+            $dto = CreateListItemRequestDTO::fromJson();
 
-            if(!empty($name)){
-                $newId = $this->listRepository->addItem((int)$listId, $name, $subtitle);
-                $this->listRepository->updateListModificationDate((int)$listId);
+            if (!empty($dto->name)) {
+                $newId = $this->listService->addItem((int)$listId, $dto);
+
                 header('Content-Type: application/json');
                 echo json_encode(['success' => true, 'id' => $newId]);
                 exit();
