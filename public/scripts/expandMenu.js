@@ -17,16 +17,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    const deleteButton = document.getElementById('delete-group-btn');
     const deleteLink = document.querySelector('.dropdown-item.delete-action');
-    const modal = document.getElementById('delete-modal');
+    const modal = document.getElementById('delete-group-modal');
     const form = document.getElementById('delete-form');
     const cancelButton = document.getElementById('modal-cancel');
-    if (deleteLink && modal && form && cancelButton) {
-        deleteLink.addEventListener('click', function(event) {
+
+    const deleteAction = deleteButton || deleteLink;
+
+    if (deleteAction && modal && form && cancelButton) {
+        deleteAction.addEventListener('click', function(event) {
             event.preventDefault();
             const deleteUrl = this.getAttribute('href');
-            form.setAttribute('action', deleteUrl);
-            if (menu) {
+            if (deleteUrl) {
+                form.setAttribute('action', deleteUrl);
+            }
+            if (menu && toggleButton) {
                 menu.classList.remove('visible');
                 toggleButton.setAttribute('aria-expanded', 'false');
             }

@@ -1,0 +1,24 @@
+<div id="delete-group-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Potwierdź usunięcie</h3>
+        <p>Czy na pewno chcesz usunąć tę grupę? Tej operacji nie można cofnąć.</p>
+
+        <form id="delete-form" action="/groups/<?= $groupId ?>/delete" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+
+            <div class="modal-actions">
+                <button type="button" class="action-button secondary" id="modal-cancel">
+                    Anuluj
+                </button>
+                <button type="submit" class="action-button primary">
+                    Usuń
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</div>
+</body>
+</html>
+

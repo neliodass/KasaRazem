@@ -224,12 +224,12 @@
     position: absolute;
     top: 100%;
     right: 0;
-    z-index: 1000;
+    z-index: 2000;
     background-color: var(--color-bg-input);
     border-radius: var(--border-radius-lg);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
     padding: 0.5rem 0;
-    min-width: 150px;
+    min-width: 200px;
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
@@ -244,6 +244,7 @@
 .dropdown-item {
     display: flex;
     align-items: center;
+    justify-content: space-between !important;
     gap: 0.75rem;
     padding: 0.75rem 1rem;
     color: var(--color-text-body);
@@ -251,6 +252,11 @@
     transition: background-color 0.15s;
     font-size: 0.95rem;
     font-weight: 500;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
 }
 .dropdown-item:hover {
     background-color: rgba(0, 0, 0, 0.05);
@@ -258,8 +264,16 @@
 .dropdown-item.delete-action {
     color: #ef4444;
 }
+.dropdown-item.delete-action .material-symbols-outlined {
+    color: #ef4444;
+}
 .dropdown-item .material-symbols-outlined {
     font-size: 1.25rem;
+}
+.dropdown-item-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 .modal-overlay {
     position: fixed;
@@ -271,7 +285,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2000;
+    z-index: 3000;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s;

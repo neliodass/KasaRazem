@@ -20,7 +20,7 @@
 <body class="theme-light whole-page-group-details">
 
 <div class="page-wrapper group-details-page-wrapper">
-
+    <script src="/public/scripts/expandMenu.js" defer></script>
     <header class="app-bar">
         <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
             <a href="/groups" style="color: inherit; text-decoration: none; display: flex;">
@@ -29,10 +29,22 @@
         </div>
         <h1><?= $groupName ?? 'Grupa' ?></h1>
 
-        <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-end;">
-            <button type="button">
-                <span class="material-symbols-outlined">settings</span>
+        <div class="dropdown-menu-wrapper">
+            <button type="button" id="dropdown-toggle" aria-expanded="false" aria-controls="context-menu">
+                <span class="material-symbols-outlined">more_vert</span>
             </button>
+
+            <div id="context-menu" class="dropdown-menu">
+                <a href="/groups/<?= $groupId ?>/edit" class="dropdown-item">
+                    <span class="material-symbols-outlined">edit</span> Edytuj
+                </a>
+                <a href="/groups/<?= $groupId ?>/invite" class="dropdown-item">
+                    <span class="material-symbols-outlined">person_add</span> Dodaj do grupy
+                </a>
+                <button type="button" class="dropdown-item delete-action" id="delete-group-btn">
+                    <span class="material-symbols-outlined">delete</span> Usuń
+                </button>
+            </div>
         </div>
     </header>
 
