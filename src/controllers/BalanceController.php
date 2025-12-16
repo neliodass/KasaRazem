@@ -49,7 +49,8 @@ class BalanceController extends AppController
             'groupId' => $balanceDTO->groupId,
             'balance' => $balanceDTO->balanceItems,
             'currentUserNetBalance' => $balanceDTO->currentUserNetBalance,
-            'currentUserBalanceEmoji' => $balanceDTO->currentUserBalanceEmoji
+            'currentUserBalanceEmoji' => $balanceDTO->currentUserBalanceEmoji,
+            'inviteId' => $this->groupService->getGroupInviteId((string)$groupId)
         ]);
     }
 
@@ -70,7 +71,8 @@ class BalanceController extends AppController
             'activeTab' => 'balance',
             'groupName' => $settlementsDTO->groupName,
             'groupId' => $settlementsDTO->groupId,
-            'settlements' => $settlementsDTO->settlements
+            'settlements' => $settlementsDTO->settlements,
+            'inviteId' => $this->groupService->getGroupInviteId((string)$groupId)
         ]);
     }
 

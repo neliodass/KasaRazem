@@ -1,3 +1,38 @@
+<div id="invite-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Zaproś do grupy</h3>
+        <p>Udostępnij kod zaproszenia lub link, aby dodać nowych członków do grupy.</p>
+
+        <div class="invite-field-wrapper">
+            <label class="form-label">Kod zaproszenia:</label>
+            <div class="invite-input-group">
+                <input type="text" id="invite-code" value="<?= $inviteId ?? '' ?>" readonly class="input-group-text invite-code-input" />
+                <button type="button" id="copy-code-btn" class="action-button secondary copy-btn">
+                    <span class="material-symbols-outlined">content_copy</span>
+                    Kopiuj
+                </button>
+            </div>
+        </div>
+
+        <div class="invite-field-wrapper">
+            <label class="form-label">Link zaproszenia:</label>
+            <div class="invite-input-group">
+                <input type="text" id="invite-link" value="<?= 'http://' . $_SERVER['HTTP_HOST'] . '/groups/join/' . ($inviteId ?? '') ?>" readonly class="input-group-text invite-code-input" />
+                <button type="button" id="copy-link-btn" class="action-button secondary copy-btn">
+                    <span class="material-symbols-outlined">content_copy</span>
+                    Kopiuj
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="action-button primary" id="invite-modal-close">
+                Zamknij
+            </button>
+        </div>
+    </div>
+</div>
+
 <div id="delete-group-modal" class="modal-overlay">
     <div class="modal-content">
         <h3>Potwierdź usunięcie</h3>
@@ -21,4 +56,3 @@
 </div>
 </body>
 </html>
-

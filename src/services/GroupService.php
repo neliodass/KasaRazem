@@ -27,6 +27,15 @@ class GroupService
         }
         return "Grupa";
     }
+
+    public function getGroupInviteId(string $groupId): ?string
+    {
+        if($group = $this->groupRepository->getGroupById((int)$groupId)) {
+            return $group['invite_id'] ?? null;
+        }
+        return null;
+    }
+
     public function getUsersInGroup(string $groupId): array
     {
         return $this->groupRepository->getUsersInGroup((int)$groupId);

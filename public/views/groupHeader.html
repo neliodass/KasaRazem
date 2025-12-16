@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= $groupName ?> - Szczegóły</title>
+    <title><?= $groupName ?> - Szczegły</title>
 
     <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
@@ -21,6 +21,7 @@
 
 <div class="page-wrapper group-details-page-wrapper">
     <script src="/public/scripts/expandMenu.js" defer></script>
+    <script src="/public/scripts/inviteModal.js" defer></script>
     <header class="app-bar">
         <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
             <a href="/groups" style="color: inherit; text-decoration: none; display: flex;">
@@ -38,9 +39,9 @@
                 <a href="/groups/<?= $groupId ?>/edit" class="dropdown-item">
                     <span class="material-symbols-outlined">edit</span> Edytuj
                 </a>
-                <a href="/groups/<?= $groupId ?>/invite" class="dropdown-item">
+                <button type="button" class="dropdown-item" id="invite-group-btn">
                     <span class="material-symbols-outlined">person_add</span> Dodaj do grupy
-                </a>
+                </button>
                 <button type="button" class="dropdown-item delete-action" id="delete-group-btn">
                     <span class="material-symbols-outlined">delete</span> Usuń
                 </button>
