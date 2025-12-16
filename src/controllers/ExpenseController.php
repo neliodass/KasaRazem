@@ -82,18 +82,13 @@ class ExpenseController extends AppController
 
     public function deleteExpense($groupId, $expenseId)
     {
-        if (!$this->isPost()) {
+        if (!$this->isPost() || !isset($_POST['_method']) || $_POST['_method'] !== 'DELETE') {
             $this->redirect("/groups/" . $groupId . "/expenses");
             return;
         }
-        if (!isset($_POST['_method']) || $_POST['_method'] !== 'DELETE') {
-            $this->redirect("/groups/" . $groupId . "/expenses");
-            return;
-        }
-        $this->authService->verifyUserInGroup($groupId);
 
-        $expenseId = (int)$expenseId;
-        $this->expenseRepository->deleteExpense($expenseId);
+        $this->authService->verifyUserInGroup($groupId);
+        $this->expenseService->deleteExpense((int)$groupId, (int)$expenseId);
         $this->redirect("/groups/" . $groupId . "/expenses");
     }
 

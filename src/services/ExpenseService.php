@@ -103,4 +103,14 @@ class ExpenseService
 
         return new ExpenseDetailsOutputDTO($expenseData, $icon, $colors);
     }
+    public function deleteExpense(int $groupId, int $expenseId): void
+    {
+        $expense = $this->expenseRepository->getExpenseDetails($expenseId);
+
+        if (!$expense || (int)$expense['group_id'] !== $groupId) {
+            return;
+        }
+
+        $this->expenseRepository->deleteExpense($expenseId);
+    }
 }
