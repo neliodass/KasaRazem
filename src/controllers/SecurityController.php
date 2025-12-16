@@ -1,38 +1,38 @@
 <?php
 
+
 require_once 'AppController.php';
 require_once 'repository/UserRepository.php';
+require_once 'src/services/UserService.php';
+require_once 'src/dtos/CreateUserRequestDTO.php';
+require_once 'src/dtos/LoginRequestDTO.php';
+
 class SecurityController extends AppController
 {
-    private $userRepository;
+    private UserService $userService;
     private function __construct()
     {
-        $this->userRepository = UserRepository::getInstance();
+        $this->userService = UserService::getInstance();
     }
-    private static $instance;
-    public static function getInstance()
+    private static ?self $instance= null;
+    public static function getInstance():self
     {
         if (self::$instance == null) {
-            self::$instance = new SecurityController();
+            self::$instance = new self();
         }
         return self::$instance;
     }
     public function login()
     {
         if (!$this->isPost()) {
-            return $this->render('login');
+             return $this->render('login');
         }
-        $email = $_POST['email'];
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return $this->render('login', ["message" => "Niewłaściwy email, bądź hasło"]);
+        try{
+            $dto = LoginRequestDTO::fromPost($_POST);
+            $this->userService->login($dto);
+        } catch (InvalidArgumentException $e) {
+             return $this->render('login', ["message" => "Niewłaściwy email, bądź hasło"]);
         }
-        $password = $_POST['password'];
-        $user = $this->userRepository->getUserByEmail($email);
-        if (!$user || !password_verify($password, $user->password)) {
-            return $this->render('login', ["message" => "Niewłaściwy email, bądź hasło"]);
-        }
-        session_start();
-        $_SESSION['user_id'] = $user->id;
         header('Location: /groups');
         exit();
     }
@@ -41,27 +41,18 @@ class SecurityController extends AppController
     {
 
         if (!$this->isPost()) {
-            return $this->render('register');
+             return $this->render('register');
         }
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $confirmPassword = $_POST['password-repeat'] ?? '';
-        $firstName = $_POST['firstName'] ?? '';
-        $lastName = $_POST['lastName'] ?? '';
+        try{
+            $dto = CreateUserRequestDTO::fromPost($_POST);
+            $this->userService->register($dto);
+            return $this->render('login', ["message" => "Rejestracja udana. Proszę się zalogować."]);
+        } catch (InvalidArgumentException $e) {
+             return $this->render('register', ["message" => $e->getMessage()]);
+        }catch (\Exception $e){
+                return $this->render('register', ["message" => "Wystąpił błąd podczas rejestracji. Proszę spróbować ponownie."]);
+        }
 
-        if ($password != $confirmPassword) {
-            return $this->render('register', ["message" => "Passwords do not match"]);
-        }
-        if ($this->userRepository->getUserByEmail($email)) {
-            return $this->render('register', ["message" => "Email already in use"]);
-        }
-        $this->userRepository->createUser(
-            $email,
-            password_hash($password, PASSWORD_BCRYPT),
-            $firstName,
-            $lastName
-        );
-        return $this->render('login', ["message" => "Registration successful. Please log in."]);
     }
     public function logout()
     {
