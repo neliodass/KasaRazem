@@ -20,6 +20,12 @@ class GroupService
         }
         return self::$instance;
     }
+
+    public function deleteGroup(int $groupId): bool
+    {
+        return $this->groupRepository->deleteGroup($groupId);
+    }
+
     public function getGroupName(string $groupId): ?string
     {
         if($group = $this->groupRepository->getGroupById($groupId)) {

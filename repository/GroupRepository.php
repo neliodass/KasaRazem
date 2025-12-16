@@ -19,7 +19,35 @@ class GroupRepository extends Repository
         parent::__construct();
     }
 
-    public function getGroupsByUserId(string $userId): ?array
+    public function deleteGroup(int $groupId): bool
+    {
+        try {
+            $this->conn->beginTransaction();
+
+            $query = $this->conn->prepare('DELETE FROM group_members WHERE group_id = :id');
+            $query->bindParam(':id', $groupId, PDO::PARAM_STR);
+            $query->execute();
+
+            $query = $this->conn->prepare('DELETE FROM shopping_lists WHERE group_id = :id');
+            $query->bindParam(':id', $groupId, PDO::PARAM_STR);
+            $query->execute([':id' => $groupId]);
+            $query->execute();
+            $query = $this->conn->prepare('DELETE FROM groups WHERE id = :id');
+            $query->bindParam(':id', $groupId, PDO::PARAM_STR);
+            $query->execute();
+
+            $this->conn->commit();
+            return true;
+        } catch
+        (\PDOException $e) {
+            $this->conn->rollBack();
+            throw $e;
+        }
+
+    }
+
+    public
+    function getGroupsByUserId(string $userId): ?array
     {
         $query = $this->conn->prepare(
             'SELECT g.*, member_counts.member_count 
@@ -56,7 +84,8 @@ WHERE gm_filter.user_id = :userId;'
         return $groupsEntities;
     }
 
-    public function getGroupIdByInviteCode(string $inviteCode): ?int
+    public
+    function getGroupIdByInviteCode(string $inviteCode): ?int
     {
         $query = $this->conn->prepare(
             'SELECT id FROM groups WHERE invite_id = :inviteCode'
@@ -69,7 +98,9 @@ WHERE gm_filter.user_id = :userId;'
 
         return $id !== false ? (int)$id : null;
     }
-    public function getGroupById(int $id): ?array
+
+    public
+    function getGroupById(int $id): ?array
     {
         $query = $this->conn->prepare(
             'SELECT g.* FROM groups g WHERE g.id = :id'
@@ -83,7 +114,8 @@ WHERE gm_filter.user_id = :userId;'
         return $group !== false ? $group : null;
     }
 
-    public function isUserInGroup(int $groupId, int $userId): bool
+    public
+    function isUserInGroup(int $groupId, int $userId): bool
     {
         $query = $this->conn->prepare(
             'SELECT COUNT(*) FROM group_members WHERE group_id = :groupId AND user_id = :userId'
@@ -95,7 +127,8 @@ WHERE gm_filter.user_id = :userId;'
         return (bool)$query->fetchColumn();
     }
 
-    public function addUserToGroup(int $groupId, int $userId): bool
+    public
+    function addUserToGroup(int $groupId, int $userId): bool
     {
         $query = $this->conn->prepare(
             'INSERT INTO group_members (group_id, user_id) 
@@ -108,7 +141,8 @@ WHERE gm_filter.user_id = :userId;'
         return $query->execute();
     }
 
-    public function createGroup(string $name, int $createdByUserId): ?int
+    public
+    function createGroup(string $name, int $createdByUserId): ?int
     {
         $this->conn->beginTransaction();
         $query = $this->conn->prepare(
@@ -131,7 +165,9 @@ WHERE gm_filter.user_id = :userId;'
         $this->conn->commit();
         return (int)$newGroupId;
     }
-    public function getUsersInGroup(int $groupId): ?array
+
+    public
+    function getUsersInGroup(int $groupId): ?array
     {
         $query = $this->conn->prepare(
             'SELECT u.id, u.firstname,u.lastname, u.email 
@@ -148,7 +184,8 @@ WHERE gm_filter.user_id = :userId;'
         return $users;
     }
 
-    public function getUsersByGroupId(int $groupId): array
+    public
+    function getUsersByGroupId(int $groupId): array
     {
         $query = $this->conn->prepare(
             'SELECT u.* FROM users u

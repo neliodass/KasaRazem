@@ -1,12 +1,15 @@
 <?php
 require_once "core/Auth.php";
 require_once "src/services/GroupService.php";
+require_once "src/services/AuthService.php";
 require_once "src/dtos/CreateGroupRequestDTO.php";
 require_once "src/dtos/GroupJoinByCodeRequestDTO.php";
 require_once "src/IconsHelper.php";
 class GroupController extends AppController
 {
-    private $groupService;
+    private GroupService $groupService;
+    private AuthService $authService;
+
     public static function getInstance()
     {
         static $instance = null;
@@ -18,6 +21,7 @@ class GroupController extends AppController
     private function __construct()
     {
         $this->groupService = GroupService::getInstance();
+        $this->authService = AuthService::getInstance();
     }
     public function groups()
     {
@@ -100,6 +104,24 @@ class GroupController extends AppController
             return;
         }
 
+    }
+    public function deleteGroup($groupId)
+    {
+        Auth::requireLogin();
+        if (!$this->isPost()) {
+            header("Location: /groups/$groupId/expenses");
+            exit();
+        }
+
+        $this->authService->verifyUserInGroup($groupId);
+
+        if ($this->groupService->deleteGroup((int)$groupId)) {
+            header("Location: /groups");
+            exit();
+        } else {
+            header("Location: /groups/$groupId/expenses");
+            exit();
+        }
     }
 
 
