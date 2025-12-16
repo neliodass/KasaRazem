@@ -7,7 +7,7 @@ require_once "repository/ExpenseRepository.php";
 require_once 'src/dtos/ExpenseOutputDTO.php';
 require_once 'src/dtos/CreateExpenseRequestDTO.php';
 require_once 'src/dtos/UpdateExpenseRequestDTO.php';
-
+require_once 'src/dtos/ExpenseSplitOutputDTO.php';
 require_once "src/services/AuthService.php";
 require_once "src/services/ExpenseService.php";
 
