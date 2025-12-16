@@ -29,17 +29,17 @@
 
     <main class="page-groups">
         <?php
-        if(!empty($groups)):
-            foreach ($groups as $group):
+        if(!empty($groupsData)):
+            foreach ($groupsData as $group):
         ?>
-        <a href="/groups/<?= $group['id'] ?>" class="group-list-item">
+        <a href="/groups/<?= $group->id ?>" class="group-list-item">
             <div class="item-content">
                 <div class="item-icon-wrapper">
                     <span class="material-symbols-outlined">home</span>
                 </div>
                 <div class="item-text-wrapper">
-                    <p class="item-name"><?= $group['name'] ?></p>
-                    <p class="item-members">Liczba osób: <?= $group['member_count'] ?></p>
+                    <p class="item-name"><?= $group->name ?></p>
+                    <p class="item-members">Liczba osób: <?= $group->member_count ?></p>
                 </div>
             </div>
             <div class="chevron-icon">

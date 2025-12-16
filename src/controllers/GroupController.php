@@ -1,12 +1,13 @@
 <?php
 require_once "core/Auth.php";
 require_once "repository/GroupRepository.php";
-require_once "repository/ExpenseRepository.php";
+require_once "src/services/GroupService.php";
 require_once "src/IconsHelper.php";
 class GroupController extends AppController
 {
     private $groupRepository;
-    private $expenseRepository;
+
+    private $groupService;
     public static function getInstance()
     {
         static $instance = null;
@@ -18,19 +19,19 @@ class GroupController extends AppController
     private function __construct()
     {
         $this->groupRepository = GroupRepository::getInstance();
-        $this->expenseRepository = ExpenseRepository::getInstance();
+        $this->groupService = GroupService::getInstance();
     }
     public function groups()
     {
         Auth::requireLogin();
-        $userId = Auth::userId();
+        $userId = (int)Auth::userId();
         if($userId === null){
             header('Location: /login');
             exit();
         }
-        $groupRepository = GroupRepository::getInstance();
-        $groups = $groupRepository->getGroupsByUserId($userId);
-        $this->render('groups', ['groups' => $groups]);
+        $groups = $this->groupService->getGroupsListDtoForUser($userId);
+
+        $this->render('groups', ['groupsData' => $groups]);
     }
     public function addGroup()
     {

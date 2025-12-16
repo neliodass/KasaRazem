@@ -2,6 +2,7 @@
 
 
 require_once "repository/GroupRepository.php";
+require_once "src/dtos/GroupListDTO.php";
 class GroupService
 {
     private static $instance = null;
@@ -27,5 +28,26 @@ class GroupService
     public function getUsersInGroup(string $groupId): array
     {
         return $this->groupRepository->getUsersInGroup((int)$groupId);
+    }
+
+    public function getGroupsForUser(int $userId): array
+    {
+        return $this->groupRepository->getGroupsByUserId($userId);
+    }
+    public function getGroupsListDtoForUser(int $userId): array
+    {
+        $groupsData = $this->groupRepository->getGroupsByUserId($userId);
+        $groupsDtos = [];
+        foreach ($groupsData as $data) {
+            $entity = $data['group'];
+            $dto = new GroupListDTO();
+            $dto->id = $entity->id;
+            $dto->name = $entity->name;
+            $dto->invite_id = $entity->invite_id;
+            $dto->member_count = $data['member_count'];
+
+            $groupsDtos[] = $dto;
+        }
+        return $groupsDtos;
     }
 }

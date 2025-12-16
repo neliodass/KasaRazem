@@ -1,5 +1,6 @@
 <?php
 require_once "repository/Repository.php";
+require_once "src/entities/Group.php";
 
 class GroupRepository extends Repository
 {
@@ -34,8 +35,25 @@ WHERE gm_filter.user_id = :userId;'
         $query->bindParam(':userId', $userId, PDO::PARAM_STR);
         $query->execute();
         $groups = $query->fetchAll(PDO::FETCH_ASSOC);
+        $groupsEntities = [];
+        foreach ($groups as $data) {
+            $group = new Group();
+            $group->id = (int)$data['id'];
+            $group->name = $data['name'];
+            $group->created_by_user_id = (int)$data['created_by_user_id'];
+            $group->invite_id = $data['invite_id'];
+            try {
+                $group->created_at = new DateTimeImmutable($data['created_at']);
+            } catch (Exception $e) {
+                throw new \RuntimeException("Błąd parsowania daty: " . $e->getMessage());
+            }
+            $groupsEntities[] = [
+                'group' => $group,
+                'member_count' => (int)$data['member_count']
+            ];
+        }
 
-        return $groups;
+        return $groupsEntities;
     }
 
     public function getGroupIdByInviteCode(string $inviteCode): ?int
