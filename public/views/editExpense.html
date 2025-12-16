@@ -81,9 +81,9 @@
                             <option disabled="" value="">Wybierz</option>
                             <?php if(!empty($categories)):
             foreach ($categories as $category):
-            $selected = ($category['id'] == $expense->categoryId) ? 'selected' : '';
+            $selected = ($category->id == $expense->categoryId) ? 'selected' : '';
 ?>
-                            <option value="<?= $category['id'] ?>" <?= $selected ?>><?= $category['name'] ?></option>
+                            <option value="<?= $category->id ?>" <?= $selected ?>><?= $category->name ?></option>
                             <?php endforeach;
     endif;
     ?>
@@ -111,10 +111,10 @@
                     <?php
         if(!empty($users)):
             foreach ($users as $user):
-            $selected = ($user['id'] == $expense->paidByUserId) ? 'selected' : '';
+            $selected = ($user->id == $expense->paidByUserId) ? 'selected' : '';
 ?>
                     <option <?= $selected ?>
-                    value="<?= $user['id'] ?>"><?= $user['firstname'] ?> <?= $user['lastname'] ?></option>
+                    value="<?= $user->id ?>"><?= $user->firstname ?> <?= $user->lastname ?></option>
                     <?php endforeach;
     endif;
     ?>
@@ -126,15 +126,15 @@
                     <?php
         if(!empty($users)):
             foreach ($users as $user):
-            $checked = in_array($user['id'], $splitUserIds) ? 'checked' : '';
+            $checked = in_array($user->id, $splitUserIds) ? 'checked' : '';
 ?>
                     <div class="user-split-item">
                         <div class="split-user-details">
                             <img class="user-avatar" alt="Avatar of user 1"
                                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIspL8uVDwe572-ePv26dWXcOQbcJMq_UwUF7_929Mu_LSA4hhrzykzZmlaz_AlocYt3hD-_lUx8BvjXP4SrNOPCBHEQlW5G_I8pJRSkvDyucTI22JiMp1Jt7CnzTth43iNB6tqzbHUd71XpqS04ak3UGUQT5CISRDd3MIiFHWSz6lmAnyL0jCz2_piOiY9E_oCJmjW8i_RU2jDzI5UEp2uxWAdfdZTrVqHxomDaAR9QgsLL-RAih7B3-zM26Vw39W_3Jn03aAvs-L"/>
-                            <span style="font-weight: 600;"><?= $user['firstname'] ?> <?= $user['lastname'] ?></span>
+                            <span style="font-weight: 600;"><?= $user->firstname ?> <?= $user->lastname ?></span>
                         </div>
-                        <input <?= $checked ?> class="checkbox-style" type="checkbox" name="split_user_<?= $user['id'] ?>" value="1"/>
+                        <input <?= $checked ?> class="checkbox-style" type="checkbox" name="split_user_<?= $user->id ?>" value="1"/>
                     </div>
                     <?php endforeach;
     endif;

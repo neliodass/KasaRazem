@@ -14,7 +14,7 @@
 
             <div style="display: flex; flex-direction: column; align-items: flex-start; flex-grow: 1;">
                 <p class="detail-value" style="margin-bottom: 0.25rem;">
-                    <?= $settlement['from_name'] ?> płaci do <?= $settlement['to_name'] ?>
+                    <?= $settlement->fromUserName ?> płaci do <?= $settlement->toUserName ?>
                 </p>
                 <p class="list-item-secondary-text">
                     Zrównanie długu.
@@ -23,16 +23,18 @@
 
             <div style="display: flex; flex-direction: column; align-items: flex-end;">
                 <p class="split-amount-negative" style="font-size: 1.125rem;">
-                    <?= number_format($settlement['amount'] ?? 0, 2, ',', ' ') ?> zł
+                    <?= number_format($settlement->amount ?? 0, 2, ',', ' ') ?> zł
                 </p>
             </div>
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <button type="button"
                         class="action-button primary small-button"
                         data-toggle="modal"
-                        data-payer="<?= $settlement['from'] ?>"
-                        data-payee="<?= $settlement['to'] ?>"
-                        data-amount="<?= $settlement['amount'] ?>"
+                        data-payer="<?= $settlement->fromUserId ?>"
+                        data-payee="<?= $settlement->toUserId ?>"
+                        data-amount="<?= $settlement->amount ?>"
+                        data-payer-name="<?= htmlspecialchars($settlement->fromUserName) ?>"
+                        data-payee-name="<?= htmlspecialchars($settlement->toUserName) ?>"
                         style="height: 2rem; font-size: 0.8rem; margin-top: 0.5rem;">
                     Uregulowane
                 </button>
@@ -76,20 +78,17 @@
         const modal = document.getElementById('settle-modal');
         const cancelButton = document.getElementById('modal-settle-cancel');
         const buttons = document.querySelectorAll('[data-toggle="modal"]');
-        const form = document.getElementById('settle-form');
-        const userMap = {
-        <?php foreach ($usersInGroup ?? [] as $user): ?>
-        '<?= $user['id'] ?>': '<?= addslashes($user['firstname'] . ' ' . $user['lastname']) ?>',
-            <?php endforeach; ?>
-    };
 
         buttons.forEach(button => {
             button.addEventListener('click', function() {
                 const payerId = this.getAttribute('data-payer');
                 const payeeId = this.getAttribute('data-payee');
                 const amount = parseFloat(this.getAttribute('data-amount')).toFixed(2).replace('.', ',');
-                document.getElementById('modal-from').textContent = userMap[payerId] || payerId;
-                document.getElementById('modal-to').textContent = userMap[payeeId] || payeeId;
+                const payerName = this.getAttribute('data-payer-name');
+                const payeeName = this.getAttribute('data-payee-name');
+
+                document.getElementById('modal-from').textContent = payerName;
+                document.getElementById('modal-to').textContent = payeeName;
                 document.getElementById('modal-amount').textContent = amount;
                 document.getElementById('modal-payer-id').value = payerId;
                 document.getElementById('modal-payee-id').value = payeeId;
@@ -102,8 +101,9 @@
         cancelButton.addEventListener('click', function() {
             modal.classList.remove('visible');
         });
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal) {
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
                 modal.classList.remove('visible');
             }
         });

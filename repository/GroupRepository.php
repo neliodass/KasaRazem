@@ -148,4 +148,32 @@ WHERE gm_filter.user_id = :userId;'
         return $users;
     }
 
+    public function getUsersByGroupId(int $groupId): array
+    {
+        $query = $this->conn->prepare(
+            'SELECT u.* FROM users u
+            JOIN group_members gm ON u.id = gm.user_id
+            WHERE gm.group_id = :groupId'
+        );
+
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->execute();
+
+        $usersData = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        $users = [];
+        foreach ($usersData as $userData) {
+            $user = new User();
+            $user->id = (int)$userData['id'];
+            $user->firstname = $userData['firstname'];
+            $user->lastname = $userData['lastname'];
+            $user->email = $userData['email'];
+            $user->bio = $userData['bio'] ?? null;
+            $user->enabled = (bool)$userData['enabled'];
+            $users[] = $user;
+        }
+
+        return $users;
+    }
+
 }

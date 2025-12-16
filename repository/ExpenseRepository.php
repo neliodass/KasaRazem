@@ -3,6 +3,7 @@
 require_once "src/entities/Expense.php";
 require_once "repository/CategoryRepository.php";
 require_once "src/entities/ExpenseSplit.php";
+require_once "src/entities/Settlement.php";
 
 class ExpenseRepository extends Repository
 {
@@ -93,33 +94,11 @@ class ExpenseRepository extends Repository
         return $splits;
     }
 
-    public function getUsersByGroupId(int $groupId): ?array
+    public function getCategories(): array
     {
-        $query = $this->conn->prepare(
-            'SELECT u.* FROM users u
-            JOIN group_members gm ON u.id = gm.user_id
-            WHERE gm.group_id = :groupId'
-        );
-
-        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
-        $query->execute();
-
-        $users = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        return $users;
+        return $this->categoryRepository->getAll();
     }
-    public function getCategories(): ?array
-    {
-        $query = $this->conn->prepare(
-            'SELECT * FROM categories'
-        );
 
-        $query->execute();
-
-        $categories = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        return $categories;
-    }
     public function addExpense(string $name,int $groupId, int $paidByUserId,float $amount,$date,$categoryId,Array $splitUsers): ?int
     {
         $this->conn->beginTransaction();
@@ -208,13 +187,25 @@ class ExpenseRepository extends Repository
     public function getSettlementsByGroupId(int $groupId): array
     {
         $query = $this->conn->prepare(
-            'SELECT payer_user_id, payee_user_id, amount 
-         FROM settlements 
-         WHERE group_id = :groupId'
+            'SELECT * FROM settlements WHERE group_id = :groupId'
         );
         $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
         $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        $settlementsData = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        $settlements = [];
+        foreach ($settlementsData as $data) {
+            $settlement = new Settlement();
+            $settlement->id = (int)$data['id'];
+            $settlement->group_id = (int)$data['group_id'];
+            $settlement->payer_user_id = (int)$data['payer_user_id'];
+            $settlement->payee_user_id = (int)$data['payee_user_id'];
+            $settlement->amount = (float)$data['amount'];
+            $settlement->date_settled = new DateTimeImmutable($data['date_settled']);
+            $settlements[] = $settlement;
+        }
+
+        return $settlements;
     }
     public function getExpenseDetails(int $expenseId): ?Expense
     {
@@ -230,8 +221,6 @@ class ExpenseRepository extends Repository
         if (!$data) {
             return null;
         }
-
-        // hydrateExpense automatycznie załaduje paidBy, category i splits
         return $this->hydrateExpense($data);
     }
     public function deleteExpense(int $expenseId): bool

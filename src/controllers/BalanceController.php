@@ -2,13 +2,16 @@
 
 require_once "src/services/BalanceService.php";
 require_once "src/services/GroupService.php";
+require_once "src/services/AuthService.php";
 require_once "repository/SettlementRepository.php";
+require_once "src/dtos/SettleDebtRequestDTO.php";
 
 class BalanceController extends AppController
 {
     private static $instance = null;
     private GroupService $groupService;
     private BalanceService $balanceService;
+    private AuthService $authService;
     private SettlementRepository $settlementRepository;
 
     public static function getInstance()
@@ -23,78 +26,79 @@ class BalanceController extends AppController
     {
         $this->groupService = GroupService::getInstance();
         $this->balanceService = BalanceService::getInstance();
+        $this->authService = AuthService::getInstance();
         $this->settlementRepository = SettlementRepository::getInstance();
     }
 
     public function balance($groupId)
     {
-        Auth::requireLogin();
-        $currentUserId = (string)Auth::userId();
-        $balanceData = $this->balanceService->getBalanceSummary((string)$groupId, (string)$currentUserId);
+        $this->authService->verifyUserInGroup($groupId);
+
+        $currentUserId = (int)Auth::userId();
+        $groupName = $this->groupService->getGroupName((string)$groupId);
+
+        $balanceDTO = $this->balanceService->getBalanceForView(
+            (int)$groupId,
+            $currentUserId,
+            $groupName
+        );
+
         $this->render('moneyBalance', [
-            "activeTab" => "balance",
-            "groupName" => ($this->groupService)->getGroupName((string)$groupId),
-            "groupId" => $groupId,
-            "balance" => $balanceData['balance'],
-            "currentUserNetBalance" => $balanceData['currentUserNetBalance'],
-            "currentUserBalanceEmoji"=> $this->balanceService->getBalanceEmoji($balanceData['currentUserNetBalance'])
+            'activeTab' => 'balance',
+            'groupName' => $balanceDTO->groupName,
+            'groupId' => $balanceDTO->groupId,
+            'balance' => $balanceDTO->balanceItems,
+            'currentUserNetBalance' => $balanceDTO->currentUserNetBalance,
+            'currentUserBalanceEmoji' => $balanceDTO->currentUserBalanceEmoji
         ]);
-        exit();
     }
 
     public function settleDetails($groupId)
     {
-        Auth::requireLogin();
-        $groupId = (int)$groupId;
+        $this->authService->verifyUserInGroup($groupId);
+
         $currentUserId = (int)Auth::userId();
-        $balanceData = $this->balanceService->getBalanceSummary((string)$groupId, (string)$currentUserId);
-        $settlements = $this->balanceService->calculateSettlements($balanceData['balance']);
-        $usersInGroup = $this->groupService->getUsersInGroup($groupId);
-        $users = array_column($usersInGroup, 'firstname', 'id');
-        $settlementsNamed = [];
-        foreach ($settlements as $settlement) {
-            $settlement['from_name'] = $users[$settlement['from']];
-            $settlement['to_name'] = $users[$settlement['to']];
-            $settlementsNamed[] = $settlement;
-        }
+        $groupName = $this->groupService->getGroupName((string)$groupId);
+
+        $settlementsDTO = $this->balanceService->getSettlementsForView(
+            (int)$groupId,
+            $currentUserId,
+            $groupName
+        );
 
         $this->render('settlementsDetails', [
-            "activeTab" => "balance",
-            "groupName" => ($this->groupService)->getGroupName((string)$groupId),
-            "groupId" => $groupId,
-            "settlements" => $settlementsNamed,
-            "usersInGroup" => $usersInGroup
+            'activeTab' => 'balance',
+            'groupName' => $settlementsDTO->groupName,
+            'groupId' => $settlementsDTO->groupId,
+            'settlements' => $settlementsDTO->settlements
         ]);
-        exit();
     }
+
     public function settleDebt($groupId)
     {
-        if(!$this->isPost()) {
-            header("Location: /groups/$groupId/balance");
-            exit();
+        if (!$this->isPost()) {
+            $this->redirect("/groups/$groupId/balance");
+            return;
         }
-        Auth::requireLogin();
-        $groupId = (int)$groupId;
+
+        $this->authService->verifyUserInGroup($groupId);
+
         $currentUserId = (int)Auth::userId();
-        $payerId = (int)$_POST['payer_id']??0;
-        $payeeId = (int)$_POST['payee_id']??0;
-        $amount = (float)$_POST['amount']??0.0;
-        if($payerId !== $currentUserId && $payeeId !== $currentUserId) {
-            header("Location: /groups/$groupId/balance");
-            exit();
+        $dto = SettleDebtRequestDTO::fromPost((int)$groupId);
+
+        if (!$dto->validate($currentUserId)) {
+            $this->redirect("/groups/$groupId/settlements");
+            return;
         }
-        if($amount >0 && $payerId !== $payeeId) {
-            $this->settlementRepository->addSettlement(
-                $payerId,
-                $payeeId,
-                $amount,
-                $groupId,
-                date('Y-m-d')
-            );
-        }
-        $this->redirect('/groups/' . $groupId . '/settlements');
-        exit();
+
+        $this->settlementRepository->addSettlement(
+            $dto->payerId,
+            $dto->payeeId,
+            $dto->amount,
+            $dto->groupId,
+            date('Y-m-d')
+        );
+
+        $this->redirect("/groups/$groupId/settlements");
     }
-
-
 }

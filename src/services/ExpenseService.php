@@ -1,6 +1,7 @@
 <?php
 
 require_once 'repository/ExpenseRepository.php';
+require_once 'repository/GroupRepository.php';
 require_once 'src/dtos/ExpenseOutputDTO.php';
 require_once 'src/dtos/CreateExpenseRequestDTO.php';
 require_once 'src/dtos/ExpenseEditOutputDTO.php';
@@ -12,6 +13,8 @@ class ExpenseService
 {
     private static $instance = null;
     private ExpenseRepository $expenseRepository;
+    private GroupRepository $groupRepository;
+
     public static function getInstance()
     {
         if (self::$instance == null) {
@@ -19,9 +22,11 @@ class ExpenseService
         }
         return self::$instance;
     }
+
     public function __construct()
     {
         $this->expenseRepository = ExpenseRepository::getInstance();
+        $this->groupRepository = GroupRepository::getInstance();
     }
 
     public function getExpensesSummaryList(int $groupId): array
@@ -56,7 +61,7 @@ class ExpenseService
     }
     public function getGroupUsers(int $groupId): array
     {
-        return $this->expenseRepository->getUsersByGroupId($groupId);
+        return $this->groupRepository->getUsersByGroupId($groupId);
     }
 
     public function getCategories(): array
@@ -120,7 +125,7 @@ class ExpenseService
             return null;
         }
 
-        $users = $this->expenseRepository->getUsersByGroupId($groupId);
+        $users = $this->groupRepository->getUsersByGroupId($groupId);
         $categories = $this->expenseRepository->getCategories();
 
         return new ExpenseEditOutputDTO($expense, $users, $categories);

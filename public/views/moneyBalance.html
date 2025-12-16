@@ -52,20 +52,20 @@
 <!--                        <span class="material-symbols-outlined" style="color: #f79009;"><?= $expense['icon'] ?></span>-->
                     </div>
                     <div class="list-text-details">
-                        <p class="list-item-primary-text"><?= $balanceItem['userName']  ?></p>
+                        <p class="list-item-primary-text"><?= $balanceItem->userName  ?></p>
 
-                        <?php if($balanceItem['isCurrentUser']): ?>
+                        <?php if($balanceItem->isCurrentUser): ?>
                         <p class="list-item-secondary-text">Ja</p>
                         <?php endif; ?>
                     </div>
                 </div>
                 <div class="list-card-right-section">
-                    <?php if($balanceItem['netBalance'] > 0): ?>
-                    <p class="list-item-value positive-balance">+<?= $balanceItem['netBalance']  ?> zł</p>
-                    <?php elseif($balanceItem['netBalance'] < 0): ?>
-                    <p class="list-item-value negative-balance"><?= $balanceItem['netBalance']  ?> zł</p>
+                    <?php if($balanceItem->netBalance > 0): ?>
+                    <p class="list-item-value positive-balance">+<?= $balanceItem->netBalance  ?> zł</p>
+                    <?php elseif($balanceItem->netBalance < 0): ?>
+                    <p class="list-item-value negative-balance"><?= $balanceItem->netBalance  ?> zł</p>
                     <?php else: ?>
-                    <p class="list-item-value"><?= $balanceItem['netBalance']  ?> zł</p>
+                    <p class="list-item-value"><?= $balanceItem->netBalance  ?> zł</p>
                     <?php endif; ?>
                 </div>
             </div>

@@ -9,7 +9,9 @@ class ExpenseEditOutputDTO
     public int $paidByUserId;
     public int $categoryId;
     public array $splitUserIds;
+    /** @var User[] */
     public array $users;
+    /** @var Category[] */
     public array $categories;
 
     public function __construct(Expense $expense, array $users, array $categories)
@@ -20,11 +22,11 @@ class ExpenseEditOutputDTO
         $this->date = $expense->date_incurred->format('Y-m-d');
         $this->paidByUserId = $expense->paid_by_user_id;
         $this->categoryId = $expense->category_id ?? 0;
+
         $this->splitUserIds = [];
         foreach ($expense->splits as $split) {
             $this->splitUserIds[] = $split->user_id;
         }
-
         $this->users = $users;
         $this->categories = $categories;
     }
