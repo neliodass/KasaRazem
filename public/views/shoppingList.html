@@ -95,19 +95,20 @@
 
 </div>
 
-<div class="shopping-bottom-actions">
-    <div class="input-field-wrapper">
-        <div class="add-item-wrapper">
-            <input type="text" id="new-item-name" placeholder="Co trzeba kupić?"
-                   class="add-item-input"
-                   onkeypress="handleEnter(event)">
-            <button onclick="addItem()" class="add-item-btn">
-                <span class="material-symbols-outlined">add</span>
-            </button>
-        </div>
-    </div>
+</main>
+</div>
 
-    </main> </div>
+<div class="shopping-bottom-actions">
+    <div class="add-item-wrapper">
+        <input type="text" id="new-item-name" placeholder="Co trzeba kupić?"
+               class="add-item-input"
+               onkeypress="handleEnter(event)">
+        <button onclick="addItem()" class="add-item-btn">
+            <span class="material-symbols-outlined">add</span>
+        </button>
+    </div>
+</div>
+
 <script>
     window.groupId = <?= $groupId ?>;
     window.currentListId = <?= $activeListId ?? 'null' ?>;
