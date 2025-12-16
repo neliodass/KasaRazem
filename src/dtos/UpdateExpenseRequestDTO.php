@@ -8,8 +8,9 @@ class UpdateExpenseRequestDTO
     public string $date;
     public int $categoryId;
     public array $splitUserIds;
-    public string $splitMode = 'equal';
-    public array $splitRatios = [];
+    public string $splitMode = 'equal'; // 'equal', 'ratio', 'amount'
+    public array $splitRatios = []; // userId => ratio
+    public array $splitAmounts = [];
 
     public static function fromPost(): self
     {
@@ -29,7 +30,6 @@ class UpdateExpenseRequestDTO
                 $dto->splitUserIds[] = (int)$userId;
             }
         }
-
         $ratioPrefix = 'split_ratio_';
         foreach ($_POST as $key => $value) {
             if (str_starts_with($key, $ratioPrefix)) {
@@ -37,6 +37,15 @@ class UpdateExpenseRequestDTO
                 $ratio = (int)($value ?? 1);
                 if ($ratio < 1) $ratio = 1; // minimum 1
                 $dto->splitRatios[$userId] = $ratio;
+            }
+        }
+
+        $amountPrefix = 'split_amount_';
+        foreach ($_POST as $key => $value) {
+            if (str_starts_with($key, $amountPrefix)) {
+                $userId = (int)substr($key, strlen($amountPrefix));
+                $amount = (float)($value ?? 0);
+                $dto->splitAmounts[$userId] = $amount;
             }
         }
 

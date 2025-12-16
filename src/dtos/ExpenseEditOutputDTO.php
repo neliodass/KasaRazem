@@ -9,8 +9,9 @@ class ExpenseEditOutputDTO
     public int $paidByUserId;
     public int $categoryId;
     public array $splitUserIds;
-    public string $splitMode = 'equal';
-    public array $splitRatios = [];
+    public string $splitMode = 'equal'; // 'equal', 'ratio', 'amount'
+    public array $splitRatios = []; // userId => ratio
+    public array $splitAmounts = [];
     /** @var User[] */
     public array $users;
     /** @var Category[] */
@@ -31,24 +32,21 @@ class ExpenseEditOutputDTO
         }
 
         $this->detectSplitMode($expense);
-
         $this->users = $users;
         $this->categories = $categories;
     }
-
     private function detectSplitMode(Expense $expense): void
     {
         if (empty($expense->splits)) {
             $this->splitMode = 'equal';
             return;
         }
-
         $fractions = [];
         foreach ($expense->splits as $split) {
             $fraction = $split->amount_owed / $expense->amount;
             $fractions[$split->user_id] = $fraction;
+            $this->splitAmounts[$split->user_id] = $split->amount_owed;
         }
-
         $firstFraction = reset($fractions);
         $isEqual = true;
         foreach ($fractions as $fraction) {
@@ -64,18 +62,38 @@ class ExpenseEditOutputDTO
                 $this->splitRatios[$userId] = 1;
             }
         } else {
-            $this->splitMode = 'ratio';
-            $this->calculateRatios($fractions);
+            $ratios = $this->calculateRatios($fractions);
+            $allInteger = true;
+            $maxRatio = 0;
+            foreach ($ratios as $ratio) {
+                if ($ratio != floor($ratio) || $ratio > 100) {
+                    $allInteger = false;
+                    break;
+                }
+                $maxRatio = max($maxRatio, $ratio);
+            }
+
+            if ($allInteger && $maxRatio <= 100) {
+                $this->splitMode = 'ratio';
+                $this->splitRatios = $ratios;
+            } else {
+                $this->splitMode = 'amount';
+                foreach ($fractions as $userId => $fraction) {
+                    $this->splitRatios[$userId] = 1;
+                }
+            }
         }
     }
 
-    private function calculateRatios(array $fractions): void
+    private function calculateRatios(array $fractions): array
     {
+        $ratios = [];
         $minFraction = min($fractions);
         foreach ($fractions as $userId => $fraction) {
             $ratio = round($fraction / $minFraction);
             if ($ratio < 1) $ratio = 1;
-            $this->splitRatios[$userId] = (int)$ratio;
+            $ratios[$userId] = (int)$ratio;
         }
+        return $ratios;
     }
 }

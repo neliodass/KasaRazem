@@ -74,7 +74,16 @@ class ExpenseService
         $count = count($dto->splitUserIds);
 
         if ($count > 0) {
-            if ($dto->splitMode === 'ratio') {
+            if ($dto->splitMode === 'amount') {
+                foreach ($dto->splitUserIds as $userId) {
+                    $amount = $dto->splitAmounts[$userId] ?? 0;
+                    $fraction = $dto->amount > 0 ? $amount / $dto->amount : 0;
+                    $splitUsers[] = [
+                        'id' => $userId,
+                        'fraction' => $fraction,
+                    ];
+                }
+            } elseif ($dto->splitMode === 'ratio') {
                 $totalRatio = 0;
                 foreach ($dto->splitUserIds as $userId) {
                     $ratio = $dto->splitRatios[$userId] ?? 1;
@@ -89,7 +98,7 @@ class ExpenseService
                         'fraction' => $fraction,
                     ];
                 }
-            } else if( $dto->splitMode === 'equal') {
+            } else {
                 $fraction = 1.0 / $count;
                 foreach ($dto->splitUserIds as $userId) {
                     $splitUsers[] = [
@@ -162,7 +171,16 @@ class ExpenseService
         $count = count($dto->splitUserIds);
 
         if ($count > 0) {
-            if ($dto->splitMode === 'ratio') {
+            if ($dto->splitMode === 'amount') {
+                foreach ($dto->splitUserIds as $userId) {
+                    $amount = $dto->splitAmounts[$userId] ?? 0;
+                    $fraction = $dto->amount > 0 ? $amount / $dto->amount : 0;
+                    $splitUsers[] = [
+                        'id' => $userId,
+                        'fraction' => $fraction,
+                    ];
+                }
+            } elseif ($dto->splitMode === 'ratio') {
                 $totalRatio = 0;
                 foreach ($dto->splitUserIds as $userId) {
                     $ratio = $dto->splitRatios[$userId] ?? 1;
@@ -177,7 +195,7 @@ class ExpenseService
                         'fraction' => $fraction,
                     ];
                 }
-            } else if( $dto->splitMode === 'equal') {
+            } else {
                 $fraction = 1.0 / $count;
                 foreach ($dto->splitUserIds as $userId) {
                     $splitUsers[] = [
