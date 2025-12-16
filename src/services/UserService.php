@@ -54,4 +54,11 @@ class UserService
         $_SESSION['user_id'] = $user->id;
         return $user;
     }
+    public function logout(): void
+    {
+        session_start();
+        session_unset();
+        session_destroy();
+    }
+
 }
