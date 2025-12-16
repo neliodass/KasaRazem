@@ -51,7 +51,7 @@ function renderItems(items) {
                     <input type="checkbox"
                            class="shopping-item-checkbox"
                            ${isPurchased ? 'checked' : ''}
-                           onchange="toggleItem(${item.id},${isPurchased})">
+                           onchange="toggleItem(${item.id}, this.checked)">
                     <div class="${isPurchased ? 'purchased-text' : ''}">
                         <p class="item-name">${escapeHtml(item.name)}</p>
                         ${item.subtitle ? `<p class="item-subtitle">${escapeHtml(item.subtitle)}</p>` : ''}
@@ -105,14 +105,12 @@ function handleEnter(e) {
     if (e.key === 'Enter') addItem();
 }
 
-function toggleItem(itemId,currentStatus) {
-    const nextStatus = !currentStatus;
-
+function toggleItem(itemId, newStatus) {
     fetch(`/groups/${window.groupId}/items/${itemId}/toggle`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            isPurchased : nextStatus
+            isPurchased: newStatus
         })
     })
         .then(res => res.json())
