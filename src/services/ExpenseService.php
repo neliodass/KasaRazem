@@ -72,13 +72,40 @@ class ExpenseService
     {
         $splitUsers = [];
         $count = count($dto->splitUserIds);
+
         if ($count > 0) {
-            $fraction = 1.0 / $count;
-            foreach ($dto->splitUserIds as $userId) {
-                $splitUsers[] = [
-                    'id' => $userId,
-                    'fraction' => $fraction,
-                ];
+            if ($dto->splitMode === 'amount') {
+                foreach ($dto->splitUserIds as $userId) {
+                    $amount = $dto->splitAmounts[$userId] ?? 0;
+                    $fraction = $dto->amount > 0 ? $amount / $dto->amount : 0;
+                    $splitUsers[] = [
+                        'id' => $userId,
+                        'fraction' => $fraction,
+                    ];
+                }
+            } elseif ($dto->splitMode === 'ratio') {
+                $totalRatio = 0;
+                foreach ($dto->splitUserIds as $userId) {
+                    $ratio = $dto->splitRatios[$userId] ?? 1;
+                    $totalRatio += $ratio;
+                }
+
+                foreach ($dto->splitUserIds as $userId) {
+                    $ratio = $dto->splitRatios[$userId] ?? 1;
+                    $fraction = $ratio / $totalRatio;
+                    $splitUsers[] = [
+                        'id' => $userId,
+                        'fraction' => $fraction,
+                    ];
+                }
+            } else {
+                $fraction = 1.0 / $count;
+                foreach ($dto->splitUserIds as $userId) {
+                    $splitUsers[] = [
+                        'id' => $userId,
+                        'fraction' => $fraction,
+                    ];
+                }
             }
         }
 
@@ -139,15 +166,43 @@ class ExpenseService
         if (!$dto->validate()) {
             return false;
         }
+
         $splitUsers = [];
         $count = count($dto->splitUserIds);
+
         if ($count > 0) {
-            $fraction = 1.0 / $count;
-            foreach ($dto->splitUserIds as $userId) {
-                $splitUsers[] = [
-                    'id' => $userId,
-                    'fraction' => $fraction,
-                ];
+            if ($dto->splitMode === 'amount') {
+                foreach ($dto->splitUserIds as $userId) {
+                    $amount = $dto->splitAmounts[$userId] ?? 0;
+                    $fraction = $dto->amount > 0 ? $amount / $dto->amount : 0;
+                    $splitUsers[] = [
+                        'id' => $userId,
+                        'fraction' => $fraction,
+                    ];
+                }
+            } elseif ($dto->splitMode === 'ratio') {
+                $totalRatio = 0;
+                foreach ($dto->splitUserIds as $userId) {
+                    $ratio = $dto->splitRatios[$userId] ?? 1;
+                    $totalRatio += $ratio;
+                }
+
+                foreach ($dto->splitUserIds as $userId) {
+                    $ratio = $dto->splitRatios[$userId] ?? 1;
+                    $fraction = $ratio / $totalRatio;
+                    $splitUsers[] = [
+                        'id' => $userId,
+                        'fraction' => $fraction,
+                    ];
+                }
+            } else {
+                $fraction = 1.0 / $count;
+                foreach ($dto->splitUserIds as $userId) {
+                    $splitUsers[] = [
+                        'id' => $userId,
+                        'fraction' => $fraction,
+                    ];
+                }
             }
         }
 
