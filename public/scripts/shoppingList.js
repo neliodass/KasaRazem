@@ -42,7 +42,7 @@ function renderItems(items) {
     let activeCount = 0;
 
     items.forEach(item => {
-        const isPurchased = item.is_purchased;
+        const isPurchased = item.isPurchased;
         if (!isPurchased) activeCount++;
 
         const html = `
