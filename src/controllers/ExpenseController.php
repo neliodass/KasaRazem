@@ -6,6 +6,7 @@ require_once "core/Auth.php";
 require_once "repository/ExpenseRepository.php";
 require_once 'src/dtos/ExpenseOutputDTO.php';
 require_once 'src/dtos/CreateExpenseRequestDTO.php';
+require_once 'src/dtos/UpdateExpenseRequestDTO.php';
 
 require_once "src/services/AuthService.php";
 require_once "src/services/ExpenseService.php";
@@ -13,14 +14,12 @@ require_once "src/services/ExpenseService.php";
 class ExpenseController extends AppController
 {
     private static $instance;
-    private ExpenseRepository $expenseRepository;
     private ExpenseService $expenseService;
     private GroupService $groupService;
     private AuthService $authService;
 
     private function __construct()
     {
-        $this->expenseRepository = ExpenseRepository::getInstance();
         $this->groupService = GroupService::getInstance();
         $this->authService = AuthService::getInstance();
         $this->expenseService = ExpenseService::getInstance();
@@ -95,23 +94,22 @@ class ExpenseController extends AppController
     public function editExpense($groupId, $expenseId)
     {
         $this->authService->verifyUserInGroup($groupId);
-        $expense = $this->expenseRepository->getExpenseDetails((int)$expenseId);
-        if (!$expense || (int)$expense['group_id'] !== (int)$groupId) {
-            echo $expense['group_id'];
-            echo $groupId;
+
+        $expenseDTO = $this->expenseService->getExpenseForEdit((int)$groupId, (int)$expenseId);
+
+        if (!$expenseDTO) {
             $this->redirect("/groups/" . $groupId . "/expenses");
             return;
         }
+
         $userId = (int)Auth::userId();
-        $users = $this->expenseRepository->getUsersByGroupId($groupId);
-        $categories = $this->expenseRepository->getCategories();
-        $splitUserIds = array_column($expense['splits'], 'user_id');
+
         $this->render('editExpense', [
-            'expense' => $expense,
-            'users' => $users,
-            'splitUserIds' => $splitUserIds,
+            'expense' => $expenseDTO,
+            'users' => $expenseDTO->users,
+            'splitUserIds' => $expenseDTO->splitUserIds,
             'groupId' => $groupId,
-            'categories' => $categories,
+            'categories' => $expenseDTO->categories,
             'userId' => $userId,
         ]);
     }
@@ -119,30 +117,26 @@ class ExpenseController extends AppController
     public function updateExpense($groupId, $expenseId)
     {
         $this->authService->verifyUserInGroup($groupId);
+
         if (!$this->isPost()) {
             $this->redirect("/groups/" . $groupId . "/expenses");
             return;
         }
-        $name = $_POST['name'] ?? '';
-        $paidBy = (int)($_POST['paidBy'] ?? 0);
-        $amount = (float)($_POST['amount'] ?? 0);
-        $dateIncurred = $_POST['date'] ?? date('Y-m-d');
-        $categoryId = (int)($_POST['category'] ?? 0);
-        $selectedUserIds = [];
-        if(empty($name)||$paidBy===0||$amount<=0||$categoryId===0){
+
+        $dto = UpdateExpenseRequestDTO::fromPost();
+
+        if (!$dto->validate()) {
             $this->redirect("/groups/" . $groupId . "/expenses/" . $expenseId . "/edit");
             return;
         }
-        $splitUsers = $this->getSplitUsers($selectedUserIds);
-        $success = $this->expenseRepository->updateExpense(
-            $expenseId,
-            $name,
-            $paidBy,
-            $amount,
-            $dateIncurred,
-            $categoryId,
-            $splitUsers
-        );
+
+        $success = $this->expenseService->updateExpense((int)$groupId, (int)$expenseId, $dto);
+
+        if (!$success) {
+            $this->redirect("/groups/" . $groupId . "/expenses/" . $expenseId . "/edit");
+            return;
+        }
+
         $this->redirect("/groups/" . $groupId . "/expenses");
     }
 

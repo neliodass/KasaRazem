@@ -3,6 +3,8 @@
 require_once 'repository/ExpenseRepository.php';
 require_once 'src/dtos/ExpenseOutputDTO.php';
 require_once 'src/dtos/CreateExpenseRequestDTO.php';
+require_once 'src/dtos/ExpenseEditOutputDTO.php';
+require_once 'src/dtos/UpdateExpenseRequestDTO.php';
 require_once "src/IconsHelper.php";
 require_once "src/ColorHelper.php";
 
@@ -87,30 +89,71 @@ class ExpenseService
     }
     public function getExpenseDetails(int $groupId, int $expenseId): ?ExpenseDetailsOutputDTO
     {
-        $expenseData = $this->expenseRepository->getExpenseDetails($expenseId);
+        $expense = $this->expenseRepository->getExpenseDetails($expenseId);
 
-        if (!$expenseData) {
-            return null;
-        }
-        if ((int)$expenseData['group_id'] !== $groupId) {
+        if (!$expense || $expense->group_id !== $groupId) {
             return null;
         }
 
-        $categoryId = $expenseData['category_id'];
+        $categoryId = $expense->category_id ?? 0;
         $icon = IconsHelper::$expenseIcon[$categoryId] ?? 'default-icon';
 
         $colors = ColorHelper::generatePastelColorSet();
 
-        return new ExpenseDetailsOutputDTO($expenseData, $icon, $colors);
+        return new ExpenseDetailsOutputDTO($expense, $icon, $colors);
     }
     public function deleteExpense(int $groupId, int $expenseId): void
     {
         $expense = $this->expenseRepository->getExpenseDetails($expenseId);
 
-        if (!$expense || (int)$expense['group_id'] !== $groupId) {
+        if (!$expense || $expense->group_id !== $groupId) {
             return;
         }
 
         $this->expenseRepository->deleteExpense($expenseId);
+    }
+    public function getExpenseForEdit(int $groupId, int $expenseId): ?ExpenseEditOutputDTO
+    {
+        $expense = $this->expenseRepository->getExpenseDetails($expenseId);
+
+        if (!$expense || $expense->group_id !== $groupId) {
+            return null;
+        }
+
+        $users = $this->expenseRepository->getUsersByGroupId($groupId);
+        $categories = $this->expenseRepository->getCategories();
+
+        return new ExpenseEditOutputDTO($expense, $users, $categories);
+    }
+    public function updateExpense(int $groupId, int $expenseId, UpdateExpenseRequestDTO $dto): bool
+    {
+        $expense = $this->expenseRepository->getExpenseDetails($expenseId);
+        if (!$expense || $expense->group_id !== $groupId) {
+            return false;
+        }
+        if (!$dto->validate()) {
+            return false;
+        }
+        $splitUsers = [];
+        $count = count($dto->splitUserIds);
+        if ($count > 0) {
+            $fraction = 1.0 / $count;
+            foreach ($dto->splitUserIds as $userId) {
+                $splitUsers[] = [
+                    'id' => $userId,
+                    'fraction' => $fraction,
+                ];
+            }
+        }
+
+        return $this->expenseRepository->updateExpense(
+            $expenseId,
+            $dto->name,
+            $dto->paidByUserId,
+            $dto->amount,
+            $dto->date,
+            $dto->categoryId,
+            $splitUsers
+        );
     }
 }

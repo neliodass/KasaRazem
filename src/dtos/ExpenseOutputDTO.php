@@ -1,5 +1,7 @@
 <?php
 
+require_once 'src/dtos/ExpenseSplitOutputDTO.php';
+
 class ExpenseSummaryOutputDto
 {
     public int $id;
@@ -12,6 +14,7 @@ class ExpenseSummaryOutputDto
     public string $iconColor;
     public ?int $categoryId = null;
 }
+
 class ExpenseDetailsOutputDTO
 {
     public int $id;
@@ -23,21 +26,27 @@ class ExpenseDetailsOutputDTO
     public string $icon;
     public string $iconBgColor;
     public string $iconColor;
+    /** @var ExpenseSplitOutputDTO[] */
     public array $splits;
 
-    public function __construct(array $data, string $icon, array $colors)
+    public function __construct(Expense $expense, string $icon, array $colors)
     {
-        $this->id = (int)$data['id'];
-        $this->name = $data['name'];
-        $this->amount = (float)$data['amount'];
-        $this->dateIncurred = $data['date_incurred'];
-        $this->payerName = $data['payer_firstname'] . ' ' . $data['payer_lastname'];
-        $this->categoryName = $data['category_name'] ?? 'Inne';
+        $this->id = $expense->id;
+        $this->name = $expense->description;
+        $this->amount = $expense->amount;
+        $this->dateIncurred = $expense->date_incurred->format('Y-m-d');
+        $this->payerName = $expense->paidBy
+            ? $expense->paidBy->firstname . ' ' . $expense->paidBy->lastname
+            : 'Unknown';
+        $this->categoryName = $expense->category ? $expense->category->name : 'Inne';
 
         $this->icon = $icon;
         $this->iconBgColor = $colors['background'];
         $this->iconColor = $colors['icon'];
 
-        $this->splits = $data['splits'] ?? [];
+        $this->splits = [];
+        foreach ($expense->splits as $split) {
+            $this->splits[] = new ExpenseSplitOutputDTO($split);
+        }
     }
 }
