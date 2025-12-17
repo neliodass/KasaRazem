@@ -6,7 +6,6 @@
     <title><?= $groupName ?> - Szczegły</title>
 
     <script>
-        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
         (function() {
             const theme = localStorage.getItem('userTheme') || 'light';
             document.documentElement.classList.add('theme-' + theme);
