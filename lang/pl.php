@@ -1,0 +1,75 @@
+<?php
+
+return [
+    'login' => [
+        'title' => 'Zaloguj się',
+        'cta' => 'Zaloguj sie, aby zarządzać wydatkami',
+        'invalid_credentials' => 'Niewłaściwy email, bądź hasło',
+        'dont_remember_password' =>'Nie pamiętam hasła',
+        'success' => 'Zalogowano pomyślnie',
+        'email_placeholder' => 'Email',
+        'password_placeholder' => 'Hasło',
+        'remember_me' => 'Zapamiętaj mnie',
+        'submit_button' => 'Zaloguj się',
+        'no_account' => 'Nie masz konta?',
+        'register_link' => 'Zarejestruj się',
+        'show_password' => 'Pokaż',
+    ],
+    'register' => [
+        'title' => 'Zarejestruj się',
+        'email_in_use' => 'Email jest już w użyciu',
+        'success' => 'Rejestracja udana. Proszę się zalogować.',
+        'error' => 'Wystąpił błąd podczas rejestracji. Proszę spróbować ponownie.',
+        'firstname_placeholder' => 'Imię',
+        'lastname_placeholder' => 'Nazwisko',
+        'email_placeholder' => 'Email',
+        'password_placeholder' => 'Hasło',
+        'submit_button' => 'Zarejestruj się',
+        'have_account' => 'Masz już konto?',
+        'login_link' => 'Zaloguj się',
+        'show_password' => 'Pokaż',
+    ],
+    'errors' => [
+        'generic' => 'Wystąpił błąd',
+        'not_found' => 'Nie znaleziono',
+        'unauthorized' => 'Brak dostępu',
+        'forbidden' => 'Dostęp zabroniony',
+    ],
+    'audit' => [
+        'login_failed' => 'Nieudane logowanie',
+        'login_success' => 'Udane logowanie',
+    ],
+    'groups' => [
+        'title' => 'Grupy',
+        'create' => 'Utwórz grupę',
+        'join' => 'Dołącz do grupy',
+        'name' => 'Nazwa grupy',
+        'members' => 'Członkowie',
+    ],
+    'expenses' => [
+        'title' => 'Wydatki',
+        'add' => 'Dodaj wydatek',
+        'edit' => 'Edytuj wydatek',
+        'delete' => 'Usuń wydatek',
+        'description' => 'Opis',
+        'amount' => 'Kwota',
+        'date' => 'Data',
+        'category' => 'Kategoria',
+    ],
+    'profile' => [
+        'title' => 'Profil',
+        'edit' => 'Edytuj profil',
+        'change_password' => 'Zmień hasło',
+        'logout' => 'Wyloguj się',
+    ],
+    'common' => [
+        'save' => 'Zapisz',
+        'cancel' => 'Anuluj',
+        'delete' => 'Usuń',
+        'edit' => 'Edytuj',
+        'back' => 'Wróć',
+        'yes' => 'Tak',
+        'no' => 'Nie',
+    ]
+];
+

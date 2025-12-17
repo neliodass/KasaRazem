@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="<?= TranslationService::getInstance()->getCurrentLang() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,7 +32,7 @@
     </style>
     <script src="public/scripts/theme.js"></script>
     <script src="public/scripts/showPassword.js"></script>
-    <title>Rejestracja</title>
+    <title><?= trans('register.title') ?></title>
 </head>
 
 <body>
@@ -41,7 +41,7 @@
         <div class="container">
             <span class="material-symbols-outlined">shopping_cart</span>
         </div>
-        <h1 class="headline">Stwórz konto</h1>
+        <h1 class="headline"><?= trans('register.title') ?></h1>
         <p class="body-text">Zacznij zarządzać wspólnymi wydatkami.</p>
         <div class="form-group-wrapper">
             <form method="post" action="/register">
@@ -52,35 +52,39 @@
                 </p>
                 <?php endif; ?>
                 <div class="input-group">
-                    <label for="firstName" class="sr-only">Imię</label>
-                    <input name="firstName" type="text" id="firstName" placeholder="Wpisz swoje imię" required>
+                    <label for="firstName" class="sr-only"><?= trans('register.firstname_placeholder') ?></label>
+                    <input name="firstName" type="text" id="firstName" placeholder="<?= trans('register.firstname_placeholder') ?>" required>
                 </div>
                 <div class="input-group">
-                    <label for="lastName" class="sr-only">Nazwisko</label>
-                    <input name="lastName" type="text" id="lastName" placeholder="Wpisz swoje nazwisko" required>
+                    <label for="lastName" class="sr-only"><?= trans('register.lastname_placeholder') ?></label>
+                    <input name="lastName" type="text" id="lastName" placeholder="<?= trans('register.lastname_placeholder') ?>" required>
                 </div>
                 <div class="input-group">
-                    <label for="email" class="sr-only">Email</label>
-                    <input name="email" type="email" id="email" placeholder="Wpisz swój email" required>
+                    <label for="email" class="sr-only"><?= trans('register.email_placeholder') ?></label>
+                    <input name="email" type="email" id="email" placeholder="<?= trans('register.email_placeholder') ?>" required>
                 </div>
                 <div class="input-group">
-                    <label for="password" class="sr-only">Hasło</label>
-                    <input name="password" type="password" class="password-input" id="password" placeholder="Wpisz hasło" required>
+                    <label for="password" class="sr-only"><?= trans('register.password_placeholder') ?></label>
+                    <input name="password" type="password" class="password-input" id="password" placeholder="<?= trans('register.password_placeholder') ?>" required>
                     <button type="button" class="show-password-btn">Pokaż</button>
                 </div>
                 <div class="input-group">
-                    <label for="password-repeat" class="sr-only">Hasło</label>
+                    <label for="password-repeat" class="sr-only"><?= trans('register.password_placeholder') ?></label>
                     <input name="password-repeat" class="password-input" type="password" id="password-repeat" placeholder="Powtórz hasło" required>
                     <button type="button" class="show-password-btn">Pokaż</button>
                 </div>
                 <button type="submit" class="login-button">
-                    Zarejestruj się
+                    <?= trans('register.submit_button') ?>
                 </button>
             </form>
         </div>
         <div class="end-section">
-            <span>Masz już konto</span>
-            <a href="/login">Zaloguj się</a>
+            <span><?= trans('register.have_account') ?></span>
+            <a href="/login"><?= trans('register.login_link') ?></a>
+        </div>
+        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center;">
+            <a href="/change-language?lang=pl" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; text-decoration: none;">PL</a>
+            <a href="/change-language?lang=en" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; text-decoration: none;">EN</a>
         </div>
     </div>
 </div>

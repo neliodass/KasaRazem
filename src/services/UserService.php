@@ -6,6 +6,7 @@ require_once 'src/dtos/CreateUserRequestDTO.php';
 require_once 'src/dtos/LoginRequestDTO.php';
 require_once 'core/RememberMe.php';
 require_once 'src/services/AuditService.php';
+require_once 'src/services/TranslationService.php';
 
 class UserService
 {
@@ -30,7 +31,7 @@ class UserService
     public function register(CreateUserRequestDTO $dto): User
     {
         if ($this->userRepository->getUserByEmail($dto->email)) {
-            throw new InvalidArgumentException("Email jest już w użyciu");
+            throw new InvalidArgumentException(trans('register.email_in_use'));
         }
         $hashedPassword = password_hash($dto->password, PASSWORD_BCRYPT);
         $user = new User();
@@ -51,14 +52,14 @@ class UserService
             $this->auditService->log('login_failed', $dto->email, [
                 'reason' => 'invalid_email_format'
             ]);
-            throw new InvalidArgumentException("Niewłaściwy email, bądź hasło");
+            throw new InvalidArgumentException(trans('login.invalid_credentials'));
         }
 
         if (!$user || !password_verify($dto->password, $user->password)) {
             $this->auditService->log('login_failed', $dto->email, [
                 'reason' => !$user ? 'user_not_found' : 'invalid_password'
             ]);
-            throw new InvalidArgumentException("Niewłaściwy email, bądź hasło");
+            throw new InvalidArgumentException(trans('login.invalid_credentials'));
         }
 
         $this->auditService->log('login_success', $dto->email, [

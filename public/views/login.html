@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="<?= TranslationService::getInstance()->getCurrentLang() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,7 +32,7 @@
     </style>
     <script src="public/scripts/theme.js"></script>
     <script src="public/scripts/showPassword.js"></script>
-    <title>Logowanie</title>
+    <title><?= trans('login.title') ?></title>
 </head>
 
 <body>
@@ -41,8 +41,8 @@
             <div class="container">
                 <span class="material-symbols-outlined">shopping_cart</span>
             </div>
-                <h1 class="headline">Witaj ponownie!</h1>
-                <p class="body-text">Zaloguj sie, aby zarządzać wydatkami</p>
+                <h1 class="headline"><?= trans('login.title') ?></h1>
+                <p class="body-text"><?= trans('login.cta') ?></p>
         <div class="form-group-wrapper">
             <form method="post" action="/login">
                 <?= $csrfField(); ?>
@@ -52,29 +52,33 @@
                 </p>
                 <?php endif; ?>
                 <div class="input-group">
-                    <label for="email" class="sr-only">Email</label>
-                    <input name="email" type="email" id="email" placeholder="Email" required>
+                    <label for="email" class="sr-only"><?= trans('login.email_placeholder') ?></label>
+                    <input name="email" type="email" id="email" placeholder="<?= trans('login.email_placeholder') ?>" required>
                 </div>
                 <div class="input-group">
-                    <label for="password" class="sr-only">Hasło</label>
-                    <input name="password" type="password" class="password-input" id="password" placeholder="Hasło" required>
-                    <button type="button" class="show-password-btn">Pokaż</button>
+                    <label for="password" class="sr-only"><?= trans('login.password_placeholder') ?></label>
+                    <input name="password" type="password" class="password-input" id="password" placeholder="<?= trans('login.password_placeholder') ?>" required>
+                    <button type="button" class="show-password-btn"><?= trans('login.show_password') ?></button>
                 </div>
                 <div class="input-group" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0;">
                     <input type="checkbox" name="remember_me" id="remember_me" style="width: auto; height: auto; margin: 0;">
-                    <label for="remember_me" style="margin: 0; font-size: 0.875rem; cursor: pointer;">Zapamiętaj mnie</label>
+                    <label for="remember_me" style="margin: 0; font-size: 0.875rem; cursor: pointer;"><?= trans('login.remember_me') ?></label>
                 </div>
                 <button type="submit" class="login-button">
-                    Zaloguj się
+                    <?= trans('login.submit_button') ?>
                 </button>
                 <div class="forgot-password">
-                    <a href="#">Nie pamiętam hasła</a>
+                    <a href="#"><?= trans('login.dont_remember_password') ?></a>
                 </div>
             </form>
         </div>
         <div class="end-section">
-            <span>Nie masz konta?</span>
-            <a href="/register">Zarejestruj się</a>
+            <span><?= trans('login.no_account') ?></span>
+            <a href="/register"><?= trans('login.register_link') ?></a>
+        </div>
+        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center;">
+            <a href="/change-language?lang=pl" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; text-decoration: none;">PL</a>
+            <a href="/change-language?lang=en" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; text-decoration: none;">EN</a>
         </div>
     </div>
 </div>

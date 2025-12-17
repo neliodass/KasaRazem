@@ -1,6 +1,7 @@
 <?php
 
 require_once 'core/CSRF.php';
+require_once 'src/services/TranslationService.php';
 
 class AppController
 {
@@ -27,7 +28,7 @@ class AppController
     {
         if (!$this->validateCSRF()) {
             http_response_code(403);
-            $this->render('login', ['message' => 'Nieprawidłowy token CSRF. Odśwież stronę i spróbuj ponownie.']);
+            $this->render('login', ['message' => trans('errors.forbidden')]);
             exit();
         }
     }
