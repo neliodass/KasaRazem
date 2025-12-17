@@ -35,4 +35,28 @@ class ProfileController extends \AppController
         $this->render('profile', ['user' => $user]);
     }
 
+    public function changePassword()
+    {
+        Auth::requireLogin();
+        $userId = (int)Auth::userId();
+
+        if (!$this->isPost()) {
+            $this->render('changePassword');
+            return;
+        }
+
+        try {
+            $dto = ChangePasswordRequestDTO::fromPost();
+            $this->profileService->changePassword($userId, $dto);
+
+            $this->render('changePassword', [
+                'message' => 'Hasło zostało pomyślnie zmienione.',
+                'success' => true
+            ]);
+        } catch (Exception $e) {
+            $this->render('changePassword', [
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }

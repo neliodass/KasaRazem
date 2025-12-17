@@ -14,7 +14,7 @@ VALUES (
            'Bartek',
            'Mockowy',
            'bartek.mock@mock.com',
-           '$2y$10$Ww9hGlHkd0qLA.mXVOIgZOlzubXk2BoSydQNlQvjtq3vBtsXehJfy',
+           '$2a$12$3zb5EA4go8LBaCvjq6FSEOfsZ/vWPmASCh9VlLrJnJcNgl1WZMALS',
            'Lubi programować w JS i PL/SQL.',
            TRUE
        );
