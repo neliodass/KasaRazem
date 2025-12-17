@@ -92,7 +92,7 @@ WHERE gm_filter.user_id = :userId;'
     }
 
     public
-    function getGroupById(int $id): ?array
+    function getGroupById(int $id): ?Group
     {
         $query = $this->conn->prepare(
             'SELECT g.* FROM groups g WHERE g.id = :id'
@@ -102,8 +102,9 @@ WHERE gm_filter.user_id = :userId;'
         $query->execute();
 
         $group = $query->fetch();
+        $group = Group::fromArray($group);
+        return $group;
 
-        return $group !== false ? $group : null;
     }
 
     public
@@ -203,6 +204,29 @@ WHERE gm_filter.user_id = :userId;'
     }
 
     public function removeUserFromGroup(int $groupId, int $userId): bool
+    {
+        $query = $this->conn->prepare(
+            'DELETE FROM group_members WHERE group_id = :groupId AND user_id = :userId'
+        );
+
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->bindParam(':userId', $userId, PDO::PARAM_INT);
+
+        return $query->execute();
+    }
+
+    public function updateGroupName(int $id, string $name)
+    {
+        $query = $this->conn->prepare(
+            'UPDATE groups SET name = :name WHERE id = :id'
+        );
+
+        $query->bindParam(':id', $id, PDO::PARAM_INT);
+        $query->bindParam(':name', $name, PDO::PARAM_STR);
+
+        return $query->execute();
+    }
+    public function deleteUserFromGroup(int $groupId, int $userId): bool
     {
         $query = $this->conn->prepare(
             'DELETE FROM group_members WHERE group_id = :groupId AND user_id = :userId'

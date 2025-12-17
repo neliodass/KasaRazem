@@ -21,6 +21,7 @@ $router->add('POST', 'groups/join', ['controller' => 'GroupController', 'action'
 $router->add('GET','groups/create',['controller' => 'GroupController', 'action' => 'createGroup']);
 $router->add('POST','groups/{groupId}/delete',['controller' => 'GroupController', 'action' => 'deleteGroup']);
 $router->add('GET','groups/{groupId}/edit',['controller' => 'GroupController', 'action' => 'editGroup']);
+$router->add('POST','groups/{groupId}/edit',['controller' => 'GroupController', 'action' => 'editGroup']);
 $router->add('POST','groups/{groupId}/deleteUser',['controller' => 'GroupController', 'action' => 'deleteUserFromGroup']);
 $router->add('GET','groups/{groupId}/expense/{expenseId}',['controller' => 'ExpenseController', 'action' => 'getExpense']);
 $router->add('POST','groups/{groupId}/expense/{expenseId}/delete',['controller' => 'ExpenseController', 'action' => 'deleteExpense']);
