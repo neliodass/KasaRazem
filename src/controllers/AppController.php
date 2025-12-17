@@ -27,7 +27,8 @@ class AppController
     {
         if (!$this->validateCSRF()) {
             http_response_code(403);
-            die('Nieprawidłowy token CSRF. Odśwież stronę i spróbuj ponownie.');
+            $this->render('login', ['message' => 'Nieprawidłowy token CSRF. Odśwież stronę i spróbuj ponownie.']);
+            exit();
         }
     }
 
