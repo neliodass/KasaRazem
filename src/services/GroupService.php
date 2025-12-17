@@ -128,13 +128,10 @@ class GroupService
             $dto->firstname = $user->firstname;
             $dto->lastname = $user->lastname;
             $dto->email = $user->email;
+            $dto->profile_picture = $user->profile_picture;
             $usersToDelete[] = $dto;
         }
         return $usersToDelete;
-    }
-
-    public function updateGroup(int $param, EditGroupNameDTO $dto): bool
-    {
     }
 
     public function deleteUserFromGroup(int $groupId, int $userId)

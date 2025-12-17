@@ -125,11 +125,14 @@
                     <?php
         if(!empty($users)):
             foreach ($users as $user):
+                $avatarUrl = isset($user->profile_picture) && !empty($user->profile_picture)
+                    ? htmlspecialchars($user->profile_picture)
+                    : 'https://ui-avatars.com/api/?name=' . urlencode($user->firstname . '+' . $user->lastname) . '&size=44&background=4CAF50&color=fff&bold=true';
 ?>
                     <div class="user-split-item" data-user-id="<?= $user->id ?>">
                         <div class="split-user-details">
-                            <img class="user-avatar" alt="Avatar of user 1"
-                                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIspL8uVDwe572-ePv26dWXcOQbcJMq_UwUF7_929Mu_LSA4hhrzykzZmlaz_AlocYt3hD-_lUx8BvjXP4SrNOPCBHEQlW5G_I8pJRSkvDyucTI22JiMp1Jt7CnzTth43iNB6tqzbHUd71XpqS04ak3UGUQT5CISRDd3MIiFHWSz6lmAnyL0jCz2_piOiY9E_oCJmjW8i_RU2jDzI5UEp2uxWAdfdZTrVqHxomDaAR9QgsLL-RAih7B3-zM26Vw39W_3Jn03aAvs-L"/>
+                            <img class="user-avatar" alt="Avatar <?= htmlspecialchars($user->firstname) ?>"
+                                 src="<?= $avatarUrl ?>"/>
                             <span style="font-weight: 600;"><?= $user->firstname ?> <?= $user->lastname ?></span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.75rem;">

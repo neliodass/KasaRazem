@@ -6,6 +6,7 @@ require_once 'src/dtos/ExpenseOutputDTO.php';
 require_once 'src/dtos/CreateExpenseRequestDTO.php';
 require_once 'src/dtos/ExpenseEditOutputDTO.php';
 require_once 'src/dtos/UpdateExpenseRequestDTO.php';
+require_once 'src/dtos/UserSelectOutputDTO.php';
 require_once "src/IconsHelper.php";
 require_once "src/ColorHelper.php";
 
@@ -61,7 +62,8 @@ class ExpenseService
     }
     public function getGroupUsers(int $groupId): array
     {
-        return $this->groupRepository->getUsersByGroupId($groupId);
+        $users = $this->groupRepository->getUsersByGroupId($groupId);
+        return UserSelectOutputDTO::fromUsers($users);
     }
 
     public function getCategories(): array
