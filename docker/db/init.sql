@@ -4,17 +4,16 @@ CREATE TABLE users (
                        lastname VARCHAR(100) NOT NULL,
                        email VARCHAR(150) UNIQUE NOT NULL,
                        password VARCHAR(255) NOT NULL,
-                       bio TEXT,
+                       profile_picture VARCHAR(255),
                        enabled BOOLEAN DEFAULT TRUE
 );
 
-INSERT INTO users (firstname, lastname, email, password, bio, enabled)
+INSERT INTO users (firstname, lastname, email, password, enabled)
 VALUES (
            'Bartek',
            'Mockowy',
            'bartek.mock@mock.com',
-           '$2y$10$Ww9hGlHkd0qLA.mXVOIgZOlzubXk2BoSydQNlQvjtq3vBtsXehJfy',
-           'Lubi programować w JS i PL/SQL.',
+           '$2a$12$3zb5EA4go8LBaCvjq6FSEOfsZ/vWPmASCh9VlLrJnJcNgl1WZMALS',
            TRUE
        );
 CREATE TABLE categories (

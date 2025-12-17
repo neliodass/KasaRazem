@@ -48,10 +48,15 @@ class UserRepository extends Repository
     {
         if ($user->id !== null) {
             $query = $this->conn->prepare(
-                'UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email, password = :password, bio = :bio, enabled = :enabled WHERE id = :id'
+                'UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email, password = :password, profile_picture = :profile_picture, enabled = :enabled WHERE id = :id'
             );
 
-            $this->bindQueryUserSave($query, $user);
+            $query->bindValue(':firstname', $user->firstname, PDO::PARAM_STR);
+            $query->bindValue(':lastname', $user->lastname, PDO::PARAM_STR);
+            $query->bindValue(':email', $user->email, PDO::PARAM_STR);
+            $query->bindValue(':password', $user->password, PDO::PARAM_STR);
+            $query->bindValue(':profile_picture', $user->profile_picture, PDO::PARAM_STR);
+            $query->bindValue(':enabled', (int)$user->enabled, PDO::PARAM_INT);
             $query->bindValue(':id', $user->id, PDO::PARAM_INT);
 
             $query->execute();
@@ -62,9 +67,14 @@ class UserRepository extends Repository
 
         if ($supportsReturning) {
             $query = $this->conn->prepare(
-                'INSERT INTO users (firstname, lastname, email, password, bio, enabled) VALUES (:firstname, :lastname, :email, :password, :bio, :enabled) RETURNING id'
+                'INSERT INTO users (firstname, lastname, email, password, profile_picture, enabled) VALUES (:firstname, :lastname, :email, :password, :profile_picture, :enabled) RETURNING id'
             );
-            $this->bindQueryUserSave($query, $user);
+            $query->bindValue(':firstname', $user->firstname, PDO::PARAM_STR);
+            $query->bindValue(':lastname', $user->lastname, PDO::PARAM_STR);
+            $query->bindValue(':email', $user->email, PDO::PARAM_STR);
+            $query->bindValue(':password', $user->password, PDO::PARAM_STR);
+            $query->bindValue(':profile_picture', $user->profile_picture, PDO::PARAM_STR);
+            $query->bindValue(':enabled', (int)$user->enabled, PDO::PARAM_INT);
 
             $query->execute();
 
@@ -74,9 +84,14 @@ class UserRepository extends Repository
             }
         } else {
             $query = $this->conn->prepare(
-                'INSERT INTO users (firstname, lastname, email, password, bio, enabled) VALUES (:firstname, :lastname, :email, :password, :bio, :enabled)'
+                'INSERT INTO users (firstname, lastname, email, password, profile_picture, enabled) VALUES (:firstname, :lastname, :email, :password, :profile_picture, :enabled)'
             );
-            $this->bindQueryUserSave($query, $user);
+            $query->bindValue(':firstname', $user->firstname, PDO::PARAM_STR);
+            $query->bindValue(':lastname', $user->lastname, PDO::PARAM_STR);
+            $query->bindValue(':email', $user->email, PDO::PARAM_STR);
+            $query->bindValue(':password', $user->password, PDO::PARAM_STR);
+            $query->bindValue(':profile_picture', $user->profile_picture, PDO::PARAM_STR);
+            $query->bindValue(':enabled', (int)$user->enabled, PDO::PARAM_INT);
 
             $query->execute();
             $newId = (int)$this->conn->lastInsertId('users_id_seq');
@@ -86,21 +101,5 @@ class UserRepository extends Repository
 
         return $user;
     }
-
-    /**
-     * @param false|PDOStatement $query
-     * @param User $user
-     * @return void
-     */
-    private function bindQueryUserSave(false|PDOStatement $query, User $user): void
-    {
-        $query->bindValue(':firstname', $user->firstname, PDO::PARAM_STR);
-        $query->bindValue(':lastname', $user->lastname, PDO::PARAM_STR);
-        $query->bindValue(':email', $user->email, PDO::PARAM_STR);
-        $query->bindValue(':password', $user->password, PDO::PARAM_STR);
-        $query->bindValue(':bio', $user->bio, PDO::PARAM_STR);
-        $query->bindValue(':enabled', (int)$user->enabled, PDO::PARAM_INT);
-    }
-
 
 }

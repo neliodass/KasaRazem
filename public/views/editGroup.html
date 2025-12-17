@@ -77,11 +77,18 @@
 
         <?php if(!empty($usersToDelete)): ?>
             <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem;">
-                <?php foreach ($usersToDelete as $user): ?>
+                <?php foreach ($usersToDelete as $user):
+                    $avatarUrl = isset($user->profile_picture) && !empty($user->profile_picture)
+                        ? $user->profile_picture  // Usunięto htmlspecialchars aby nie podwójnie enkodować
+                        : 'https://ui-avatars.com/api/?name=' . urlencode($user->firstname . '+' . $user->lastname) . '&size=44&background=4CAF50&color=fff&bold=true';
+                ?>
                     <div class="group-list-item" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--surface-container); border-radius: 12px;">
                         <div class="item-content" style="flex: 1; margin: 0;">
                             <div class="item-icon-wrapper">
-                                <span class="material-symbols-outlined">person</span>
+                                <img class="user-avatar"
+                                     alt="Avatar <?= htmlspecialchars($user->firstname) ?>"
+                                     src="<?= htmlspecialchars($avatarUrl) ?>"
+                                     style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;"/>
                             </div>
                             <div class="item-text-wrapper">
                                 <p class="item-name"><?= htmlspecialchars($user->firstname . ' ' . $user->lastname) ?></p>

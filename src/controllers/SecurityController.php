@@ -57,5 +57,6 @@ class SecurityController extends AppController
     public function logout()
     {
       $this->userService->logout();
+        header('Location: /login');
     }
 }

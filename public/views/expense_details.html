@@ -93,12 +93,16 @@ $formattedDate = $date->format('l, d F Y');
             </p>
 
             <?php if (!empty($expenseDetails->splits)): ?>
-            <?php foreach ($expenseDetails->splits as $split): ?>
+            <?php foreach ($expenseDetails->splits as $split):
+                $avatarUrl = isset($split->profilePicture) && !empty($split->profilePicture)
+                    ? htmlspecialchars($split->profilePicture)
+                    : 'https://ui-avatars.com/api/?name=' . urlencode($split->userFullName) . '&size=44&background=4CAF50&color=fff&bold=true';
+            ?>
             <div class="expense-detail-row split-row" style="border-top: none;">
                 <div class="split-details-left">
                     <img class="user-avatar"
                          alt="<?= $split->userFullName ?? '?' ?> avatar"
-                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIspL8uVDwe572-ePv26dWXcOQbcJMq_UwUF7_929Mu_LSA4hhrzykzZmlaz_AlocYt3hD-_lUx8BvjXP4SrNOPCBHEQlW5G_I8pJRSkvDyucTI22JiMp1Jt7CnzTth43iNB6tqzbHUd71XpqS04ak3UGUQT5CISRDd3MIiFHWSz6lmAnyL0jCz2_piOiY9E_oCJmjW8i_RU2jDzI5UEp2uxWAdfdZTrVqHxomDaAR9QgsLL-RAih7B3-zM26Vw39W_3Jn03aAvs-L"/>
+                         src="<?= $avatarUrl ?>"/>
                     <p style="font-weight: 500; color: var(--color-text-body);"><?= $split->userFullName ?></p>
                 </div>
                 <p class="split-amount-negative">

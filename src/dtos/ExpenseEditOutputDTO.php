@@ -1,5 +1,7 @@
 <?php
 
+require_once 'src/dtos/UserSelectOutputDTO.php';
+
 class ExpenseEditOutputDTO
 {
     public int $id;
@@ -12,7 +14,7 @@ class ExpenseEditOutputDTO
     public string $splitMode = 'equal'; // 'equal', 'ratio', 'amount'
     public array $splitRatios = []; // userId => ratio
     public array $splitAmounts = [];
-    /** @var User[] */
+    /** @var UserSelectOutputDTO[] */
     public array $users;
     /** @var Category[] */
     public array $categories;
@@ -32,7 +34,7 @@ class ExpenseEditOutputDTO
         }
 
         $this->detectSplitMode($expense);
-        $this->users = $users;
+        $this->users = UserSelectOutputDTO::fromUsers($users);
         $this->categories = $categories;
     }
     private function detectSplitMode(Expense $expense): void
