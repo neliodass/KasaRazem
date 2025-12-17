@@ -34,7 +34,12 @@
         <!-- Profile Header -->
         <div style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem 0 2rem 0;">
             <div style="position: relative; cursor: pointer;">
-                <div class="profile-avatar" style='background-image: url("https://ui-avatars.com/api/?name=Anna+Kowalska&size=256&background=4CAF50&color=fff&bold=true");'>
+                <?php
+                $avatarUrl = isset($user->profile_picture) && !empty($user->profile_picture)
+                    ? htmlspecialchars($user->profile_picture)
+                    : 'https://ui-avatars.com/api/?name=' . urlencode($user->firstname . '+' . $user->lastname) . '&size=256&background=4CAF50&color=fff&bold=true';
+                ?>
+                <div class="profile-avatar" style='background-image: url("<?= $avatarUrl ?>");'>
                 </div>
                 <div class="profile-avatar-edit">
                     <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
@@ -42,10 +47,10 @@
             </div>
             <div style="margin-top: 1.5rem; text-align: center;">
                 <h1 style="font-size: 1.75rem; font-weight: 700; color: var(--color-text-body); margin-bottom: 0.25rem;">
-                    Anna Kowalska
+                    <?= htmlspecialchars($user->firstname . ' ' . $user->lastname) ?>
                 </h1>
                 <p style="color: var(--color-text-secondary); font-size: 0.875rem; font-weight: 500;">
-                    anna.kowalska@example.com
+                    <?= htmlspecialchars($user->email) ?>
                 </p>
             </div>
         </div>

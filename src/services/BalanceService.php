@@ -62,7 +62,8 @@ class BalanceService
                 $userId,
                 $user->firstname . ' ' . $user->lastname,
                 $netBalance,
-                $userId === $currentUserId
+                $userId === $currentUserId,
+                $user->profile_picture
             );
 
             if ($userId === $currentUserId) {

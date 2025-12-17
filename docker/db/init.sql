@@ -5,6 +5,7 @@ CREATE TABLE users (
                        email VARCHAR(150) UNIQUE NOT NULL,
                        password VARCHAR(255) NOT NULL,
                        bio TEXT,
+                       profile_picture VARCHAR(255),
                        enabled BOOLEAN DEFAULT TRUE
 );
 

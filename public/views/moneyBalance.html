@@ -43,13 +43,19 @@
     </div>
     </a>
     <h3>Salda</h3>
-    <?php if(!empty($balance)): foreach ($balance as $balanceItem): ?>
+    <?php if(!empty($balance)): foreach ($balance as $balanceItem):
+
+    $avatarUrl = isset($balanceItem->profile_picture) && !empty($balanceItem->profile_picture)
+    ? htmlspecialchars($balanceItem->profile_picture)
+    : 'https://ui-avatars.com/api/?name=' . $balanceItem->userName . '&size=44&background=4CAF50&color=fff&bold=true';
+    ?>
     <div class="p-4 bg-gray-100 rounded-lg">
         <div class="list-card-item">
             <div class="list-card-content">
                 <div class="list-card-left-section">
-                    <div class="list-icon-wrapper" style="background-color: #fff4d8;">
-<!--                        <span class="material-symbols-outlined" style="color: #f79009;"><?= $expense['icon'] ?></span>-->
+                    <div class="list-icon-wrapper" style="background-color: #fff4d8; overflow: hidden;">
+
+                    <img src="<?= $avatarUrl ?>" alt="Avatar" class="avatar-image" />
                     </div>
                     <div class="list-text-details">
                         <p class="list-item-primary-text"><?= $balanceItem->userName  ?></p>
