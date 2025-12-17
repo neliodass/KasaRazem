@@ -8,6 +8,7 @@ class User
     public string $email;
     public string $password;
     public ?string $profile_picture = null;
+    public string $theme = 'light';
     public bool $enabled = true;
 
     public array $createdGroups = [];
@@ -22,6 +23,7 @@ class User
         $user->email = $data['email'] ?? '';
         $user->password = $data['password'] ?? '';
         $user->profile_picture = $data['profile_picture'] ?? null;
+        $user->theme = $data['theme'] ?? 'light';
         if (isset($data['enabled'])) {
             $user->enabled = filter_var($data['enabled'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool)$data['enabled'];
         } else {
@@ -40,6 +42,7 @@ class User
             'email' => $this->email,
             'password' => $this->password,
             'profile_picture' => $this->profile_picture,
+            'theme' => $this->theme,
             'enabled' => (int)$this->enabled,
         ];
     }

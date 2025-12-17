@@ -5,16 +5,18 @@ CREATE TABLE users (
                        email VARCHAR(150) UNIQUE NOT NULL,
                        password VARCHAR(255) NOT NULL,
                        profile_picture VARCHAR(255),
+                       theme VARCHAR(20) DEFAULT 'light',
                        enabled BOOLEAN DEFAULT TRUE
 );
 
-INSERT INTO users (firstname, lastname, email, password, enabled)
+INSERT INTO users (firstname, lastname, email, password, enabled, theme)
 VALUES (
            'Bartek',
            'Mockowy',
            'bartek.mock@mock.com',
            '$2a$12$3zb5EA4go8LBaCvjq6FSEOfsZ/vWPmASCh9VlLrJnJcNgl1WZMALS',
-           TRUE
+           TRUE,
+           'light'
        );
 CREATE TABLE categories (
                             id SERIAL PRIMARY KEY,

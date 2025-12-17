@@ -48,6 +48,7 @@ $router->add('GET', 'profile/edit', ['controller' => 'ProfileController', 'actio
 $router->add('POST', 'profile/edit', ['controller' => 'ProfileController', 'action' => 'editProfile']);
 $router->add('GET', 'profile/change-password', ['controller' => 'ProfileController', 'action' => 'changePassword']);
 $router->add('POST', 'profile/change-password', ['controller' => 'ProfileController', 'action' => 'changePassword']);
+$router->add('POST', 'profile/change-theme', ['controller' => 'ProfileController', 'action' => 'changeTheme']);
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->run($path,$_SERVER['REQUEST_METHOD']);

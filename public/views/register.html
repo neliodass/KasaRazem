@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script>
+        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
+        (function() {
+            const theme = localStorage.getItem('userTheme') || 'light';
+            document.documentElement.classList.add('theme-' + theme);
+        })();
+    </script>
+
     <link href="public/styles/_theme.css" type="text/css" rel="stylesheet"/>
     <link href="public/styles/_base.css" type="text/css" rel="stylesheet"/>
     <link href="public/styles/_components.css" type="text/css" rel="stylesheet"/>
@@ -21,10 +30,12 @@
             'opsz' 24
         }
     </style>
+    <script src="public/scripts/theme.js"></script>
     <script src="public/scripts/showPassword.js"></script>
     <title>Rejestracja</title>
 </head>
-<body class="theme-light">
+
+<body>
 <div class="page-wrapper">
     <div class="login-box">
         <div class="container">

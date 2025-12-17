@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $groupName ?> - Szczegły</title>
 
+    <script>
+        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
+        (function() {
+            const theme = localStorage.getItem('userTheme') || 'light';
+            document.documentElement.classList.add('theme-' + theme);
+        })();
+    </script>
+
     <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
@@ -15,9 +23,10 @@
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 }
     </style>
+    <script src="/public/scripts/theme.js"></script>
 </head>
 
-<body class="theme-light whole-page-group-details">
+<body class="whole-page-group-details">
 
 <div class="page-wrapper group-details-page-wrapper">
     <script src="/public/scripts/expandMenu.js" defer></script>

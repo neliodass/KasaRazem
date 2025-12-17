@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dołącz do grupy</title>
+
+    <script>
+        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
+        (function() {
+            const theme = localStorage.getItem('userTheme') || 'light';
+            document.documentElement.classList.add('theme-' + theme);
+        })();
+    </script>
+
     <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
@@ -13,39 +22,11 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <script src="/public/scripts/theme.js"></script>
 
 </head>
 
-<style>
-    .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24
-    }
-    .join-container {
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-    .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-    }
-    .form-input {
-        width: 100%;
-        padding: 1rem;
-        border-radius: 12px;
-        border: 1px solid #ccc;
-        font-size: 1rem;
-        color:  var(--color-text-input);
-        background: var(--color-bg-input);
-    }
-
-</style>
-<body class="theme-light">
+<body>
 <div class="page-wrapper">
 <header class="app-bar">
         <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
