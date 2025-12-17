@@ -123,6 +123,43 @@ class GroupController extends AppController
             exit();
         }
     }
+    public function editGroup($groupId)
+    {
+        Auth::requireLogin();
+        $this->authService->verifyUserInGroup($groupId);
+        if(!$this->isPost()) {
 
+            $editGroupDTO = $this->groupService->getGroupForEdit((int)$groupId);
+            $this->render('editGroup', ['group' => $group]);
+            return;
+        }
+        $group = $this->groupService->getGroupById((int)$groupId);
+        if (!$group) {
+            header("Location: /groups");
+            exit();
+        }
+
+            try {
+                $dto = CreateGroupRequestDTO::fromPost($_POST);
+                if ($this->groupService->updateGroup((int)$groupId, $dto)) {
+                    header("Location: /groups/$groupId/expenses");
+                    exit();
+                }
+            } catch (InvalidArgumentException $e) {
+                $this->render('editGroup', [
+                    'group' => $group,
+                    'message' => $e->getMessage()
+                ]);
+                return;
+            } catch (Exception $e) {
+                $this->render('editGroup', [
+                    'group' => $group,
+                    'message' => 'Wystąpił nieznany błąd podczas edycji grupy.'
+                ]);
+                return;
+            }
+
+        $this->render('editGroup', ['group' => $group]);
+    }
 
 }

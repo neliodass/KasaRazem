@@ -1,6 +1,7 @@
 <?php
 require_once "repository/Repository.php";
 require_once "src/entities/Group.php";
+require_once "src/entities/User.php";
 
 class GroupRepository extends Repository
 {
@@ -65,16 +66,7 @@ WHERE gm_filter.user_id = :userId;'
         $groups = $query->fetchAll(PDO::FETCH_ASSOC);
         $groupsEntities = [];
         foreach ($groups as $data) {
-            $group = new Group();
-            $group->id = (int)$data['id'];
-            $group->name = $data['name'];
-            $group->created_by_user_id = (int)$data['created_by_user_id'];
-            $group->invite_id = $data['invite_id'];
-            try {
-                $group->created_at = new DateTimeImmutable($data['created_at']);
-            } catch (Exception $e) {
-                throw new \RuntimeException("Błąd parsowania daty: " . $e->getMessage());
-            }
+            $group = Group::fromArray($data);
             $groupsEntities[] = [
                 'group' => $group,
                 'member_count' => (int)$data['member_count']
@@ -180,6 +172,10 @@ WHERE gm_filter.user_id = :userId;'
         $query->execute();
 
         $users = $query->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($users as &$user)
+            {
+                $user = User::fromArray($user);
+            }
 
         return $users;
     }
@@ -200,17 +196,22 @@ WHERE gm_filter.user_id = :userId;'
 
         $users = [];
         foreach ($usersData as $userData) {
-            $user = new User();
-            $user->id = (int)$userData['id'];
-            $user->firstname = $userData['firstname'];
-            $user->lastname = $userData['lastname'];
-            $user->email = $userData['email'];
-            $user->bio = $userData['bio'] ?? null;
-            $user->enabled = (bool)$userData['enabled'];
-            $users[] = $user;
+            $users[] = User::fromArray($userData);
         }
 
         return $users;
+    }
+
+    public function removeUserFromGroup(int $groupId, int $userId): bool
+    {
+        $query = $this->conn->prepare(
+            'DELETE FROM group_members WHERE group_id = :groupId AND user_id = :userId'
+        );
+
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->bindParam(':userId', $userId, PDO::PARAM_INT);
+
+        return $query->execute();
     }
 
 }

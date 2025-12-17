@@ -34,11 +34,7 @@ class CategoryRepository extends Repository
             return null;
         }
 
-        $category = new Category();
-        $category->id = (int)$data['id'];
-        $category->name = $data['name'];
-
-        return $category;
+        return Category::fromArray($data);
     }
 
     public function getAll(): array
@@ -48,13 +44,9 @@ class CategoryRepository extends Repository
 
         $categories = [];
         while ($data = $query->fetch(PDO::FETCH_ASSOC)) {
-            $category = new Category();
-            $category->id = (int)$data['id'];
-            $category->name = $data['name'];
-            $categories[] = $category;
+            $categories[] = Category::fromArray($data);
         }
 
         return $categories;
     }
 }
-

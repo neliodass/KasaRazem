@@ -4,6 +4,7 @@
 require_once "repository/GroupRepository.php";
 require_once "src/dtos/GroupListDTO.php";
 require_once "src/dtos/CreateGroupRequestDTO.php";
+require_once "src/dtos/EditGroupNameDTO.php";
 
 class GroupService
 {
@@ -101,5 +102,13 @@ class GroupService
             $groupsDtos[] = $dto;
         }
         return $groupsDtos;
+    }
+
+    public function getGroupForEdit(int $groupId): ?array
+    {
+        $group =  $this->groupRepository->getGroupById($groupId);
+        $editGroupDTO = new EditGroupNameDTO();
+        $editGroupDTO->id = $groupId;
+        $editGroupDTO->name = $group['name'];
     }
 }
