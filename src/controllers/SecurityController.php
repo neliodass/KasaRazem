@@ -27,6 +27,9 @@ class SecurityController extends AppController
         if (!$this->isPost()) {
              return $this->render('login');
         }
+
+        $this->requireCSRF();
+
         try{
             $dto = LoginRequestDTO::fromPost($_POST);
             $this->userService->login($dto);
@@ -43,6 +46,9 @@ class SecurityController extends AppController
         if (!$this->isPost()) {
              return $this->render('register');
         }
+
+        $this->requireCSRF();
+
         try{
             $dto = CreateUserRequestDTO::fromPost($_POST);
             $this->userService->register($dto);

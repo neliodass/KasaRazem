@@ -45,6 +45,7 @@
         <p class="body-text">Zacznij zarządzać wspólnymi wydatkami.</p>
         <div class="form-group-wrapper">
             <form method="post" action="/register">
+                <?= $csrfField(); ?>
                 <?php if(isset($message)): ?>
                 <p class="messages">
                     <?= $message; ?>

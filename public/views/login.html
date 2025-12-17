@@ -45,6 +45,7 @@
                 <p class="body-text">Zaloguj sie, aby zarządzać wydatkami</p>
         <div class="form-group-wrapper">
             <form method="post" action="/login">
+                <?= $csrfField(); ?>
                 <?php if(isset($message)): ?>
                 <p class="messages">
                     <?= $message; ?>

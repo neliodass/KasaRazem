@@ -50,13 +50,19 @@ class UserService
         if (!$user || !password_verify($dto->password, $user->password)) {
             throw new InvalidArgumentException("Niewłaściwy email, bądź hasło");
         }
-        session_start();
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $_SESSION['user_id'] = $user->id;
         return $user;
     }
+
     public function logout(): void
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         session_unset();
         session_destroy();
     }
