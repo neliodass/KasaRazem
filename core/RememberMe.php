@@ -15,13 +15,17 @@ class RememberMe
         self::storeToken($userId, $selector, $hashedToken);
         
         $cookieValue = $selector . ':' . $token;
+
+        $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+                    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+
         setcookie(
             self::COOKIE_NAME,
             $cookieValue,
             time() + self::COOKIE_LIFETIME,
             '/',
             '',
-            false,
+            $isSecure,
             true
         );
     }
@@ -122,4 +126,3 @@ class RememberMe
         $stmt->execute([$selector]);
     }
 }
-
