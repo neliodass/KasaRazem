@@ -167,10 +167,14 @@ class GroupController extends AppController
 
         $userId = isset($_POST['user_id']) ? (int)$_POST['user_id'] : 0;
         try {
-            $this->groupService->deleteUserFromGroup($groupId, $userId);
+            $wasDeleted = $this->groupService->deleteUserFromGroup($groupId, $userId);
+            if ($wasDeleted) {
+                header("Location: /groups");
+                exit();
+            }
         } catch (Exception $e) {
-
         }
+
         header("Location: /groups/$groupId/edit");
         exit();
     }
