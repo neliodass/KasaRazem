@@ -3,9 +3,9 @@
 return [
     'login' => [
         'title' => 'Login',
-        'cta' => 'Log in, to manage your expenses',
+        'cta' => 'Log in to manage your expenses',
         'invalid_credentials' => 'Invalid email or password',
-        'dont_remember_password' =>'I don\'t remember the password',
+        'dont_remember_password' => 'I don\'t remember the password',
         'success' => 'Logged in successfully',
         'email_placeholder' => 'Email',
         'password_placeholder' => 'Password',
@@ -16,14 +16,16 @@ return [
         'show_password' => 'Show',
     ],
     'register' => [
-        'title' => 'Register',
+        'title' => 'Create account',
+        'cta' => 'Start managing shared expenses',
         'email_in_use' => 'Email is already in use',
         'success' => 'Registration successful. Please log in.',
         'error' => 'An error occurred during registration. Please try again.',
-        'firstname_placeholder' => 'First name',
-        'lastname_placeholder' => 'Last name',
-        'email_placeholder' => 'Email',
-        'password_placeholder' => 'Password',
+        'firstname_placeholder' => 'Enter your first name',
+        'lastname_placeholder' => 'Enter your last name',
+        'email_placeholder' => 'Enter your email',
+        'password_placeholder' => 'Enter password',
+        'password_repeat_placeholder' => 'Repeat password',
         'submit_button' => 'Register',
         'have_account' => 'Already have an account?',
         'login_link' => 'Login',
@@ -72,4 +74,3 @@ return [
         'no' => 'No',
     ],
 ];
-

@@ -3,9 +3,9 @@
 return [
     'login' => [
         'title' => 'Zaloguj się',
-        'cta' => 'Zaloguj sie, aby zarządzać wydatkami',
+        'cta' => 'Zaloguj się, aby zarządzać wydatkami',
         'invalid_credentials' => 'Niewłaściwy email, bądź hasło',
-        'dont_remember_password' =>'Nie pamiętam hasła',
+        'dont_remember_password' => 'Nie pamiętam hasła',
         'success' => 'Zalogowano pomyślnie',
         'email_placeholder' => 'Email',
         'password_placeholder' => 'Hasło',
@@ -16,14 +16,16 @@ return [
         'show_password' => 'Pokaż',
     ],
     'register' => [
-        'title' => 'Zarejestruj się',
+        'title' => 'Stwórz konto',
+        'cta' => 'Zacznij zarządzać wspólnymi wydatkami',
         'email_in_use' => 'Email jest już w użyciu',
         'success' => 'Rejestracja udana. Proszę się zalogować.',
         'error' => 'Wystąpił błąd podczas rejestracji. Proszę spróbować ponownie.',
-        'firstname_placeholder' => 'Imię',
-        'lastname_placeholder' => 'Nazwisko',
-        'email_placeholder' => 'Email',
-        'password_placeholder' => 'Hasło',
+        'firstname_placeholder' => 'Wpisz swoje imię',
+        'lastname_placeholder' => 'Wpisz swoje nazwisko',
+        'email_placeholder' => 'Wpisz swój email',
+        'password_placeholder' => 'Wpisz hasło',
+        'password_repeat_placeholder' => 'Powtórz hasło',
         'submit_button' => 'Zarejestruj się',
         'have_account' => 'Masz już konto?',
         'login_link' => 'Zaloguj się',
@@ -70,6 +72,5 @@ return [
         'back' => 'Wróć',
         'yes' => 'Tak',
         'no' => 'Nie',
-    ]
+    ],
 ];
-
