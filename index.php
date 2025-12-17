@@ -1,12 +1,13 @@
 <?php
 require_once('core/Router.php');
+require_once ('core/Auth.php');
 require_once ('src/controllers/GroupController.php');
 require_once ('src/controllers/SecurityController.php');
 require_once ('src/controllers/ExpenseController.php');
 require_once ('src/controllers/BalanceController.php');
 require_once ('src/controllers/ListController.php');
 require_once ('src/controllers/ProfileController.php');
-
+Auth::setCookieParameters();
 $router = new Router();
 
 $router->add('GET', 'login',  ['controller' => 'SecurityController', 'action' => 'login']);
@@ -52,4 +53,3 @@ $router->add('POST', 'profile/change-theme', ['controller' => 'ProfileController
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->run($path,$_SERVER['REQUEST_METHOD']);
-

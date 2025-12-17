@@ -104,3 +104,30 @@ CREATE TABLE list_items (
                             is_purchased BOOLEAN DEFAULT FALSE,
                             purchased_by_user_id INTEGER REFERENCES users(id)
 );
+
+CREATE TABLE remember_tokens (
+                                  id SERIAL PRIMARY KEY,
+                                  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                                  selector VARCHAR(64) UNIQUE NOT NULL,
+                                  token VARCHAR(64) NOT NULL,
+                                  expires INTEGER NOT NULL,
+                                  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                                  UNIQUE(user_id)
+);
+
+CREATE INDEX idx_remember_tokens_selector ON remember_tokens(selector);
+CREATE INDEX idx_remember_tokens_expires ON remember_tokens(expires);
+
+CREATE TABLE audit_logs (
+    id SERIAL PRIMARY KEY,
+    event_type VARCHAR(50) NOT NULL,
+    user_email VARCHAR(150),
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    additional_data JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_audit_logs_event_type ON audit_logs(event_type);
+CREATE INDEX idx_audit_logs_user_email ON audit_logs(user_email);
+CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
