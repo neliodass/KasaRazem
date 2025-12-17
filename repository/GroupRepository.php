@@ -163,7 +163,7 @@ WHERE gm_filter.user_id = :userId;'
     function getUsersInGroup(int $groupId): ?array
     {
         $query = $this->conn->prepare(
-            'SELECT u.id, u.firstname,u.lastname, u.email 
+            'SELECT u.id, u.firstname, u.lastname, u.email, u.profile_picture, u.enabled
              FROM users u
              JOIN group_members gm ON u.id = gm.user_id
              WHERE gm.group_id = :groupId'
