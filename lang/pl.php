@@ -42,11 +42,15 @@ return [
         'login_success' => 'Udane logowanie',
     ],
     'groups' => [
-        'title' => 'Grupy',
+        'title' => 'Moje grupy',
         'create' => 'Utwórz grupę',
         'join' => 'Dołącz do grupy',
         'name' => 'Nazwa grupy',
         'members' => 'Członkowie',
+        'member_count' => 'Liczba osób',
+        'no_groups' => 'Nie należysz jeszcze do żadnej grupy.',
+        'create_new' => 'Stwórz nową grupę',
+        'join_group' => 'Dołącz do grupy',
     ],
     'expenses' => [
         'title' => 'Wydatki',

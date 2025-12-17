@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="pl">
+<html lang="<?= TranslationService::getInstance()->getCurrentLang() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Moje grupy</title>
+    <title><?= trans('groups.title') ?></title>
 
     <script>
         // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
@@ -30,7 +30,7 @@
 <div class="page-wrapper">
     <header class="app-bar">
         <div style="width: 48px; height: 48px;"></div>
-        <h1>Moje grupy</h1>
+        <h1><?= trans('groups.title') ?></h1>
         <div style="width: 48px; height: 48px; display: flex; justify-content: flex-end;">
             <a href="/profile" type="button">
                 <span class="material-symbols-outlined">account_circle</span>
@@ -50,7 +50,7 @@
                 </div>
                 <div class="item-text-wrapper">
                     <p class="item-name"><?= $group->name ?></p>
-                    <p class="item-members">Liczba osób: <?= $group->member_count ?></p>
+                    <p class="item-members"><?= trans('groups.member_count') ?>: <?= $group->member_count ?></p>
                 </div>
             </div>
             <div class="chevron-icon">
@@ -61,7 +61,7 @@
         endforeach;
     else:
     ?>
-        <p class="body-text" style="text-align: center; padding-top: 2rem;">Nie należysz jeszcze do żadnej grupy.</p>
+        <p class="body-text" style="text-align: center; padding-top: 2rem;"><?= trans('groups.no_groups') ?></p>
         <?php
     endif;
     ?>
@@ -70,10 +70,10 @@
     <div class="bottom-actions">
         <div class="action-buttons-wrapper">
             <a href="/groups/create" type="button" class="action-button primary">
-                Stwórz nową grupę
+                <?= trans('groups.create_new') ?>
             </a>
             <a href="/groups/join" type="button" class="action-button secondary">
-                Dołącz do grupy
+                <?= trans('groups.join_group') ?>
             </a>
         </div>
     </div>

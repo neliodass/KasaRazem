@@ -42,11 +42,15 @@ return [
         'login_success' => 'Login successful',
     ],
     'groups' => [
-        'title' => 'Groups',
+        'title' => 'My groups',
         'create' => 'Create group',
         'join' => 'Join group',
         'name' => 'Group name',
         'members' => 'Members',
+        'member_count' => 'Number of people',
+        'no_groups' => 'You are not part of any group yet.',
+        'create_new' => 'Create new group',
+        'join_group' => 'Join group',
     ],
     'expenses' => [
         'title' => 'Expenses',
