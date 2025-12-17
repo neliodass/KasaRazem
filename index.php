@@ -5,6 +5,7 @@ require_once ('src/controllers/SecurityController.php');
 require_once ('src/controllers/ExpenseController.php');
 require_once ('src/controllers/BalanceController.php');
 require_once ('src/controllers/ListController.php');
+require_once ('src/controllers/ProfileController.php');
 
 $router = new Router();
 
@@ -42,6 +43,7 @@ $router->add('POST', 'groups/{groupId}/items/{itemId}/toggle', ['controller' => 
 $router->add('POST', 'groups/{groupId}/items/{itemId}/delete', ['controller' => 'ListController', 'action' => 'deleteItem']);
 $router->add('POST', 'groups/{groupId}/lists/add', ['controller' => 'ListController', 'action' => 'addList']);
 $router->add('POST', 'groups/{groupId}/lists/{listId}/items/add', ['controller' => 'ListController', 'action' => 'addItem']);
+$router->add('GET', 'profile', ['controller' => 'ProfileController', 'action' => 'getProfile']);
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->run($path,$_SERVER['REQUEST_METHOD']);
