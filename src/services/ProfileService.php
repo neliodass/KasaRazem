@@ -146,4 +146,22 @@ class ProfileService
 
         return true;
     }
+
+    public function changeTheme(int $userId, string $theme): bool
+    {
+        $user = $this->userRepository->getUserById((string)$userId);
+
+        if (!$user) {
+            throw new Exception('Użytkownik nie został znaleziony.');
+        }
+
+        if (!in_array($theme, ['light', 'dark'])) {
+            throw new Exception('Nieprawidłowy motyw. Dozwolone: light, dark.');
+        }
+
+        $user->theme = $theme;
+        $this->userRepository->save($user);
+
+        return true;
+    }
 }

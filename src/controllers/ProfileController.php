@@ -90,4 +90,30 @@ class ProfileController extends \AppController
             ]);
         }
     }
+
+    public function changeTheme()
+    {
+        Auth::requireLogin();
+        $userId = (int)Auth::userId();
+
+        if (!$this->isPost()) {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            return;
+        }
+
+        header('Content-Type: application/json');
+
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $theme = $data['theme'] ?? '';
+
+            $this->profileService->changeTheme($userId, $theme);
+
+            echo json_encode(['success' => true, 'theme' => $theme]);
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
 }

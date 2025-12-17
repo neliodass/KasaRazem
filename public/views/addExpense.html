@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nowy Wydatek</title>
 
+    <script>
+        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
+        (function() {
+            const theme = localStorage.getItem('userTheme') || 'light';
+            document.documentElement.classList.add('theme-' + theme);
+        })();
+    </script>
+
     <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
@@ -25,9 +33,10 @@
             'opsz' 24
         }
     </style>
+    <script src="/public/scripts/theme.js"></script>
 </head>
 
-<body class="theme-light whole-page-group-details">
+<body class="whole-page-group-details">
 <div class="page-wrapper">
     <header class="app-bar">
         <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
