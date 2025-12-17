@@ -104,3 +104,16 @@ CREATE TABLE list_items (
                             is_purchased BOOLEAN DEFAULT FALSE,
                             purchased_by_user_id INTEGER REFERENCES users(id)
 );
+
+CREATE TABLE remember_tokens (
+                                  id SERIAL PRIMARY KEY,
+                                  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                                  selector VARCHAR(64) UNIQUE NOT NULL,
+                                  token VARCHAR(64) NOT NULL,
+                                  expires INTEGER NOT NULL,
+                                  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                                  UNIQUE(user_id)
+);
+
+CREATE INDEX idx_remember_tokens_selector ON remember_tokens(selector);
+CREATE INDEX idx_remember_tokens_expires ON remember_tokens(expires);

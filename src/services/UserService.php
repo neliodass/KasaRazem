@@ -4,6 +4,7 @@ require_once 'repository/UserRepository.php';
 require_once 'src/entities/User.php';
 require_once 'src/dtos/CreateUserRequestDTO.php';
 require_once 'src/dtos/LoginRequestDTO.php';
+require_once 'core/RememberMe.php';
 
 class UserService
 {
@@ -55,6 +56,11 @@ class UserService
             session_start();
         }
         $_SESSION['user_id'] = $user->id;
+
+        if (isset($dto->rememberMe) && $dto->rememberMe) {
+            RememberMe::set($user->id);
+        }
+
         return $user;
     }
 
@@ -63,6 +69,9 @@ class UserService
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+
+        RememberMe::clear();
+
         session_unset();
         session_destroy();
     }
