@@ -7,7 +7,6 @@ class UserProfileOutputDTO
     public string $lastname;
     public string $email;
     public ?string $profile_picture;
-    public ?string $bio;
 
     public function __construct(User $user)
     {
@@ -16,7 +15,6 @@ class UserProfileOutputDTO
         $this->lastname = $user->lastname;
         $this->email = $user->email;
         $this->profile_picture = $user->profile_picture;
-        $this->bio = $user->bio;
     }
 
     public static function fromUser(User $user): self
@@ -29,4 +27,3 @@ class UserProfileOutputDTO
         return trim($this->firstname . ' ' . $this->lastname);
     }
 }
-

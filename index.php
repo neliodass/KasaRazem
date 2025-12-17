@@ -44,8 +44,11 @@ $router->add('POST', 'groups/{groupId}/items/{itemId}/delete', ['controller' => 
 $router->add('POST', 'groups/{groupId}/lists/add', ['controller' => 'ListController', 'action' => 'addList']);
 $router->add('POST', 'groups/{groupId}/lists/{listId}/items/add', ['controller' => 'ListController', 'action' => 'addItem']);
 $router->add('GET', 'profile', ['controller' => 'ProfileController', 'action' => 'getProfile']);
+$router->add('GET', 'profile/edit', ['controller' => 'ProfileController', 'action' => 'editProfile']);
+$router->add('POST', 'profile/edit', ['controller' => 'ProfileController', 'action' => 'editProfile']);
 $router->add('GET', 'profile/change-password', ['controller' => 'ProfileController', 'action' => 'changePassword']);
 $router->add('POST', 'profile/change-password', ['controller' => 'ProfileController', 'action' => 'changePassword']);
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $router->run($path,$_SERVER['REQUEST_METHOD']);
+

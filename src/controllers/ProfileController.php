@@ -59,4 +59,35 @@ class ProfileController extends \AppController
             ]);
         }
     }
+
+    public function editProfile()
+    {
+        Auth::requireLogin();
+        $userId = (int)Auth::userId();
+
+        if (!$this->isPost()) {
+            $user = $this->profileService->getUserProfile($userId);
+            
+            if (!$user) {
+                $this->redirect('/login');
+                return;
+            }
+            
+            $this->render('editProfile', ['user' => $user]);
+            return;
+        }
+
+        try {
+            $dto = UpdateProfileRequestDTO::fromPost();
+            $this->profileService->updateProfile($userId, $dto);
+            
+            $this->redirect('/profile');
+        } catch (Exception $e) {
+            $user = $this->profileService->getUserProfile($userId);
+            $this->render('editProfile', [
+                'user' => $user,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }

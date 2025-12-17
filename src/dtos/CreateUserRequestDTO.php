@@ -8,7 +8,6 @@ class CreateUserRequestDTO
     public string $lastname;
     public string $email;
     public string $password;
-    public ?string $bio = null;
 
     public static function fromPost(array $postData): self
     {
@@ -27,7 +26,6 @@ class CreateUserRequestDTO
         $dto->password = $postData['password'] ?? '';
         $dto->firstname = $postData['firstName'] ?? '';
         $dto->lastname = $postData['lastName'] ?? '';
-        $dto->bio = $postData['bio'] ?? null;
 
         return $dto;
     }

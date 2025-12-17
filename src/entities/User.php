@@ -7,7 +7,6 @@ class User
     public string $lastname;
     public string $email;
     public string $password;
-    public ?string $bio = null;
     public ?string $profile_picture = null;
     public bool $enabled = true;
 
@@ -22,7 +21,6 @@ class User
         $user->lastname = $data['lastname'] ?? '';
         $user->email = $data['email'] ?? '';
         $user->password = $data['password'] ?? '';
-        $user->bio = $data['bio'] ?? null;
         $user->profile_picture = $data['profile_picture'] ?? null;
         if (isset($data['enabled'])) {
             $user->enabled = filter_var($data['enabled'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool)$data['enabled'];
@@ -41,7 +39,6 @@ class User
             'lastname' => $this->lastname,
             'email' => $this->email,
             'password' => $this->password,
-            'bio' => $this->bio,
             'profile_picture' => $this->profile_picture,
             'enabled' => (int)$this->enabled,
         ];
