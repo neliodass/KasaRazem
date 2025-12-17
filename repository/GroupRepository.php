@@ -1,6 +1,7 @@
 <?php
 require_once "repository/Repository.php";
 require_once "src/entities/Group.php";
+require_once "src/entities/User.php";
 
 class GroupRepository extends Repository
 {
@@ -19,7 +20,35 @@ class GroupRepository extends Repository
         parent::__construct();
     }
 
-    public function getGroupsByUserId(string $userId): ?array
+    public function deleteGroup(int $groupId): bool
+    {
+        try {
+            $this->conn->beginTransaction();
+
+            $query = $this->conn->prepare('DELETE FROM group_members WHERE group_id = :id');
+            $query->bindParam(':id', $groupId, PDO::PARAM_STR);
+            $query->execute();
+
+            $query = $this->conn->prepare('DELETE FROM shopping_lists WHERE group_id = :id');
+            $query->bindParam(':id', $groupId, PDO::PARAM_STR);
+            $query->execute([':id' => $groupId]);
+            $query->execute();
+            $query = $this->conn->prepare('DELETE FROM groups WHERE id = :id');
+            $query->bindParam(':id', $groupId, PDO::PARAM_STR);
+            $query->execute();
+
+            $this->conn->commit();
+            return true;
+        } catch
+        (\PDOException $e) {
+            $this->conn->rollBack();
+            throw $e;
+        }
+
+    }
+
+    public
+    function getGroupsByUserId(string $userId): ?array
     {
         $query = $this->conn->prepare(
             'SELECT g.*, member_counts.member_count 
@@ -37,16 +66,7 @@ WHERE gm_filter.user_id = :userId;'
         $groups = $query->fetchAll(PDO::FETCH_ASSOC);
         $groupsEntities = [];
         foreach ($groups as $data) {
-            $group = new Group();
-            $group->id = (int)$data['id'];
-            $group->name = $data['name'];
-            $group->created_by_user_id = (int)$data['created_by_user_id'];
-            $group->invite_id = $data['invite_id'];
-            try {
-                $group->created_at = new DateTimeImmutable($data['created_at']);
-            } catch (Exception $e) {
-                throw new \RuntimeException("Błąd parsowania daty: " . $e->getMessage());
-            }
+            $group = Group::fromArray($data);
             $groupsEntities[] = [
                 'group' => $group,
                 'member_count' => (int)$data['member_count']
@@ -56,7 +76,8 @@ WHERE gm_filter.user_id = :userId;'
         return $groupsEntities;
     }
 
-    public function getGroupIdByInviteCode(string $inviteCode): ?int
+    public
+    function getGroupIdByInviteCode(string $inviteCode): ?int
     {
         $query = $this->conn->prepare(
             'SELECT id FROM groups WHERE invite_id = :inviteCode'
@@ -69,7 +90,9 @@ WHERE gm_filter.user_id = :userId;'
 
         return $id !== false ? (int)$id : null;
     }
-    public function getGroupById(int $id): ?array
+
+    public
+    function getGroupById(int $id): ?Group
     {
         $query = $this->conn->prepare(
             'SELECT g.* FROM groups g WHERE g.id = :id'
@@ -79,11 +102,13 @@ WHERE gm_filter.user_id = :userId;'
         $query->execute();
 
         $group = $query->fetch();
+        $group = Group::fromArray($group);
+        return $group;
 
-        return $group !== false ? $group : null;
     }
 
-    public function isUserInGroup(int $groupId, int $userId): bool
+    public
+    function isUserInGroup(int $groupId, int $userId): bool
     {
         $query = $this->conn->prepare(
             'SELECT COUNT(*) FROM group_members WHERE group_id = :groupId AND user_id = :userId'
@@ -95,7 +120,8 @@ WHERE gm_filter.user_id = :userId;'
         return (bool)$query->fetchColumn();
     }
 
-    public function addUserToGroup(int $groupId, int $userId): bool
+    public
+    function addUserToGroup(int $groupId, int $userId): bool
     {
         $query = $this->conn->prepare(
             'INSERT INTO group_members (group_id, user_id) 
@@ -108,7 +134,8 @@ WHERE gm_filter.user_id = :userId;'
         return $query->execute();
     }
 
-    public function createGroup(string $name, int $createdByUserId): ?int
+    public
+    function createGroup(string $name, int $createdByUserId): ?int
     {
         $this->conn->beginTransaction();
         $query = $this->conn->prepare(
@@ -131,7 +158,9 @@ WHERE gm_filter.user_id = :userId;'
         $this->conn->commit();
         return (int)$newGroupId;
     }
-    public function getUsersInGroup(int $groupId): ?array
+
+    public
+    function getUsersInGroup(int $groupId): ?array
     {
         $query = $this->conn->prepare(
             'SELECT u.id, u.firstname,u.lastname, u.email 
@@ -144,11 +173,16 @@ WHERE gm_filter.user_id = :userId;'
         $query->execute();
 
         $users = $query->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($users as &$user)
+            {
+                $user = User::fromArray($user);
+            }
 
         return $users;
     }
 
-    public function getUsersByGroupId(int $groupId): array
+    public
+    function getUsersByGroupId(int $groupId): array
     {
         $query = $this->conn->prepare(
             'SELECT u.* FROM users u
@@ -163,17 +197,45 @@ WHERE gm_filter.user_id = :userId;'
 
         $users = [];
         foreach ($usersData as $userData) {
-            $user = new User();
-            $user->id = (int)$userData['id'];
-            $user->firstname = $userData['firstname'];
-            $user->lastname = $userData['lastname'];
-            $user->email = $userData['email'];
-            $user->bio = $userData['bio'] ?? null;
-            $user->enabled = (bool)$userData['enabled'];
-            $users[] = $user;
+            $users[] = User::fromArray($userData);
         }
 
         return $users;
+    }
+
+    public function removeUserFromGroup(int $groupId, int $userId): bool
+    {
+        $query = $this->conn->prepare(
+            'DELETE FROM group_members WHERE group_id = :groupId AND user_id = :userId'
+        );
+
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->bindParam(':userId', $userId, PDO::PARAM_INT);
+
+        return $query->execute();
+    }
+
+    public function updateGroupName(int $id, string $name)
+    {
+        $query = $this->conn->prepare(
+            'UPDATE groups SET name = :name WHERE id = :id'
+        );
+
+        $query->bindParam(':id', $id, PDO::PARAM_INT);
+        $query->bindParam(':name', $name, PDO::PARAM_STR);
+
+        return $query->execute();
+    }
+    public function deleteUserFromGroup(int $groupId, int $userId): bool
+    {
+        $query = $this->conn->prepare(
+            'DELETE FROM group_members WHERE group_id = :groupId AND user_id = :userId'
+        );
+
+        $query->bindParam(':groupId', $groupId, PDO::PARAM_INT);
+        $query->bindParam(':userId', $userId, PDO::PARAM_INT);
+
+        return $query->execute();
     }
 
 }

@@ -10,8 +10,37 @@ class User
     public ?string $bio = null;
     public bool $enabled = true;
 
-    /** @var Group[] */
     public array $createdGroups = [];
-    /** @var Group[] */
     public array $memberOfGroups = [];
+
+    public static function fromArray(array $data): self
+    {
+        $user = new self();
+        $user->id = isset($data['id']) && $data['id'] !== null && $data['id'] !== '' ? (int)$data['id'] : null;
+        $user->firstname = $data['firstname'] ?? '';
+        $user->lastname = $data['lastname'] ?? '';
+        $user->email = $data['email'] ?? '';
+        $user->password = $data['password'] ?? '';
+        $user->bio = $data['bio'] ?? null;
+        if (isset($data['enabled'])) {
+            $user->enabled = filter_var($data['enabled'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? (bool)$data['enabled'];
+        } else {
+            $user->enabled = true;
+        }
+
+        return $user;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'firstname' => $this->firstname,
+            'lastname' => $this->lastname,
+            'email' => $this->email,
+            'password' => $this->password,
+            'bio' => $this->bio,
+            'enabled' => (int)$this->enabled,
+        ];
+    }
 }

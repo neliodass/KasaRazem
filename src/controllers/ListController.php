@@ -46,7 +46,8 @@ class ListController extends \AppController
             'activeListId' => $activeListId,
             'lists' => $lists,
             'activeTab' => 'shopping-lists',
-            'groupName' => $groupName
+            'groupName' => $groupName,
+            'inviteId' => $this->groupService->getGroupInviteId((string)$groupId)
         ]);
     }
 

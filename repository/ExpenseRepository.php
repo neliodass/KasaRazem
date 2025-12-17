@@ -27,23 +27,13 @@ class ExpenseRepository extends Repository
 
     private function hydrateExpense(array $data): Expense
     {
-        $expense = new Expense();
-        $expense->id = (int) $data['id'];
-        $expense->group_id = (int) $data['group_id'];
-        $expense->paid_by_user_id = (int) $data['paid_by_user_id'];
-        $expense->amount = (float) $data['amount'];
-        $expense->description = $data['description'];
-        $expense->category_id = isset($data['category_id']) ? (int) $data['category_id'] : null;
-        $expense->photo_url = $data['photo_url'];
-
-        $expense->date_incurred = new DateTimeImmutable($data['date_incurred']);
+        $expense = Expense::fromArray($data);
 
         if (isset($data['paid_by_user_id'])) {
             $expense->paidBy = $this->userRepository->getUserById((string)$data['paid_by_user_id']);
         } else {
             $expense->paidBy = null;
         }
-
 
         if (isset($expense->category_id)) {
             $expense->category = $this->categoryRepository->getCategoryById($expense->category_id);
@@ -75,20 +65,21 @@ class ExpenseRepository extends Repository
 
         $splits = [];
         foreach ($splitsData as $sData) {
-            $split = new ExpenseSplit();
-            $split->id = (int)$sData['id'];
-            $split->expense_id = (int)$sData['expense_id'];
-            $split->user_id = (int)$sData['user_id'];
-            $split->amount_owed = (float)$sData['amount_owed'];
-            $split->split_type = $sData['split_type'] ?? 'equal';
+            $splitData = [
+                'id' => $sData['id'] ?? null,
+                'expense_id' => $sData['expense_id'] ?? null,
+                'user_id' => $sData['user_id'] ?? null,
+                'amount_owed' => $sData['amount_owed'] ?? 0,
+                'split_type' => $sData['split_type'] ?? 'equal',
+                'user' => [
+                    'id' => $sData['user_id'] ?? null,
+                    'firstname' => $sData['firstname'] ?? '',
+                    'lastname' => $sData['lastname'] ?? '',
+                    'email' => $sData['email'] ?? '',
+                ],
+            ];
 
-            $splitUser = new User();
-            $splitUser->id = $split->user_id;
-            $splitUser->firstname = $sData['firstname'];
-            $splitUser->lastname = $sData['lastname'];
-            $splitUser->email = $sData['email'];
-
-            $split->user = $splitUser;
+            $split = ExpenseSplit::fromArray($splitData);
             $splits[] = $split;
         }
         return $splits;
@@ -195,14 +186,7 @@ class ExpenseRepository extends Repository
 
         $settlements = [];
         foreach ($settlementsData as $data) {
-            $settlement = new Settlement();
-            $settlement->id = (int)$data['id'];
-            $settlement->group_id = (int)$data['group_id'];
-            $settlement->payer_user_id = (int)$data['payer_user_id'];
-            $settlement->payee_user_id = (int)$data['payee_user_id'];
-            $settlement->amount = (float)$data['amount'];
-            $settlement->date_settled = new DateTimeImmutable($data['date_settled']);
-            $settlements[] = $settlement;
+            $settlements[] = Settlement::fromArray($data);
         }
 
         return $settlements;

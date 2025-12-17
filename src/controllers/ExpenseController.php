@@ -43,7 +43,8 @@ class ExpenseController extends AppController
             'groupId' => $groupId,
             'expenses' => $expenseOutputDtos,
             'activeTab' => 'expenses',
-            'groupName' => $this->groupService->getGroupName((string)$groupId)
+            'groupName' => $this->groupService->getGroupName((string)$groupId),
+            'inviteId' => $this->groupService->getGroupInviteId((string)$groupId)
         ]);
         exit();
     }

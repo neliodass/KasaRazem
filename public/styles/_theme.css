@@ -9,6 +9,7 @@
     --color-primary-hover: #45a049;
     --color-primary-ring: rgba(76, 175, 80, 0.5);
     --color-primary-bg: rgba(76, 175, 80, 0.2);
+    --error: red;
 }
 .theme-light {
     --color-background: #F5F5F7;

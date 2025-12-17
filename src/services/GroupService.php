@@ -4,6 +4,8 @@
 require_once "repository/GroupRepository.php";
 require_once "src/dtos/GroupListDTO.php";
 require_once "src/dtos/CreateGroupRequestDTO.php";
+require_once "src/dtos/EditGroupNameDTO.php";
+require_once "src/dtos/DeleteUserFromGroupOutputDTO.php";
 
 class GroupService
 {
@@ -20,13 +22,28 @@ class GroupService
         }
         return self::$instance;
     }
+
+    public function deleteGroup(int $groupId): bool
+    {
+        return $this->groupRepository->deleteGroup($groupId);
+    }
+
     public function getGroupName(string $groupId): ?string
     {
         if($group = $this->groupRepository->getGroupById($groupId)) {
-            return $group['name'];
+            return $group->name;
         }
         return "Grupa";
     }
+
+    public function getGroupInviteId(string $groupId): ?string
+    {
+        if($group = $this->groupRepository->getGroupById((int)$groupId)) {
+            return $group->invite_id ?? null;
+        }
+        return null;
+    }
+
     public function getUsersInGroup(string $groupId): array
     {
         return $this->groupRepository->getUsersInGroup((int)$groupId);
@@ -87,4 +104,45 @@ class GroupService
         }
         return $groupsDtos;
     }
+
+    public function getGroupForEdit(int $groupId): ?EditGroupNameDTO
+    {
+        $group =  $this->groupRepository->getGroupById($groupId);
+        $editGroupDTO = new EditGroupNameDTO();
+        $editGroupDTO->id = $groupId;
+        $editGroupDTO->name = $group->name;
+        return $editGroupDTO;
+    }
+    public function editGroupName(EditGroupNameDTO $dto): bool
+    {
+        return $this->groupRepository->updateGroupName($dto->id, $dto->name);
+    }
+
+    public function getUsersToDeleteFromGroup(int $groupId):array
+    {
+        $users = $this->groupRepository->getUsersInGroup($groupId);
+        $usersToDelete = [];
+        foreach ($users as $user) {
+            $dto = new DeleteUserFromGroupOutputDTO();
+            $dto->id = $user->id;
+            $dto->firstname = $user->firstname;
+            $dto->lastname = $user->lastname;
+            $dto->email = $user->email;
+            $usersToDelete[] = $dto;
+        }
+        return $usersToDelete;
+    }
+
+    public function updateGroup(int $param, EditGroupNameDTO $dto): bool
+    {
+    }
+
+    public function deleteUserFromGroup(int $groupId, int $userId)
+    {
+        if($this->groupRepository->isUserInGroup($groupId, $userId) === false) {
+            throw new \Exception("Użytkownik nie należy do tej grupy.");
+        }
+       return $this->groupRepository->deleteUserFromGroup($groupId, $userId);
+    }
+
 }

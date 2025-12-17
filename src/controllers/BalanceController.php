@@ -5,6 +5,7 @@ require_once "src/services/GroupService.php";
 require_once "src/services/AuthService.php";
 require_once "repository/SettlementRepository.php";
 require_once "src/dtos/SettleDebtRequestDTO.php";
+require_once "src/entities/Settlement.php";
 
 class BalanceController extends AppController
 {
@@ -49,7 +50,8 @@ class BalanceController extends AppController
             'groupId' => $balanceDTO->groupId,
             'balance' => $balanceDTO->balanceItems,
             'currentUserNetBalance' => $balanceDTO->currentUserNetBalance,
-            'currentUserBalanceEmoji' => $balanceDTO->currentUserBalanceEmoji
+            'currentUserBalanceEmoji' => $balanceDTO->currentUserBalanceEmoji,
+            'inviteId' => $this->groupService->getGroupInviteId((string)$groupId)
         ]);
     }
 
@@ -70,7 +72,8 @@ class BalanceController extends AppController
             'activeTab' => 'balance',
             'groupName' => $settlementsDTO->groupName,
             'groupId' => $settlementsDTO->groupId,
-            'settlements' => $settlementsDTO->settlements
+            'settlements' => $settlementsDTO->settlements,
+            'inviteId' => $this->groupService->getGroupInviteId((string)$groupId)
         ]);
     }
 
@@ -90,15 +93,13 @@ class BalanceController extends AppController
             $this->redirect("/groups/$groupId/settlements");
             return;
         }
-
-        $this->settlementRepository->addSettlement(
-            $dto->payerId,
-            $dto->payeeId,
-            $dto->amount,
-            $dto->groupId,
-            date('Y-m-d')
-        );
-
+        $s = new Settlement();
+        $s->group_id = $dto->groupId;
+        $s->payer_user_id = $dto->payerId;
+        $s->payee_user_id = $dto->payeeId;
+        $s->amount = $dto->amount;
+        $s->date_settled = new \DateTimeImmutable(date('Y-m-d'));
+        $created = $this->settlementRepository->addSettlement($s);
         $this->redirect("/groups/$groupId/settlements");
     }
 }

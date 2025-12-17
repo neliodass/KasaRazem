@@ -27,38 +27,19 @@ class ListRepository extends Repository
 
     private function hydrateShoppingList(array $data): ShoppingList
     {
-        $list = new ShoppingList();
-        $list->id = (int)$data['id'];
-        $list->group_id = (int)$data['group_id'];
-        $list->name = $data['name'];
-        $list->created_by_user_id = (int)$data['created_by_user_id'];
-        $list->created_at = new DateTimeImmutable($data['created_at']);
-        $list->updated_at = new DateTimeImmutable($data['updated_at']);
-
-        if (isset($data['created_by_user_id'])) {
+        $list = ShoppingList::fromArray($data);
+        if ((!$list->createdBy || $list->createdBy === null) && isset($data['created_by_user_id'])) {
             $list->createdBy = $this->userRepository->getUserById((string)$data['created_by_user_id']);
         }
-
         return $list;
     }
 
     private function hydrateListItem(array $data): ListItem
     {
-        $item = new ListItem();
-        $item->id = (int)$data['id'];
-        $item->list_id = (int)$data['list_id'];
-        $item->name = $data['name'];
-        $item->subtitle = $data['subtitle'] ?? null;
-        $item->quantity = (float)$data['quantity'];
-        $item->unit = $data['unit'];
-        $item->is_in_cart = (bool)$data['is_in_cart'];
-        $item->is_purchased = (bool)$data['is_purchased'];
-        $item->purchased_by_user_id = isset($data['purchased_by_user_id']) ? (int)$data['purchased_by_user_id'] : null;
-
-        if ($item->purchased_by_user_id) {
-            $item->purchasedBy = $this->userRepository->getUserById((string)$item->purchased_by_user_id);
+        $item = ListItem::fromArray($data);
+        if ((!$item->purchasedBy || $item->purchasedBy === null) && isset($data['purchased_by_user_id']) && $data['purchased_by_user_id'] !== null) {
+            $item->purchasedBy = $this->userRepository->getUserById((string)$data['purchased_by_user_id']);
         }
-
         return $item;
     }
 
@@ -246,3 +227,4 @@ class ListRepository extends Repository
         return $query->execute();
     }
 }
+
