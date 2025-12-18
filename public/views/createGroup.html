@@ -1,19 +1,17 @@
 <!doctype html>
-<html lang="pl">
+<html lang="<?= TranslationService::getInstance()->getCurrentLang() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Stwórz nową grupę</title>
+    <title><?= trans('groups.create_title') ?></title>
 
     <script>
-        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
         (function() {
             const theme = localStorage.getItem('userTheme') || 'light';
             document.documentElement.classList.add('theme-' + theme);
         })();
     </script>
 
-    <!-- Używamy tylko ogólnych stylów dla spójności -->
     <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
@@ -35,7 +33,7 @@
                 <span class="material-symbols-outlined">arrow_back</span>
             </a>
         </div>
-        <h1>Nowa Grupa</h1>
+        <h1><?= trans('groups.new_group') ?></h1>
         <div style="width: 48px; height: 48px;"></div>
     </header>
 
@@ -43,9 +41,9 @@
         <main class="page-form-container">
 
             <div class="form-header-group">
-                <h1 class="headline-text">Stwórz nową grupę</h1>
+                <h1 class="headline-text"><?= trans('groups.create_title') ?></h1>
                 <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
-                    Wypełnij pola, aby utworzyć nową przestrzeń do rozliczania wydatków.
+                    <?= trans('groups.create_description') ?>
                 </p>
             </div>
 
@@ -56,13 +54,13 @@
             <?php endif; ?>
 
             <div class="input-field-wrapper">
-                <label class="form-label" for="group_name">Nazwa grupy</label>
+                <label class="form-label" for="group_name"><?= trans('groups.name') ?></label>
                 <input
                         id="group_name"
                         name="group_name"
                         type="text"
                         class="input-group-text"
-                        placeholder="np. Domownicy, Współlokatorzy"
+                        placeholder="<?= trans('groups.group_name_placeholder') ?>"
                         value="<?= isset($name) ? htmlspecialchars($name) : '' ?>"
                         required
                 />
@@ -71,7 +69,7 @@
         <div class="bottom-actions">
             <div class="action-buttons-wrapper">
                 <button type="submit" class="action-button primary">
-                    Utwórz grupę
+                    <?= trans('groups.create') ?>
                 </button>
             </div>
         </div>

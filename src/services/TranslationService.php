@@ -44,7 +44,7 @@ class TranslationService
 
     private function loadLanguage(string $lang): void
     {
-        $file = "lang/{$lang}.php";
+        $file = __DIR__ . "/../../lang/{$lang}.php";
         if (file_exists($file)) {
             $this->translations = require $file;
             $this->currentLang = $lang;
