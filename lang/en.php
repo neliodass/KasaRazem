@@ -198,6 +198,8 @@ return [
         'not_found' => 'Not found',
         'unauthorized' => 'Unauthorized',
         'forbidden' => 'Forbidden',
+        'page_not_found_message' => 'Sorry, the page you are looking for does not exist or has been moved.',
+        'back_to_home' => 'Back to home',
     ],
     'common' => [
         'save' => 'Save',
