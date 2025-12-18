@@ -29,26 +29,26 @@
 
     <button onclick="openNewListModal()"
             class="list-tab-button new-list-btn">
-        + Nowa lista
+        + <?= trans('shopping_list.new_list') ?>
     </button>
 </div>
 
     <div id="items-container">
         <section class="mt-4">
             <div class="section-header-wrapper">
-                <h2 class="section-title">Do kupienia</h2>
+                <h2 class="section-title"><?= trans('shopping_list.to_buy') ?></h2>
                 <span id="to-buy-count" class="items-count-badge">
-                    0 produktów
+                    0 <?= trans('shopping_list.products') ?>
                 </span>
             </div>
             <div id="active-items-list" class="items-list-container">
-                <p class="empty-state-text">Wybierz listę, aby zobaczyć produkty.</p>
+                <p class="empty-state-text"><?= trans('shopping_list.choose_list') ?></p>
             </div>
         </section>
 
         <section class="purchased-section">
             <h2 class="purchased-header">
-                Kupione
+                <?= trans('shopping_list.purchased') ?>
             </h2>
             <div id="purchased-items-list" class="items-list-container">
             </div>
@@ -56,16 +56,16 @@
 
         <div id="delete-modal" class="modal-overlay">
             <div class="modal-content">
-                <h3>Potwierdź usunięcie</h3>
-                <p>Czy na pewno chcesz usunąć <strong id="modal-delete-target">ten element</strong>? Tej operacji nie można cofnąć.</p>
+                <h3><?= trans('shopping_list.confirm_delete') ?></h3>
+                <p><?= trans('shopping_list.confirm_delete_message') ?> <strong id="modal-delete-target"><?= trans('shopping_list.this_element') ?></strong>? <?= trans('shopping_list.cannot_undo') ?></p>
 
                 <form id="delete-form-action" data-item-id="" data-list-id="" data-action-type="" method="POST">
                     <div class="modal-actions">
                         <button type="button" class="action-button secondary" id="modal-delete-cancel">
-                            Anuluj
+                            <?= trans('common.cancel') ?>
                         </button>
                         <button type="submit" class="action-button primary" id="modal-delete-confirm">
-                            Usuń
+                            <?= trans('common.delete') ?>
                         </button>
                     </div>
                 </form>
@@ -74,18 +74,18 @@
 
         <div id="create-list-modal" class="modal-overlay">
             <div class="modal-content">
-                <h3>Nowa lista zakupów</h3>
-                <p>Podaj nazwę nowej listy zakupów.</p>
+                <h3><?= trans('shopping_list.new_shopping_list') ?></h3>
+                <p><?= trans('shopping_list.new_list_description') ?></p>
 
                 <form id="create-list-form" method="POST">
-                    <input type="text" id="new-list-name" name="list_name" placeholder="Nazwa listy" required
+                    <input type="text" id="new-list-name" name="list_name" placeholder="<?= trans('shopping_list.list_name') ?>" required
                            class="input-group-text" style="margin-top: 1rem; margin-bottom: 1rem;"/>
                     <div class="modal-actions">
                         <button type="button" class="action-button secondary" id="modal-create-cancel">
-                            Anuluj
+                            <?= trans('common.cancel') ?>
                         </button>
                         <button type="submit" class="action-button primary">
-                            Utwórz listę
+                            <?= trans('shopping_list.create_list') ?>
                         </button>
                     </div>
                 </form>
