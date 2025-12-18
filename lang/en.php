@@ -169,6 +169,10 @@ return [
         'new_password' => 'New password',
         'confirm_password' => 'Confirm password',
         'save_changes' => 'Save changes',
+        'version' => 'Version',
+        'your_data' => 'Your data',
+        'your_data_description' => 'Update your personal information. Changes will be visible to other group members.',
+        'click_to_change_photo' => 'Click on photo to change',
     ],
     'errors' => [
         'generic' => 'An error occurred',

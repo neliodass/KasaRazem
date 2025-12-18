@@ -16,6 +16,7 @@
     <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
     <link href="/public/styles/groups.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/profile.css" type="text/css" rel="stylesheet"/>
 
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -46,13 +47,40 @@
         <?php endif; ?>
 
         <div class="form-header-group">
-            <h2 class="headline-text">Twoje dane</h2>
+            <h2 class="headline-text"><?= trans('profile.your_data') ?></h2>
             <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
-                Zaktualizuj swoje informacje osobiste. Zmiany będą widoczne dla innych członków grup.
+                <?= trans('profile.your_data_description') ?>
             </p>
         </div>
 
         <form action="/profile/edit" method="POST" enctype="multipart/form-data" style="margin-top: 1.5rem;">
+
+            <!-- Sekcja zdjęcia profilowego -->
+            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem;">
+                <?php
+                $avatarUrl = isset($user->profile_picture) && !empty($user->profile_picture)
+                    ? htmlspecialchars($user->profile_picture)
+                    : 'https://ui-avatars.com/api/?name=' . urlencode($user->firstname . '+' . $user->lastname) . '&size=256&background=4CAF50&color=fff&bold=true';
+                ?>
+                <div style="position: relative; cursor: pointer;" onclick="document.getElementById('profile-picture-input').click();">
+                    <div class="profile-avatar" style='background-image: url("<?= $avatarUrl ?>");'>
+                    </div>
+                    <div class="profile-avatar-edit">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                    </div>
+                </div>
+                <input
+                    type="file"
+                    id="profile-picture-input"
+                    name="profile_picture"
+                    accept="image/*"
+                    style="display: none;"
+                    onchange="previewImage(event)"
+                />
+                <p class="body-text" style="opacity: 0.6; font-size: 0.875rem; margin-top: 0.5rem; text-align: center;">
+                    <?= trans('profile.click_to_change_photo') ?>
+                </p>
+            </div>
 
             <div class="input-field-wrapper">
                 <label class="form-label" for="firstname"><?= trans('profile.firstname') ?></label>
@@ -103,5 +131,20 @@
         </div>
     </main>
 </div>
+
+<script>
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const avatar = document.querySelector('.profile-avatar');
+            avatar.style.backgroundImage = `url('${e.target.result}')`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+
 </body>
 </html>

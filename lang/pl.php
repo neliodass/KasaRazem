@@ -169,6 +169,10 @@ return [
         'new_password' => 'Nowe hasło',
         'confirm_password' => 'Potwierdź hasło',
         'save_changes' => 'Zapisz zmiany',
+        'version' => 'Wersja',
+        'your_data' => 'Twoje dane',
+        'your_data_description' => 'Zaktualizuj swoje informacje osobiste. Zmiany będą widoczne dla innych członków grup.',
+        'click_to_change_photo' => 'Kliknij na zdjęcie, aby zmienić',
     ],
     'errors' => [
         'generic' => 'Wystąpił błąd',
