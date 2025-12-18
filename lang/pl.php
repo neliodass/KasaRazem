@@ -14,6 +14,7 @@ return [
         'no_account' => 'Nie masz konta?',
         'register_link' => 'Zarejestruj się',
         'show_password' => 'Pokaż',
+        'use_demo' => 'Wypróbuj Demo',
     ],
     'register' => [
         'title' => 'Stwórz konto',

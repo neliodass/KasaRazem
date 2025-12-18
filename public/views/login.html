@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script>
-        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
         (function() {
             const theme = localStorage.getItem('userTheme') || 'light';
             document.documentElement.classList.add('theme-' + theme);
@@ -32,6 +31,13 @@
     </style>
     <script src="public/scripts/theme.js"></script>
     <script src="public/scripts/showPassword.js"></script>
+    <script>
+        function fillDemoCredentials() {
+            document.getElementById('email').value = 'demo@kasarazem.pl';
+            document.getElementById('password').value = 'demo123';
+            // document.querySelector('form').submit();
+        }
+    </script>
     <title><?= trans('login.title') ?></title>
 </head>
 
@@ -67,6 +73,15 @@
                 <button type="submit" class="login-button">
                     <?= trans('login.submit_button') ?>
                 </button>
+
+                <!-- Demo Mode Button: DEMO_MODE=true -->
+                <?php if(isset($demoMode) && $demoMode): ?>
+                <button type="button" class="demo-button" style="margin-top:0.75rem" onclick="fillDemoCredentials()">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">science</span>
+                    <?= trans('login.use_demo') ?>
+                </button>
+                <?php endif; ?>
+
                 <div class="forgot-password">
                     <a href="#"><?= trans('login.dont_remember_password') ?></a>
                 </div>

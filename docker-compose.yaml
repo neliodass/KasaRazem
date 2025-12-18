@@ -20,6 +20,8 @@ services:
       dockerfile: docker/db/Dockerfile
     ports:
       - "5433:5432"
+    environment:
+      - DEMO_MODE=${DEMO_MODE:-true}
     networks:
       - pg-network
     volumes:
@@ -34,7 +36,7 @@ services:
     networks:
       - pg-network
 
-  pgadmin-wdpai:
+  pgadmin:
     image: dpage/pgadmin4:latest
     container_name: pg-admin3
     environment:
