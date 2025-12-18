@@ -70,16 +70,16 @@ function renderItems(items) {
         }
     });
 
-    countBadge.innerText = `${activeCount} produktów`;
+    countBadge.innerText = `${activeCount} ${trans('products')}`;
 
     if (activeCount === 0 && activeContainer.innerHTML === '') {
-        activeContainer.innerHTML = '<p class="empty-state-text">Wszystko kupione! 🎉</p>';
+        activeContainer.innerHTML = `<p class="empty-state-text">${trans('all_bought')}</p>`;
     }
 }
 
 function addItem() {
     if (!window.currentListId) {
-        alert('Wybierz lub stwórz najpierw listę!');
+        alert(trans('select_list_first'));
         return;
     }
 
@@ -143,7 +143,7 @@ function openDeleteModal(type, id, name, itemRow = null) {
 
 function deleteList(listId) {
     const list = window.allLists.find(l => l.id == listId);
-    const name = list ? `listę zakupów "${list.name}"` : 'tę listę';
+    const name = list ? `${trans('shopping_list')} "${list.name}"` : trans('this_list');
     openDeleteModal('list', listId, name);
 }
 
@@ -151,9 +151,9 @@ function deleteItem(itemId, btn) {
 
     const itemRow = btn.closest('.shopping-item-row');
 
-    const itemName = itemRow ? itemRow.querySelector('.item-name').textContent : 'ten produkt';
+    const itemName = itemRow ? itemRow.querySelector('.item-name').textContent : trans('this_product');
 
-    openDeleteModal('item', itemId, `produkt "${itemName}"`, itemRow);
+    openDeleteModal('item', itemId, `${trans('product')} "${itemName}"`, itemRow);
 }
 
 
@@ -210,12 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             loadList(window.currentListId, document.querySelector('.list-tab-active'));
                         }
                     } else {
-                        alert('Nie udało się usunąć elementu. Spróbuj ponownie.');
+                        alert(trans('delete_failed'));
                     }
                 })
                 .catch(err => {
                     console.error('Błąd podczas usuwania:', err);
-                    alert('Wystąpił błąd komunikacji z serwerem.');
+                    alert(trans('server_error'));
                 });
         });
     }
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (data.success) {
                             location.reload();
                         } else {
-                            alert('Nie udało się utworzyć nowej listy. Spróbuj ponownie.');
+                            alert(trans('delete_failed'));
                         }
                     })
                     .catch(err => console.error('Błąd podczas tworzenia listy:', err))

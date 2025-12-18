@@ -89,7 +89,7 @@ class GroupController extends AppController
     {
         Auth::requireLogin();
         if (!$this->isPost()) {
-            $this->render('addGroup');
+            $this->render('createGroup');
             return;
         }
         try {

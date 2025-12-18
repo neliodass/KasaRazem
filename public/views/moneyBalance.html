@@ -1,7 +1,7 @@
 <?php include 'public/views/groupHeader.html'; ?>
 
 <div class="tab-panel active">
-    <h2>Bilans</h2>
+    <h2><?= trans('balance.title') ?></h2>
     <a href="/groups/<?= $groupId ?>/settlements" style="text-decoration: none; color: inherit;">
     <div class="list-card-item">
         <div class="list-card-content">
@@ -12,18 +12,18 @@
                 <div class="list-text-details">
                     <?php switch ($currentUserNetBalance > 0) {
                         case true:
-                            $statusText = "Masz do odebrania";
+                            $statusText = trans('balance.you_have_to_receive');
                             $currentUserStringBalance = "$currentUserNetBalance zł";
-                            $contextText = "Od kogo?";
+                            $contextText = trans('balance.from_whom');
 
                     break;
                         case false:
-                            $statusText = "Jesteś winien";
+                            $statusText = trans('balance.you_owe');
                             $currentUserStringBalance = "$currentUserNetBalance zł";
-                    $contextText = "Dla kogo?";
+                    $contextText = trans('balance.for_whom');
                     break;
                         default:
-                            $statusText = "Jesteś na zero";
+                            $statusText = trans('balance.you_are_even');
                             $currentUserStringBalance = "";
                             $contextText = "";
                     break;
@@ -42,7 +42,7 @@
         </div>
     </div>
     </a>
-    <h3>Salda</h3>
+    <h3><?= trans('balance.balances') ?></h3>
     <?php if(!empty($balance)): foreach ($balance as $balanceItem):
 
     $avatarUrl = isset($balanceItem->profile_picture) && !empty($balanceItem->profile_picture)
@@ -63,7 +63,7 @@
                         <p class="list-item-primary-text"><?= htmlspecialchars($balanceItem->userName)  ?></p>
 
                         <?php if($balanceItem->isCurrentUser): ?>
-                        <p class="list-item-secondary-text">Ja</p>
+                        <p class="list-item-secondary-text"><?= trans('balance.me') ?></p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
     </div>
 
     <div class="column-action-button-wrapper desktop-only">
-        <a href="/groups/<?= $groupId ?>/settlements" class="action-button primary">+ Rozlicz Długi</a>
+        <a href="/groups/<?= $groupId ?>/settlements" class="action-button primary">+ <?= trans('balance.settle_debts') ?></a>
     </div>
 </div>
 
@@ -95,7 +95,7 @@
 
 <div class="bottom-actions mobile-only">
     <div class="action-buttons-wrapper">
-        <a href="/groups/<?= $groupId ?>/settlements" class="action-button primary">+ Rozlicz Długi</a>
+        <a href="/groups/<?= $groupId ?>/settlements" class="action-button primary">+ <?= trans('balance.settle_debts') ?></a>
     </div>
 </div>
 

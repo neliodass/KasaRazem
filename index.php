@@ -15,6 +15,8 @@ $router->add('POST', 'login', ['controller' => 'SecurityController', 'action' =>
 $router->add('GET', 'register', ['controller' => 'SecurityController', 'action' => 'register']);
 $router->add('POST', 'register', ['controller' => 'SecurityController', 'action' => 'register']);
 $router->add('GET', 'logout', ['controller' => 'SecurityController', 'action' => 'logout']);
+$router->add('GET', 'change-language', ['controller' => 'SecurityController', 'action' => 'changeLanguage']);
+$router->add('POST', 'change-language', ['controller' => 'SecurityController', 'action' => 'changeLanguage']);
 $router->add('GET', 'groups', ['controller' => 'GroupController', 'action' => 'groups']);
 $router->add('GET', 'groups/add', ['controller' => 'GroupController', 'action' => 'addGroup']);
 $router->add('GET', 'groups/join', ['controller' => 'GroupController', 'action' => 'joinGroup']);

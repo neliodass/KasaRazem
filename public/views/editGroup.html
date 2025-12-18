@@ -1,12 +1,11 @@
 <!doctype html>
-<html lang="pl">
+<html lang="<?= TranslationService::getInstance()->getCurrentLang() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Edytuj grupę</title>
+    <title><?= trans('groups.name') ?></title>
 
     <script>
-        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
         (function() {
             const theme = localStorage.getItem('userTheme') || 'light';
             document.documentElement.classList.add('theme-' + theme);
@@ -33,7 +32,7 @@
                 <span class="material-symbols-outlined">arrow_back</span>
             </a>
         </div>
-        <h1>Edytuj grupę</h1>
+        <h1><?= trans('common.edit') ?> <?= trans('groups.name') ?></h1>
         <div style="width: 48px; height: 48px;"></div>
     </header>
 
@@ -46,9 +45,9 @@
         <?php endif; ?>
 
         <div class="form-header-group">
-            <h2 class="headline-text">Zmień nazwę grupy</h2>
+            <h2 class="headline-text"><?= trans('groups.change_name_title') ?></h2>
             <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
-                Zaktualizuj nazwę grupy, aby lepiej odzwierciedlała jej przeznaczenie.
+                <?= trans('groups.change_name_description') ?>
             </p>
         </div>
 
@@ -56,13 +55,13 @@
             <input type="hidden" name="group_id" value="<?= $groupDto->id ?>" />
 
             <div class="input-field-wrapper">
-                <label class="form-label" for="group_name">Nazwa grupy</label>
+                <label class="form-label" for="group_name"><?= trans('groups.name') ?></label>
                 <input
                     id="group_name"
                     name="group_name"
                     type="text"
                     class="input-group-text"
-                    placeholder="np. Domownicy, Współlokatorzy"
+                    placeholder="<?= trans('groups.group_name_placeholder') ?>"
                     value="<?= htmlspecialchars($groupDto->name) ?>"
                     required
                 />
@@ -70,7 +69,7 @@
 
             <div style="margin-top: 1rem;">
                 <button type="submit" class="action-button primary" style="width: 100%;">
-                    Zapisz zmiany
+                    <?= trans('common.save') ?>
                 </button>
             </div>
         </form>
@@ -78,47 +77,56 @@
         <hr style="margin: 2rem 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);" />
 
         <div class="form-header-group">
-            <h2 class="headline-text">Członkowie grupy</h2>
+            <h2 class="headline-text"><?= trans('groups.members') ?></h2>
             <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
-                Usuń użytkowników z grupy. Uwaga: operacja jest nieodwracalna.
+                <?= trans('groups.manage_members') ?>
             </p>
         </div>
 
-        <?php if(!empty($usersToDelete)): ?>
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.5rem;">
-                <?php foreach ($usersToDelete as $user):
-                    $avatarUrl = isset($user->profile_picture) && !empty($user->profile_picture)
-                        ? $user->profile_picture  // Usunięto htmlspecialchars aby nie podwójnie enkodować
-                        : 'https://ui-avatars.com/api/?name=' . urlencode($user->firstname . '+' . $user->lastname) . '&size=44&background=4CAF50&color=fff&bold=true';
-                ?>
-                    <div class="group-list-item" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: var(--surface-container); border-radius: 12px;">
-                        <div class="item-content" style="flex: 1; margin: 0;">
-                            <div class="item-icon-wrapper">
-                                <img class="user-avatar"
-                                     alt="Avatar <?= htmlspecialchars($user->firstname) ?>"
-                                     src="<?= htmlspecialchars($avatarUrl) ?>"
-                                     style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;"/>
-                            </div>
-                            <div class="item-text-wrapper">
-                                <p class="item-name"><?= htmlspecialchars($user->firstname . ' ' . $user->lastname) ?></p>
-                                <p class="item-members" style="font-size: 0.875rem; opacity: 0.7;"><?= htmlspecialchars($user->email) ?></p>
+        <div style="margin-top: 1.5rem;">
+            <?php if (!empty($groupDto->users)): ?>
+                <?php foreach ($groupDto->users as $user): ?>
+                    <div class="member-item">
+                        <div class="member-info">
+                            <?php
+                            $avatarUrl = isset($user->profile_picture) && !empty($user->profile_picture)
+                                ? htmlspecialchars($user->profile_picture)
+                                : 'https://ui-avatars.com/api/?name=' . urlencode($user->firstname . '+' . $user->lastname) . '&size=48&background=4CAF50&color=fff&bold=true';
+                            ?>
+                            <img src="<?= $avatarUrl ?>" alt="Avatar" class="member-avatar" />
+                            <div>
+                                <p class="member-name"><?= htmlspecialchars($user->firstname . ' ' . $user->lastname) ?></p>
+                                <p class="member-email"><?= htmlspecialchars($user->email) ?></p>
                             </div>
                         </div>
-                        <form action="/groups/<?= $groupDto->id ?>/deleteUser" method="POST" onsubmit="return confirm('Czy na pewno chcesz usunąć użytkownika <?= htmlspecialchars($user->firstname . ' ' . $user->lastname) ?> z grupy?');" style="margin: 0;">
-                            <input type="hidden" name="user_id" value="<?= $user->id ?>" />
-                            <button type="submit" class="action-button" style="background: var(--error); color: white; padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.25rem;">
-                                <span class="material-symbols-outlined" style="font-size: 1.25rem;">delete</span>
-                                Usuń
-                            </button>
-                        </form>
+                        <?php if ($user->id != $groupDto->created_by_user_id): ?>
+                            <form action="/groups/<?= $groupDto->id ?>/deleteUser" method="POST" style="display: inline;">
+                                <input type="hidden" name="user_id" value="<?= $user->id ?>" />
+                                <button type="submit" class="delete-member-btn" onclick="return confirm('<?= trans('groups.confirm_delete_user') ?>');">
+                                    <span class="material-symbols-outlined">person_remove</span>
+                                </button>
+                            </form>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <p class="body-text" style="text-align: center; padding: 2rem 0; opacity: 0.7;">
-                Brak członków do wyświetlenia.
+            <?php endif; ?>
+        </div>
+
+        <hr style="margin: 2rem 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);" />
+
+        <div class="form-header-group">
+            <h2 class="headline-text" style="color: #DC2626;"><?= trans('groups.delete_group_title') ?></h2>
+            <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
+                <?= trans('groups.delete_group_description') ?>
             </p>
-        <?php endif; ?>
+        </div>
+
+        <form action="/groups/<?= $groupDto->id ?>/delete" method="POST" style="margin-top: 1rem;">
+            <button type="submit" class="action-button" style="width: 100%; background-color: #DC2626; color: white;"
+                    onclick="return confirm('<?= trans('groups.confirm_delete_group') ?>');">
+                <?= trans('common.delete') ?>
+            </button>
+        </form>
 
     </main>
 </div>

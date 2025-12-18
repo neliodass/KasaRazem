@@ -1,12 +1,11 @@
 <!doctype html>
-<html lang="pl">
+<html lang="<?= TranslationService::getInstance()->getCurrentLang() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Edytuj profil</title>
+    <title><?= trans('profile.edit_title') ?></title>
 
     <script>
-        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
         (function() {
             const theme = localStorage.getItem('userTheme') || 'light';
             document.documentElement.classList.add('theme-' + theme);
@@ -33,7 +32,7 @@
                 <span class="material-symbols-outlined">arrow_back</span>
             </a>
         </div>
-        <h1>Edytuj profil</h1>
+        <h1><?= trans('profile.edit_title') ?></h1>
         <div style="width: 48px; height: 48px;"></div>
     </header>
 
@@ -56,147 +55,53 @@
         <form action="/profile/edit" method="POST" enctype="multipart/form-data" style="margin-top: 1.5rem;">
 
             <div class="input-field-wrapper">
-                <label class="form-label" for="firstname">Imię</label>
+                <label class="form-label" for="firstname"><?= trans('profile.firstname') ?></label>
                 <input
                     id="firstname"
                     name="firstname"
                     type="text"
                     class="input-group-text"
-                    placeholder="Wprowadź imię"
+                    placeholder="<?= trans('profile.firstname') ?>"
                     value="<?= htmlspecialchars($user->firstname ?? '') ?>"
                     required
                 />
             </div>
 
             <div class="input-field-wrapper">
-                <label class="form-label" for="lastname">Nazwisko</label>
+                <label class="form-label" for="lastname"><?= trans('profile.lastname') ?></label>
                 <input
                     id="lastname"
                     name="lastname"
                     type="text"
                     class="input-group-text"
-                    placeholder="Wprowadź nazwisko"
+                    placeholder="<?= trans('profile.lastname') ?>"
                     value="<?= htmlspecialchars($user->lastname ?? '') ?>"
                     required
                 />
             </div>
 
             <div class="input-field-wrapper">
-                <label class="form-label" for="email">Adres email</label>
+                <label class="form-label" for="email"><?= trans('profile.email') ?></label>
                 <input
                     id="email"
                     name="email"
                     type="email"
                     class="input-group-text"
-                    placeholder="twoj@email.com"
+                    placeholder="<?= trans('profile.email') ?>"
                     value="<?= htmlspecialchars($user->email ?? '') ?>"
                     required
                 />
             </div>
 
-            <div class="input-field-wrapper">
-                <label class="form-label" for="profile_picture">Zdjęcie profilowe (opcjonalne)</label>
-                <input
-                    id="profile_picture"
-                    name="profile_picture"
-                    type="file"
-                    accept="image/jpeg,image/png,image/jpg,image/webp"
-                    class="input-group-text"
-                    style="padding: 0.625rem;"
-                />
-                <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin-top: 0.5rem;">
-                    Akceptowane formaty: JPG, PNG, WEBP. Maksymalny rozmiar: 5MB.
-                </p>
-            </div>
-
-            <?php
-            $avatarUrl = isset($user->profile_picture) && !empty($user->profile_picture)
-                ? htmlspecialchars($user->profile_picture)
-                : 'https://ui-avatars.com/api/?name=' . urlencode($user->firstname . '+' . $user->lastname) . '&size=128&background=4CAF50&color=fff&bold=true';
-            ?>
-            <div style="margin-top: 1rem; padding: 1rem; background: var(--surface-container); border-radius: 12px;">
-                <p style="font-weight: 600; margin-bottom: 0.75rem; color: var(--color-text-body); font-size: 0.875rem;">Podgląd avatara:</p>
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <img
-                        id="avatar-preview"
-                        src="<?= $avatarUrl ?>"
-                        alt="Podgląd avatara"
-                        style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-border-input);"
-                    />
-                    <div>
-                        <p id="preview-name" style="font-weight: 600; color: var(--color-text-body);"><?= htmlspecialchars($user->firstname . ' ' . $user->lastname) ?></p>
-                        <p style="font-size: 0.875rem; color: var(--color-text-secondary);">Tak widzą Cię inni</p>
-                    </div>
-                </div>
-                <?php if (isset($user->profile_picture) && !empty($user->profile_picture)): ?>
-                <div style="margin-top: 0.75rem;">
-                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.875rem; color: var(--error);">
-                        <input type="checkbox" name="remove_profile_picture" value="1" style="cursor: pointer;">
-                        <span>Usuń obecne zdjęcie profilowe</span>
-                    </label>
-                </div>
-                <?php endif; ?>
-            </div>
-
-            <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="margin-top: 1.5rem;">
                 <button type="submit" class="action-button primary" style="width: 100%;">
-                    Zapisz zmiany
+                    <?= trans('profile.save_changes') ?>
                 </button>
-                <a href="/profile" class="action-button secondary" style="width: 100%; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">
-                    Anuluj
-                </a>
             </div>
         </form>
 
         </div>
     </main>
 </div>
-
-<script>
-// Podgląd avatara na żywo
-const profilePictureInput = document.getElementById('profile_picture');
-const firstnameInput = document.getElementById('firstname');
-const lastnameInput = document.getElementById('lastname');
-const avatarPreview = document.getElementById('avatar-preview');
-const previewName = document.getElementById('preview-name');
-
-function updateNamePreview() {
-    const firstname = firstnameInput.value.trim() || 'User';
-    const lastname = lastnameInput.value.trim() || '';
-    previewName.textContent = firstname + ' ' + lastname;
-}
-
-firstnameInput.addEventListener('input', updateNamePreview);
-lastnameInput.addEventListener('input', updateNamePreview);
-
-// Podgląd wgranego pliku
-profilePictureInput.addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        // Sprawdź rozmiar pliku (5MB max)
-        if (file.size > 5 * 1024 * 1024) {
-            alert('Plik jest za duży. Maksymalny rozmiar to 5MB.');
-            this.value = '';
-            return;
-        }
-
-        // Sprawdź typ pliku
-        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-        if (!validTypes.includes(file.type)) {
-            alert('Nieprawidłowy format pliku. Akceptowane formaty: JPG, PNG, WEBP.');
-            this.value = '';
-            return;
-        }
-
-        // Pokaż podgląd
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            avatarPreview.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-});
-</script>
-
 </body>
 </html>

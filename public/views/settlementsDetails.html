@@ -3,8 +3,8 @@
 <div class="tab-panel active">
 
     <div style="padding: 1rem; text-align: center;">
-        <h2 class="headline" style="margin-bottom: 0.5rem; font-size: 1.8rem;">Rozlicz grupę</h2>
-        <p class="list-item-secondary-text">Minimalna liczba transakcji do zrównania salda.</p>
+        <h2 class="headline" style="margin-bottom: 0.5rem; font-size: 1.8rem;"><?= trans('balance.settle_group') ?></h2>
+        <p class="list-item-secondary-text"><?= trans('balance.settle_description') ?></p>
     </div>
 
     <div class="expense-detail-card" style="padding: 0;">
@@ -14,10 +14,10 @@
 
             <div style="display: flex; flex-direction: column; align-items: flex-start; flex-grow: 1;">
                 <p class="detail-value" style="margin-bottom: 0.25rem;">
-                    <?= $settlement->fromUserName ?> płaci do <?= $settlement->toUserName ?>
+                    <?= $settlement->fromUserName ?> <?= trans('balance.pays_to') ?> <?= $settlement->toUserName ?>
                 </p>
                 <p class="list-item-secondary-text">
-                    Zrównanie długu.
+                    <?= trans('balance.debt_settlement') ?>.
                 </p>
             </div>
 
@@ -36,13 +36,13 @@
                         data-payer-name="<?= htmlspecialchars($settlement->fromUserName) ?>"
                         data-payee-name="<?= htmlspecialchars($settlement->toUserName) ?>"
                         style="height: 2rem; font-size: 0.8rem; margin-top: 0.5rem;">
-                    Uregulowane
+                    <?= trans('balance.settled_button') ?>
                 </button>
             </div>
         </div>
         <?php endforeach; ?>
         <?php else: ?>
-        <p class="body-text" style="text-align: center; padding: 1rem;">Grupa jest już w pełni rozliczona!</p>
+        <p class="body-text" style="text-align: center; padding: 1rem;"><?= trans('balance.group_fully_settled') ?></p>
         <?php endif; ?>
     </div>
 
@@ -50,8 +50,8 @@
 
 <div id="settle-modal" class="modal-overlay">
     <div class="modal-content">
-        <h3>Potwierdź rozliczenie</h3>
-        <p>Czy na pewno chcesz potwierdzić przelew <strong id="modal-from">?</strong> do <strong id="modal-to">?</strong> w kwocie <strong id="modal-amount">?</strong> zł?</p>
+        <h3><?= trans('balance.confirm_settlement') ?></h3>
+        <p><?= trans('balance.confirm_transfer') ?> <strong id="modal-from">?</strong> <?= trans('balance.to') ?> <strong id="modal-to">?</strong> <?= trans('balance.in_amount') ?> <strong id="modal-amount">?</strong> zł?</p>
 
         <form id="settle-form" method="POST" action="/groups/<?= $groupId ?>/settleDebt">
             <input type="hidden" name="payer_id" id="modal-payer-id">
@@ -60,10 +60,10 @@
 
             <div class="modal-actions">
                 <button type="button" class="action-button secondary" id="modal-settle-cancel">
-                    Anuluj
+                    <?= trans('common.cancel') ?>
                 </button>
                 <button type="submit" class="action-button primary">
-                    Potwierdź
+                    <?= trans('common.confirm') ?>
                 </button>
             </div>
         </form>

@@ -6,6 +6,7 @@ require_once 'repository/UserRepository.php';
 require_once 'src/services/UserService.php';
 require_once 'src/dtos/CreateUserRequestDTO.php';
 require_once 'src/dtos/LoginRequestDTO.php';
+require_once 'src/services/TranslationService.php';
 
 class SecurityController extends AppController
 {
@@ -34,7 +35,7 @@ class SecurityController extends AppController
             $dto = LoginRequestDTO::fromPost($_POST);
             $this->userService->login($dto);
         } catch (InvalidArgumentException $e) {
-             return $this->render('login', ["message" => "Niewłaściwy email, bądź hasło"]);
+             return $this->render('login', ["message" => $e->getMessage()]);
         }
         header('Location: /groups');
         exit();
@@ -52,11 +53,11 @@ class SecurityController extends AppController
         try{
             $dto = CreateUserRequestDTO::fromPost($_POST);
             $this->userService->register($dto);
-            return $this->render('login', ["message" => "Rejestracja udana. Proszę się zalogować."]);
+            return $this->render('login', ["message" => trans('register.success')]);
         } catch (InvalidArgumentException $e) {
              return $this->render('register', ["message" => $e->getMessage()]);
         }catch (\Exception $e){
-                return $this->render('register', ["message" => "Wystąpił błąd podczas rejestracji. Proszę spróbować ponownie."]);
+                return $this->render('register', ["message" => trans('register.error')]);
         }
 
     }
@@ -64,5 +65,15 @@ class SecurityController extends AppController
     {
       $this->userService->logout();
         header('Location: /login');
+    }
+
+    public function changeLanguage()
+    {
+        $lang = $_POST['lang'] ?? $_GET['lang'] ?? 'pl';
+        TranslationService::getInstance()->setLanguage($lang);
+
+        $redirect = $_SERVER['HTTP_REFERER'] ?? '/';
+        header("Location: $redirect");
+        exit();
     }
 }

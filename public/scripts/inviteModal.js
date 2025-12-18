@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showCopyFeedback(button) {
         const originalText = button.innerHTML;
-        button.innerHTML = '<span class="material-symbols-outlined">check</span> Skopiowano!';
+        button.innerHTML = `<span class="material-symbols-outlined">check</span> ${trans('copied')}`;
         button.style.backgroundColor = 'var(--color-success, #10b981)';
         button.style.color = 'white';
 
