@@ -198,6 +198,8 @@ return [
         'not_found' => 'Nie znaleziono',
         'unauthorized' => 'Brak dostępu',
         'forbidden' => 'Dostęp zabroniony',
+        'page_not_found_message' => 'Przepraszamy, strona której szukasz nie istnieje lub została przeniesiona.',
+        'back_to_home' => 'Wróć do strony głównej',
     ],
     'common' => [
         'save' => 'Zapisz',
