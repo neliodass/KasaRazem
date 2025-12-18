@@ -45,9 +45,9 @@
         <?php endif; ?>
 
         <div class="form-header-group">
-            <h2 class="headline-text">Zmień nazwę grupy</h2>
+            <h2 class="headline-text"><?= trans('groups.change_name_title') ?></h2>
             <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
-                Zaktualizuj nazwę grupy, aby lepiej odzwierciedlała jej przeznaczenie.
+                <?= trans('groups.change_name_description') ?>
             </p>
         </div>
 
@@ -79,7 +79,7 @@
         <div class="form-header-group">
             <h2 class="headline-text"><?= trans('groups.members') ?></h2>
             <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
-                Zarządzaj członkami grupy.
+                <?= trans('groups.manage_members') ?>
             </p>
         </div>
 
@@ -102,7 +102,7 @@
                         <?php if ($user->id != $groupDto->created_by_user_id): ?>
                             <form action="/groups/<?= $groupDto->id ?>/deleteUser" method="POST" style="display: inline;">
                                 <input type="hidden" name="user_id" value="<?= $user->id ?>" />
-                                <button type="submit" class="delete-member-btn" onclick="return confirm('Czy na pewno chcesz usunąć tego użytkownika z grupy?');">
+                                <button type="submit" class="delete-member-btn" onclick="return confirm('<?= trans('groups.confirm_delete_user') ?>');">
                                     <span class="material-symbols-outlined">person_remove</span>
                                 </button>
                             </form>
@@ -115,15 +115,15 @@
         <hr style="margin: 2rem 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);" />
 
         <div class="form-header-group">
-            <h2 class="headline-text" style="color: #DC2626;">Usuń grupę</h2>
+            <h2 class="headline-text" style="color: #DC2626;"><?= trans('groups.delete_group_title') ?></h2>
             <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
-                Usuń grupę na stałe. Tej operacji nie można cofnąć.
+                <?= trans('groups.delete_group_description') ?>
             </p>
         </div>
 
         <form action="/groups/<?= $groupDto->id ?>/delete" method="POST" style="margin-top: 1rem;">
             <button type="submit" class="action-button" style="width: 100%; background-color: #DC2626; color: white;"
-                    onclick="return confirm('Czy na pewno chcesz usunąć tę grupę? Wszystkie dane zostaną utracone.');">
+                    onclick="return confirm('<?= trans('groups.confirm_delete_group') ?>');">
                 <?= trans('common.delete') ?>
             </button>
         </form>
