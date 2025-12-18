@@ -38,38 +38,40 @@
         <div style="width: 48px; height: 48px;"></div>
     </header>
 
-    <form action="/groups/join" method="POST" style="display: contents;">
-        <main class="join-container">
-            <div>
-                <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;"><?= trans('groups.join_title') ?></h1>
-                <p class="body-text" style="opacity: 0.7;">
+    <form action="/groups/join" method="POST">
+        <main class="page-form-container">
+            <div class="form-header-group">
+                <h2 class="headline-text"><?= trans('groups.join_title') ?></h2>
+                <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
                     <?= trans('groups.join_description') ?>
                 </p>
             </div>
+
             <?php if(isset($message)): ?>
             <p class="messages">
                 <?= $message; ?>
             </p>
             <?php endif; ?>
-            <div>
-                <label class="form-label"><?= trans('groups.invitation_code') ?></label>
+
+            <div class="input-field-wrapper">
+                <label class="form-label" for="code"><?= trans('groups.invitation_code') ?></label>
                 <input
+                        id="code"
                         type="text"
                         name="code"
-                        class="form-input"
+                        class="input-group-text"
                         placeholder="<?= trans('groups.invitation_code_placeholder') ?>"
                         value="<?= isset($code) ? $code : '' ?>"
                         required
                 >
             </div>
-        </main>
-        <div class="bottom-actions">
-            <div class="action-buttons-wrapper">
-                <button type="submit" class="action-button primary">
+
+            <div style="margin-top: 1.5rem;">
+                <button type="submit" class="action-button primary" style="width: 100%;">
                     <?= trans('groups.join_group') ?>
                 </button>
             </div>
-        </div>
+        </main>
     </form>
 </div>
 </body>
