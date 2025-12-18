@@ -1,5 +1,6 @@
 <?php
 
+require_once 'config.php';
 require_once 'src/services/ProfileService.php';
 
 class ProfileController extends \AppController

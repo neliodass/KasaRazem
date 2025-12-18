@@ -169,6 +169,7 @@ return [
         'new_password' => 'Nowe hasło',
         'confirm_password' => 'Potwierdź hasło',
         'save_changes' => 'Zapisz zmiany',
+        'version' => 'Wersja',
     ],
     'errors' => [
         'generic' => 'Wystąpił błąd',
