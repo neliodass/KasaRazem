@@ -26,7 +26,8 @@ class SecurityController extends AppController
     public function login()
     {
         if (!$this->isPost()) {
-             return $this->render('login');
+            $demoMode = getenv('DEMO_MODE') === 'true';
+            return $this->render('login', ['demoMode' => $demoMode]);
         }
 
         $this->requireCSRF();
@@ -35,7 +36,8 @@ class SecurityController extends AppController
             $dto = LoginRequestDTO::fromPost($_POST);
             $this->userService->login($dto);
         } catch (InvalidArgumentException $e) {
-             return $this->render('login', ["message" => $e->getMessage()]);
+            $demoMode = getenv('DEMO_MODE') === 'true';
+            return $this->render('login', ["message" => $e->getMessage(), 'demoMode' => $demoMode]);
         }
         header('Location: /groups');
         exit();

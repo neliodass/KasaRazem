@@ -9,26 +9,18 @@ CREATE TABLE users (
                        enabled BOOLEAN DEFAULT TRUE
 );
 
-INSERT INTO users (firstname, lastname, email, password, enabled, theme)
-VALUES (
-           'Bartek',
-           'Mockowy',
-           'bartek.mock@mock.com',
-           '$2a$12$3zb5EA4go8LBaCvjq6FSEOfsZ/vWPmASCh9VlLrJnJcNgl1WZMALS',
-           TRUE,
-           'light'
-       );
 CREATE TABLE categories (
                             id SERIAL PRIMARY KEY,
-                            name VARCHAR(100) UNIQUE NOT NULL
+                            name VARCHAR(100) UNIQUE NOT NULL,
+                            translation_key VARCHAR(100) UNIQUE NOT NULL
 );
 
-INSERT INTO categories (name) VALUES
-                                  ('Spożywcze'),
-                                  ('Czynsz'),
-                                  ('Rachunki'),
-                                  ('Rozrywka'),
-                                  ('Transport');
+INSERT INTO categories (name, translation_key) VALUES
+                                  ('Groceries', 'groceries'),
+                                  ('Rent', 'rent'),
+                                  ('Bills', 'bills'),
+                                  ('Entertainment', 'entertainment'),
+                                  ('Transport', 'transport');
 
 CREATE TABLE groups (
                         id SERIAL PRIMARY KEY,
@@ -37,10 +29,6 @@ CREATE TABLE groups (
                         invite_id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid(),
                         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-INSERT INTO groups (name, created_by_user_id) VALUES
-                                                  ('Konto Wspólne', 1),
-                                                  ('Wyjazd Firmowy 2024', 1),
-                                                  ('Remont Mieszkania', 1);
 
 CREATE TABLE group_members (
                                group_id INTEGER NOT NULL REFERENCES groups(id),
@@ -48,10 +36,7 @@ CREATE TABLE group_members (
                                joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                                PRIMARY KEY (group_id, user_id)
 );
-INSERT INTO group_members (group_id, user_id) VALUES
-                                                  (1, 1), -- Bartek w 'Konto Wspólne'
-                                                  (2, 1), -- Bartek w 'Wyjazd Firmowy 2024'
-                                                  (3, 1); -- Bartek w 'Remont Mieszkania'
+
 CREATE TABLE expenses (
                           id SERIAL PRIMARY KEY,
                           group_id INTEGER NOT NULL REFERENCES groups(id),
@@ -131,3 +116,5 @@ CREATE TABLE audit_logs (
 CREATE INDEX idx_audit_logs_event_type ON audit_logs(event_type);
 CREATE INDEX idx_audit_logs_user_email ON audit_logs(user_email);
 CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
+
+

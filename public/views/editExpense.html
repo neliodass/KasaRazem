@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="pl">
+<html lang="<?= TranslationService::getInstance()->getCurrentLang() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Edycja: <?= $expense->name ?? 'Wydatek' ?></title>
+    <title><?= trans('expenses.editing_prefix') ?> <?= $expense->name ?? trans('expenses.expense_default') ?></title>
 
     <script>
         // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
@@ -43,7 +43,7 @@
                 <span class="material-symbols-outlined">arrow_back</span>
             </a>
         </div>
-        <h1>Edytuj Wydatek</h1>
+        <h1><?= trans('expenses.edit_expense_title') ?></h1>
         <div style="width: 48px; height: 48px;"></div>
     </header>
 
@@ -51,23 +51,23 @@
         <input type="hidden" name="_method" value="PATCH"/>
         <main class="page-form-container page-container">
             <div class="form-header-group">
-                <h1 class="headline-text">Edytuj wydatek</h1>
+                <h1 class="headline-text"><?= trans('expenses.edit_expense_header') ?></h1>
             </div>
 
             <div class="input-field-wrapper">
-                <label class="form-label" for="expense_name">Nazwa</label>
+                <label class="form-label" for="expense_name"><?= trans('expenses.name') ?></label>
                 <input
                         id="expense_name"
                         name="name"
                         type="text"
                         class="input-group-text"
-                        placeholder="np. Zakupy spożywcze"
+                        placeholder="<?= trans('expenses.name_placeholder') ?>"
                         value="<?= $expense->name ?? '' ?>" required
                 />
             </div>
 
             <div class="input-field-wrapper">
-                <label class="form-label" for="amount">Kwota</label>
+                <label class="form-label" for="amount"><?= trans('expenses.amount') ?></label>
                 <div class="input-suffix-wrapper">
                     <input
                             id="amount"
@@ -75,7 +75,7 @@
                             type="number"
                             step="0.01"
                             class="input-group-text"
-                            placeholder="0.00"
+                            placeholder="<?= trans('expenses.amount_placeholder') ?>"
                             value="<?= $expense->amount ?? '' ?>" required
                     />
                     <span class="input-suffix-text">PLN</span>
@@ -84,10 +84,10 @@
 
             <div class="grid-2-col">
                 <div class="input-field-wrapper">
-                    <label class="form-label" for="category">Kategoria</label>
+                    <label class="form-label" for="category"><?= trans('expenses.category') ?></label>
                     <div class="input-suffix-wrapper">
                         <select class="input-group-text" name="category" id="category" required>
-                            <option disabled="" value="">Wybierz</option>
+                            <option disabled="" value=""><?= trans('expenses.category_select') ?></option>
                             <?php if(!empty($categories)):
             foreach ($categories as $category):
             $selected = ($category->id == $expense->categoryId) ? 'selected' : '';
@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="input-field-wrapper">
-                    <label class="form-label" for="date">Data</label>
+                    <label class="form-label" for="date"><?= trans('expenses.date') ?></label>
                     <input
                             id="date"
                             name="date"
@@ -115,7 +115,7 @@
 
             </div>
             <div class="input-field-wrapper">
-                <label class="form-label" for="paidBy">Zapłacono przez:</label>
+                <label class="form-label" for="paidBy"><?= trans('expenses.paid_by_colon') ?></label>
                 <select id="paidBy" name="paidBy" class="input-group-text" required>
                     <?php
         if(!empty($users)):
@@ -130,7 +130,7 @@
                 </select>
             </div>
             <div>
-                <p class="form-label" style="padding-bottom: 0.75rem;">Podziel pomiędzy</p>
+                <p class="form-label" style="padding-bottom: 0.75rem;"><?= trans('expenses.split_among') ?></p>
                 <div class="split-user-list">
                     <?php
         if(!empty($users)):
@@ -149,7 +149,7 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                             <input class="split-ratio-input" type="number" min="1" step="1" name="split_ratio_<?= $user->id ?>" value="<?= $ratio ?>" style="display: none; width: 4rem; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--color-border-input); text-align: center; font-weight: 600;"/>
-                            <input class="split-amount-input" type="number" min="0" step="0.01" name="split_amount_<?= $user->id ?>" value="<?= $expense->splitAmounts[$user->id] ?? '0' ?>" style="display: none; width: 5rem; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--color-border-input); text-align: center; font-weight: 600;" placeholder="0.00"/>
+                            <input class="split-amount-input" type="number" min="0" step="0.01" name="split_amount_<?= $user->id ?>" value="<?= $expense->splitAmounts[$user->id] ?? '0' ?>" style="display: none; width: 5rem; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--color-border-input); text-align: center; font-weight: 600;" placeholder="<?= trans('expenses.amount_placeholder') ?>"/>
                             <input <?= $checked ?> class="checkbox-style split-checkbox" type="checkbox" name="split_user_<?= $user->id ?>" value="1"/>
                         </div>
                     </div>
@@ -162,12 +162,12 @@
             <div class="split-mode-toggle-wrapper">
                 <input type="hidden" name="split_mode" id="split_mode" value="<?= $expense->splitMode ?>"/>
                 <div class="split-mode-toggle" style="grid-template-columns: repeat(3, 1fr);">
-                    <button type="button" class="<?= $expense->splitMode === 'equal' ? 'active-mode' : '' ?>" data-mode="equal">Równo</button>
-                    <button type="button" class="<?= $expense->splitMode === 'ratio' ? 'active-mode' : '' ?>" data-mode="ratio">Na części</button>
-                    <button type="button" class="<?= $expense->splitMode === 'amount' ? 'active-mode' : '' ?>" data-mode="amount">Kwoty</button>
+                    <button type="button" class="<?= $expense->splitMode === 'equal' ? 'active-mode' : '' ?>" data-mode="equal"><?= trans('expenses.split_mode_equal') ?></button>
+                    <button type="button" class="<?= $expense->splitMode === 'ratio' ? 'active-mode' : '' ?>" data-mode="ratio"><?= trans('expenses.split_mode_ratio') ?></button>
+                    <button type="button" class="<?= $expense->splitMode === 'amount' ? 'active-mode' : '' ?>" data-mode="amount"><?= trans('expenses.split_mode_amount') ?></button>
                 </div>
                 <div id="amount-validation-message" style="display: none; margin-top: 0.5rem; padding: 0.75rem; background-color: #FEE2E2; color: #991B1B; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500;">
-                    Suma kwot nie zgadza się z całkowitą kwotą wydatku
+                    <?= trans('expenses.amount_validation_error') ?>
                 </div>
             </div>
         </main>
@@ -175,7 +175,7 @@
         <div class="bottom-actions">
             <div class="action-buttons-wrapper">
                 <button type="submit" class="action-button primary">
-                    Zapisz zmiany
+                    <?= trans('expenses.save_changes') ?>
                 </button>
             </div>
         </div>

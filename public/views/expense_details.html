@@ -1,12 +1,11 @@
 <!doctype html>
-<html lang="pl" xmlns:link="http://www.w3.org/1999/html">
+<html lang="<?= TranslationService::getInstance()->getCurrentLang() ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= $expenseDetails->name ?? 'Szczegóły wydatku' ?></title>
+    <title><?= $expenseDetails->name ?? trans('expenses.no_name') ?></title>
 
     <script>
-        // Natychmiastowe ustawienie motywu (przed renderowaniem), aby uniknąć migotania
         (function() {
             const theme = localStorage.getItem('userTheme') || 'light';
             document.documentElement.classList.add('theme-' + theme);
@@ -50,10 +49,10 @@ $formattedDate = $date->format('l, d F Y');
 
         <div id="context-menu" class="dropdown-menu">
             <a href="/groups/<?= $groupId ?>/expense/<?= $expenseDetails->id ?>/edit" class="dropdown-item">
-                <span class="material-symbols-outlined">edit</span> Edytuj
+                <span class="material-symbols-outlined">edit</span> <?= trans('common.edit') ?>
             </a>
             <a href="/groups/<?= $groupId ?>/expense/<?= $expenseDetails->id ?>/delete" class="dropdown-item delete-action">
-                <span class="material-symbols-outlined">delete</span> Usuń
+                <span class="material-symbols-outlined">delete</span> <?= trans('common.delete') ?>
             </a>
         </div>
     </div>
@@ -71,7 +70,7 @@ $formattedDate = $date->format('l, d F Y');
             </div>
 
             <h1 class="expense-amount">
-                <?= $expenseDetails->name ?? 'Brak nazwy' ?>
+                <?= $expenseDetails->name ?? trans('expenses.no_name') ?>
             </h1>
 
             <p class="expense-name">
@@ -86,19 +85,19 @@ $formattedDate = $date->format('l, d F Y');
         <div class="expense-detail-card">
 
             <div class="expense-detail-row">
-                <p class="detail-label">Zapłacone przez</p>
+                <p class="detail-label"><?= trans('expenses.paid_by_label') ?></p>
                 <p class="detail-value"><?= $expenseDetails->payerName ?? '?' ?></p>
             </div>
 
             <div class="expense-detail-row">
-                <p class="detail-label">Kategoria</p>
-                <p class="detail-value"><?= $expenseDetails->categoryName ?? 'Brak' ?></p>
+                <p class="detail-label"><?= trans('expenses.category') ?></p>
+                <p class="detail-value"><?= $expenseDetails->categoryName ?? trans('expenses.no_category') ?></p>
             </div>
         </div>
 
         <div class="expense-detail-card">
             <p class="detail-value" style="margin-bottom: 0.5rem;">
-                Podzielone pomiędzy
+                <?= trans('expenses.split_between') ?>
             </p>
 
             <?php if (!empty($expenseDetails->splits)): ?>
@@ -120,7 +119,7 @@ $formattedDate = $date->format('l, d F Y');
             </div>
             <?php endforeach; ?>
             <?php else: ?>
-            <p class="list-item-secondary-text">Wydatek nie został podzielony.</p>
+            <p class="list-item-secondary-text"><?= trans('expenses.not_split') ?></p>
             <?php endif; ?>
         </div>
 
@@ -129,20 +128,20 @@ $formattedDate = $date->format('l, d F Y');
     </main>
 
 </div>
-<div id="delete-modal" class="modal-overlay">
+<div id="delete-group-modal" class="modal-overlay">
     <div class="modal-content">
-        <h3>Potwierdź usunięcie</h3>
-        <p>Czy na pewno chcesz to usunąć? Tej operacji nie można cofnąć.</p>
+        <h3><?= trans('expenses.confirm_delete_title') ?></h3>
+        <p><?= trans('expenses.confirm_delete_message') ?></p>
 
         <form id="delete-form" method="POST">
             <input type="hidden" name="_method" value="DELETE">
 
             <div class="modal-actions">
                 <button type="button" class="action-button secondary" id="modal-cancel">
-                    Anuluj
+                    <?= trans('common.cancel') ?>
                 </button>
                 <button type="submit" class="action-button primary">
-                    Usuń
+                    <?= trans('common.delete') ?>
                 </button>
             </div>
         </form>
