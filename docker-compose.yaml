@@ -19,13 +19,17 @@ services:
       context: .
       dockerfile: docker/db/Dockerfile
     ports:
-      - "5433:5432"
+      - "${DB_PORT}:5432"
     environment:
-      - DEMO_MODE=${DEMO_MODE:-true}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - DEMO_MODE=${DEMO_MODE}
     networks:
       - pg-network
     volumes:
       - ./docker/db:/docker-entrypoint-initdb.d
+      - pg-data:/var/lib/postgresql
 
   php:
     build:
@@ -33,6 +37,13 @@ services:
       dockerfile: docker/php/Dockerfile
     volumes:
       - .:/app
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DEMO_MODE=${DEMO_MODE}
     networks:
       - pg-network
 
@@ -40,15 +51,18 @@ services:
     image: dpage/pgadmin4:latest
     container_name: pg-admin3
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     ports:
-      - "5050:80"
+      - "${PGADMIN_PORT}:80"
     networks:
       - pg-network
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
 
 networks:
   pg-network:
 
 volumes:
   pg-data:
+  pgadmin-data:

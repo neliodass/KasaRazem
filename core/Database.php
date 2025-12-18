@@ -14,11 +14,11 @@ class Database
     {
         Env::load('.env');
 
-        $this->username = $_ENV['USERNAME'];
-        $this->password = $_ENV['PASSWORD'];
-        $this->host = $_ENV['HOST'];
-        $this->port = $_ENV['PORT'];
-        $this->database = $_ENV['DATABASE'];
+        $this->username = $_ENV['DB_USER'];
+        $this->password = $_ENV['DB_PASSWORD'];
+        $this->host = $_ENV['DB_HOST'];
+        $this->port = $_ENV['DB_PORT'];
+        $this->database = $_ENV['DB_NAME'];
     }
     public static function getInstance(): Database
     {
