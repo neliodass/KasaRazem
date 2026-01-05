@@ -12,13 +12,13 @@ class CreateUserRequestDTO
     public static function fromPost(array $postData): self
     {
         if (empty($postData['password']) || $postData['password'] !== ($postData['password-repeat'] ?? '')) {
-            throw new InvalidArgumentException("Hasła nie są zgodne lub puste");
+            throw new InvalidArgumentException(trans('register.passwords_mismatch'));
         }
 
         PasswordValidator::validateOrThrow($postData['password']);
 
         if (!filter_var($postData['email'] ?? '', FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException("Nieprawidłowy format adresu email.");
+            throw new InvalidArgumentException(trans('register.invalid_email'));
         }
 
         $dto = new self();

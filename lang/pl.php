@@ -31,6 +31,8 @@ return [
         'have_account' => 'Masz już konto?',
         'login_link' => 'Zaloguj się',
         'show_password' => 'Pokaż',
+        'passwords_mismatch' => 'Hasła nie są zgodne lub puste',
+        'invalid_email' => 'Nieprawidłowy format adresu email',
     ],
     'groups' => [
         'title' => 'Moje grupy',

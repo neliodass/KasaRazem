@@ -39,7 +39,6 @@ class UserService
         $user->lastname = $dto->lastname;
         $user->email = $dto->email;
         $user->password = $hashedPassword;
-        $user->bio = $dto->bio;
         $user->enabled = true;
 
         return $this->userRepository->save($user);
