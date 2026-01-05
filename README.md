@@ -3,11 +3,11 @@
   <p><strong>Smart expense management for groups</strong></p>
   
   <p>
-    <a href="#features">Features</a> •
-    <a href="#screenshots">Screenshots</a> •
-    <a href="#tech-stack">Tech Stack</a> •
-    <a href="#getting-started">Getting Started</a> •
-    <a href="#demo">Demo</a>
+    <a href="#-features">Features</a> •
+    <a href="#-screenshots">Screenshots</a> •
+    <a href="#-tech-stack">Tech Stack</a> •
+    <a href="#-getting-started">Getting Started</a> •
+    <a href="#-demo">Demo</a>
   </p>
 
   ![License](https://img.shields.io/badge/license-MIT-blue.svg)
