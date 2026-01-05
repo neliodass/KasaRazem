@@ -27,6 +27,26 @@ class Database
         }
         return self::$instance;
     }
+    public function getConnection(): PDO
+    {
+        if ($this->connection === null) {
+            $this->connection = $this->connect();
+        }
+        return $this->connection;
+    }
+    public function resetDatabase() {
+        $db = $this->getConnection();
+        $db->exec("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
+        $initPath = __DIR__ . '/../docker/db/01-init.sql';
+        $demoPath = __DIR__ . '/../docker/db/02-demo_data.sql';
+
+        if (file_exists($initPath) && file_exists($demoPath)) {
+            $db->exec(file_get_contents($initPath));
+            $db->exec(file_get_contents($demoPath));
+        } else {
+            throw new Exception("SQL files for reset not found.");
+        }
+    }
     public function connect():PDO
     {
         try {

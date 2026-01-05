@@ -8,6 +8,16 @@ require_once ('src/controllers/BalanceController.php');
 require_once ('src/controllers/ListController.php');
 require_once ('src/controllers/ProfileController.php');
 Auth::setCookieParameters();
+if (getenv('DEMO_MODE') === 'true') {
+    if (!defined('DEMO_INITIALIZED')) {
+        try {
+            Database::getInstance()->resetDatabase();
+            define('DEMO_INITIALIZED', true);
+        } catch (Exception $e) {
+            error_log("Demo reset failed: " . $e->getMessage());
+        }
+    }
+}
 $router = new Router();
 
 $router->add('GET', 'login',  ['controller' => 'SecurityController', 'action' => 'login']);
