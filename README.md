@@ -208,7 +208,7 @@ When `DEMO_MODE=true`, the application includes:
 
 ---
 ## 🎥 Live Demo
-You can try a live demo of KasaRazem at: [https://kasarazem.demo.example.com](https://kasarazem.demo.example.com)
+You can try a live demo of KasaRazem at: [Currently unavailable]
 
 ---
 <div align="center">
