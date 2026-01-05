@@ -1,0 +1,122 @@
+<?php include 'public/views/groupHeader.html'; ?>
+
+<link href="/public/styles/shoppingList.css" type="text/css" rel="stylesheet"/>
+
+<div class="tab-panel active" style="padding-bottom: 6rem;"> <div class="shopping-list-tabs-container no-scrollbar">
+    <?php if (!empty($lists)): ?>
+    <?php $listCount = count($lists); ?>
+    <?php foreach ($lists as $list): ?>
+    <?php
+    $isActive = $list->id == $activeListId;
+    $listClass = $isActive ? 'list-tab-active' : 'list-tab-inactive';
+    $wrapperClass = $isActive ? 'list-tab-wrapper active-list' : 'list-tab-wrapper';
+    ?>
+    <div class="<?= $wrapperClass ?>" data-list-id="<?= $list->id ?>">
+        <button
+                onclick="loadList(<?= $list->id ?>, this)"
+                class="list-tab-button <?= $listClass ?>"
+                data-list-id="<?= $list->id ?>">
+            <?= htmlspecialchars($list->name) ?>
+        </button>
+        <?php if ($listCount > 1): ?>
+        <button class="delete-list-btn" onclick="deleteList(<?= $list->id ?>)">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <?php endif; ?>
+    </div>
+    <?php endforeach; ?>
+    <?php endif; ?>
+
+    <button onclick="openNewListModal()"
+            class="list-tab-button new-list-btn">
+        + <?= trans('shopping_list.new_list') ?>
+    </button>
+</div>
+
+    <div id="items-container">
+        <section class="mt-4">
+            <div class="section-header-wrapper">
+                <h2 class="section-title"><?= trans('shopping_list.to_buy') ?></h2>
+                <span id="to-buy-count" class="items-count-badge">
+                    0 <?= trans('shopping_list.products') ?>
+                </span>
+            </div>
+            <div id="active-items-list" class="items-list-container">
+                <p class="empty-state-text"><?= trans('shopping_list.choose_list') ?></p>
+            </div>
+        </section>
+
+        <section class="purchased-section">
+            <h2 class="purchased-header">
+                <?= trans('shopping_list.purchased') ?>
+            </h2>
+            <div id="purchased-items-list" class="items-list-container">
+            </div>
+        </section>
+
+        <div id="delete-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3><?= trans('shopping_list.confirm_delete') ?></h3>
+                <p><?= trans('shopping_list.confirm_delete_message') ?> <strong id="modal-delete-target"><?= trans('shopping_list.this_element') ?></strong>? <?= trans('shopping_list.cannot_undo') ?></p>
+
+                <form id="delete-form-action" data-item-id="" data-list-id="" data-action-type="" method="POST">
+                    <div class="modal-actions">
+                        <button type="button" class="action-button secondary" id="modal-delete-cancel">
+                            <?= trans('common.cancel') ?>
+                        </button>
+                        <button type="submit" class="action-button primary" id="modal-delete-confirm">
+                            <?= trans('common.delete') ?>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="create-list-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3><?= trans('shopping_list.new_shopping_list') ?></h3>
+                <p><?= trans('shopping_list.new_list_description') ?></p>
+
+                <form id="create-list-form" method="POST">
+                    <input type="text" id="new-list-name" name="list_name" placeholder="<?= trans('shopping_list.list_name') ?>" required
+                           class="input-group-text" style="margin-top: 1rem; margin-bottom: 1rem;"/>
+                    <div class="modal-actions">
+                        <button type="button" class="action-button secondary" id="modal-create-cancel">
+                            <?= trans('common.cancel') ?>
+                        </button>
+                        <button type="submit" class="action-button primary">
+                            <?= trans('shopping_list.create_list') ?>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</main>
+</div>
+
+<div class="shopping-bottom-actions">
+    <div class="add-item-wrapper">
+        <input type="text" id="new-item-name" placeholder="<?= trans('shopping_list.add_product_input_placeholder') ?>"
+               class="add-item-input"
+               onkeypress="handleEnter(event)">
+        <button onclick="addItem()" class="add-item-btn">
+            <span class="material-symbols-outlined">add</span>
+        </button>
+    </div>
+</div>
+
+<?php include 'public/views/groupFooter.html'; ?>
+
+<script>
+    window.groupId = <?= $groupId ?>;
+    window.currentListId = <?= $activeListId ?? 'null' ?>;
+    window.initialItems = <?= json_encode($items ?? []) ?>;
+    window.allLists = <?= json_encode($lists ?? []) ?>;
+</script>
+<script src="/public/scripts/shoppingList.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<div id="invite-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3><?= trans('groups.invite_title') ?></h3>
+        <p><?= trans('groups.invite_description') ?></p>
+
+        <div class="invite-field-wrapper">
+            <label class="form-label"><?= trans('groups.invitation_code_label') ?></label>
+            <div class="invite-input-group">
+                <input type="text" id="invite-code" value="<?= $inviteId ?? '' ?>" readonly class="input-group-text invite-code-input" />
+                <button type="button" id="copy-code-btn" class="action-button secondary copy-btn">
+                    <span class="material-symbols-outlined">content_copy</span>
+                    <?= trans('groups.copy') ?>
+                </button>
+            </div>
+        </div>
+
+        <div class="invite-field-wrapper">
+            <label class="form-label"><?= trans('groups.invitation_link_label') ?></label>
+            <div class="invite-input-group">
+                <input type="text" id="invite-link" value="<?= 'http://' . $_SERVER['HTTP_HOST'] . '/groups/join/' . ($inviteId ?? '') ?>" readonly class="input-group-text invite-code-input" />
+                <button type="button" id="copy-link-btn" class="action-button secondary copy-btn">
+                    <span class="material-symbols-outlined">content_copy</span>
+                    <?= trans('groups.copy') ?>
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="action-button primary" id="invite-modal-close">
+                <?= trans('groups.close') ?>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="delete-group-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3><?= trans('groups.confirm_delete_title') ?></h3>
+        <p><?= trans('groups.confirm_delete_description') ?></p>
+
+        <form id="delete-form" action="/groups/<?= $groupId ?>/delete" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+
+            <div class="modal-actions">
+                <button type="button" class="action-button secondary" id="modal-cancel">
+                    <?= trans('common.cancel') ?>
+                </button>
+                <button type="submit" class="action-button primary">
+                    <?= trans('common.delete') ?>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</div>
+</body>
+</html>

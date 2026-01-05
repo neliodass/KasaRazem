@@ -1,0 +1,102 @@
+<?php include 'public/views/groupHeader.html'; ?>
+
+<div class="tab-panel active">
+    <h2><?= trans('balance.title') ?></h2>
+    <a href="/groups/<?= $groupId ?>/settlements" style="text-decoration: none; color: inherit;">
+    <div class="list-card-item">
+        <div class="list-card-content">
+            <div class="list-card-left-section">
+                <div class="list-icon-wrapper" style="background-color: #fff4d8;">
+                    <p class="emoji"><?= $currentUserBalanceEmoji ?></p>
+                </div>
+                <div class="list-text-details">
+                    <?php switch ($currentUserNetBalance > 0) {
+                        case true:
+                            $statusText = trans('balance.you_have_to_receive');
+                            $currentUserStringBalance = "$currentUserNetBalance zł";
+                            $contextText = trans('balance.from_whom');
+
+                    break;
+                        case false:
+                            $statusText = trans('balance.you_owe');
+                            $currentUserStringBalance = "$currentUserNetBalance zł";
+                    $contextText = trans('balance.for_whom');
+                    break;
+                        default:
+                            $statusText = trans('balance.you_are_even');
+                            $currentUserStringBalance = "";
+                            $contextText = "";
+                    break;
+                    }
+
+                    ?>
+                    <h3 class="list-item-primary-text"><?= $statusText ?> <?= $currentUserStringBalance ?> </h3>
+                    <p class="list-item-secondary-text"><?= $contextText ?></p>
+                </div>
+            </div>
+            <div class="list-card-right-section">
+                <span class="material-symbols-outlined" style="color: #f79009;">
+                        chevron_right
+                    </span>
+            </div>
+        </div>
+    </div>
+    </a>
+    <h3><?= trans('balance.balances') ?></h3>
+    <?php if(!empty($balance)): foreach ($balance as $balanceItem):
+
+    $avatarUrl = isset($balanceItem->profile_picture) && !empty($balanceItem->profile_picture)
+    ? htmlspecialchars($balanceItem->profile_picture)
+    : 'https://ui-avatars.com/api/?name=' . urlencode($balanceItem->userName) . '&size=44&background=4CAF50&color=fff&bold=true';
+    ?>
+    <div class="p-4 bg-gray-100 rounded-lg">
+        <div class="list-card-item">
+            <div class="list-card-content">
+                <div class="list-card-left-section">
+                    <div class="list-icon-wrapper">
+                        <img src="<?= $avatarUrl ?>"
+                             alt="Avatar <?= htmlspecialchars($balanceItem->userName) ?>"
+                             class="user-avatar"
+                             style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;" />
+                    </div>
+                    <div class="list-text-details">
+                        <p class="list-item-primary-text"><?= htmlspecialchars($balanceItem->userName)  ?></p>
+
+                        <?php if($balanceItem->isCurrentUser): ?>
+                        <p class="list-item-secondary-text"><?= trans('balance.me') ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="list-card-right-section">
+                    <?php if($balanceItem->netBalance > 0): ?>
+                    <p class="list-item-value positive-balance">+<?= $balanceItem->netBalance  ?> zł</p>
+                    <?php elseif($balanceItem->netBalance < 0): ?>
+                    <p class="list-item-value negative-balance"><?= $balanceItem->netBalance  ?> zł</p>
+                    <?php else: ?>
+                    <p class="list-item-value"><?= $balanceItem->netBalance  ?> zł</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <?php endforeach;
+         else: ?>
+        <p>Tutaj pojawi się podsumowanie: Ty wisisz X, Tobie wiszą Y.</p>
+         <?php endif; ?>
+
+    </div>
+
+    <div class="column-action-button-wrapper desktop-only">
+        <a href="/groups/<?= $groupId ?>/settlements" class="action-button primary">+ <?= trans('balance.settle_debts') ?></a>
+    </div>
+</div>
+
+</main>
+</div>
+
+<div class="bottom-actions mobile-only">
+    <div class="action-buttons-wrapper">
+        <a href="/groups/<?= $groupId ?>/settlements" class="action-button primary">+ <?= trans('balance.settle_debts') ?></a>
+    </div>
+</div>
+
+<?php include 'public/views/groupFooter.html'; ?>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="<?= TranslationService::getInstance()->getCurrentLang() ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+    <title><?= trans('profile.edit_title') ?></title>
+
+    <script>
+        (function() {
+            const theme = localStorage.getItem('userTheme') || 'light';
+            document.documentElement.classList.add('theme-' + theme);
+        })();
+    </script>
+
+    <link href="/public/styles/_theme.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_base.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/_components.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/groups.css" type="text/css" rel="stylesheet"/>
+    <link href="/public/styles/profile.css" type="text/css" rel="stylesheet"/>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <script src="/public/scripts/theme.js"></script>
+</head>
+
+<body>
+<div class="page-wrapper">
+    <header class="app-bar">
+        <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: flex-start;">
+            <a href="/profile" style="color: inherit; text-decoration: none; display: flex;">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+        </div>
+        <h1><?= trans('profile.edit_title') ?></h1>
+        <div style="width: 48px; height: 48px;"></div>
+    </header>
+
+    <main class="page-form-container animated-content" style="padding-bottom: 2rem; max-width: 100%; width: 100%;">
+        <div style="max-width: 480px; margin: 0 auto; width: 100%;">
+
+        <?php if(isset($message)): ?>
+        <p class="messages">
+            <?= htmlspecialchars($message); ?>
+        </p>
+        <?php endif; ?>
+
+        <div class="form-header-group">
+            <h2 class="headline-text"><?= trans('profile.your_data') ?></h2>
+            <p class="body-text" style="opacity: 0.7; margin-bottom: 0;">
+                <?= trans('profile.your_data_description') ?>
+            </p>
+        </div>
+
+        <form action="/profile/edit" method="POST" enctype="multipart/form-data" style="margin-top: 1.5rem;">
+
+            <!-- Sekcja zdjęcia profilowego -->
+            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem;">
+                <?php
+                $avatarUrl = isset($user->profile_picture) && !empty($user->profile_picture)
+                    ? htmlspecialchars($user->profile_picture)
+                    : 'https://ui-avatars.com/api/?name=' . urlencode($user->firstname . '+' . $user->lastname) . '&size=256&background=4CAF50&color=fff&bold=true';
+                ?>
+                <div style="position: relative; cursor: pointer;" onclick="document.getElementById('profile-picture-input').click();">
+                    <div class="profile-avatar" style='background-image: url("<?= $avatarUrl ?>");'>
+                    </div>
+                    <div class="profile-avatar-edit">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                    </div>
+                </div>
+                <input
+                    type="file"
+                    id="profile-picture-input"
+                    name="profile_picture"
+                    accept="image/*"
+                    style="display: none;"
+                    onchange="previewImage(event)"
+                />
+                <p class="body-text" style="opacity: 0.6; font-size: 0.875rem; margin-top: 0.5rem; text-align: center;">
+                    <?= trans('profile.click_to_change_photo') ?>
+                </p>
+            </div>
+
+            <div class="input-field-wrapper">
+                <label class="form-label" for="firstname"><?= trans('profile.firstname') ?></label>
+                <input
+                    id="firstname"
+                    name="firstname"
+                    type="text"
+                    class="input-group-text"
+                    placeholder="<?= trans('profile.firstname') ?>"
+                    value="<?= htmlspecialchars($user->firstname ?? '') ?>"
+                    required
+                />
+            </div>
+
+            <div class="input-field-wrapper">
+                <label class="form-label" for="lastname"><?= trans('profile.lastname') ?></label>
+                <input
+                    id="lastname"
+                    name="lastname"
+                    type="text"
+                    class="input-group-text"
+                    placeholder="<?= trans('profile.lastname') ?>"
+                    value="<?= htmlspecialchars($user->lastname ?? '') ?>"
+                    required
+                />
+            </div>
+
+            <div class="input-field-wrapper">
+                <label class="form-label" for="email"><?= trans('profile.email') ?></label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    class="input-group-text"
+                    placeholder="<?= trans('profile.email') ?>"
+                    value="<?= htmlspecialchars($user->email ?? '') ?>"
+                    required
+                />
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <button type="submit" class="action-button primary" style="width: 100%;">
+                    <?= trans('profile.save_changes') ?>
+                </button>
+            </div>
+        </form>
+
+        </div>
+    </main>
+</div>
+
+<script>
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const avatar = document.querySelector('.profile-avatar');
+            avatar.style.backgroundImage = `url('${e.target.result}')`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+
+</body>
+</html>
