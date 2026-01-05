@@ -162,9 +162,6 @@ KasaRazem (Polish: "Cash Together") is a modern web application designed to simp
    docker-compose up -d
    ```
 
-5. **Access the application**
-   - **Web App**: http://localhost:8080
-   - **pgAdmin**: http://localhost:5050
 
 ### Demo Mode
 
@@ -217,7 +214,7 @@ When `DEMO_MODE=true`, the application includes:
 ## 🎥 Live Demo
 You can try a live demo of KasaRazem at: [https://kasarazem.demo.example.com](https://kasarazem.demo.example.com)
 
-
+---
 <div align="center">
   <p>Made with ❤️ for better expense management</p>
   <p>⭐ Star this repo if you find it useful!</p>
