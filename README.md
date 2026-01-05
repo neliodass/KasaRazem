@@ -35,22 +35,18 @@ KasaRazem (Polish: "Cash Together") is a modern web application designed to simp
 
 ## 🎬 Screenshots
 
-> add here
-
-### Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-
 ### Expense Tracking
-![Expenses](docs/screenshots/expenses.png)
+![Expenses](/promos/expenses.gif)
 
 ### Group Management
-![Groups](docs/screenshots/groups.png)
+![Groups](/promos/group_management.gif)
 
 ### Shopping Lists
-![Shopping Lists](docs/screenshots/shopping-lists.png)
+
+![Shopping Lists](/promos/shopping_lists.gif)
 
 ### Balance & Settlements
-![Balance](docs/screenshots/balance.png)
+![Balance](/promos/balance.gif)
 
 ---
 
@@ -212,7 +208,7 @@ When `DEMO_MODE=true`, the application includes:
 
 ---
 ## 🎥 Live Demo
-You can try a live demo of KasaRazem at: [https://kasarazem.demo.example.com](https://kasarazem.demo.example.com)
+You can try a live demo of KasaRazem at: [Currently unavailable]
 
 ---
 <div align="center">
