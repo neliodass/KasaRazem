@@ -6,6 +6,7 @@
     <a href="#-features">Features</a> •
     <a href="#-screenshots">Screenshots</a> •
     <a href="#-tech-stack">Tech Stack</a> •
+    <a href="#-erd-diagram">ERD Diagram</a> •
     <a href="#-getting-started">Getting Started</a> •
     <a href="#-demo">Demo</a>
   </p>
@@ -111,6 +112,137 @@ KasaRazem (Polish: "Cash Together") is a modern web application designed to simp
 - **Responsive Design** - Mobile-first approach
 
 
+---
+## 📊 ERD Diagram
+```mermaid
+erDiagram
+    users {
+        int id PK
+        varchar firstname
+        varchar lastname
+        varchar email
+        varchar password
+        varchar profile_picture
+        varchar theme
+        boolean enabled
+    }
+
+    categories {
+        int id PK
+        varchar name
+        varchar translation_key
+    }
+
+    groups {
+        int id PK
+        varchar name
+        int created_by_user_id FK
+        uuid invite_id
+        timestamp created_at
+    }
+
+    group_members {
+        int group_id PK, FK
+        int user_id PK, FK
+        timestamp joined_at
+    }
+
+    expenses {
+        int id PK
+        int group_id FK
+        int paid_by_user_id FK
+        numeric amount
+        varchar description
+        int category_id FK
+        varchar photo_url
+        date date_incurred
+    }
+
+    expense_splits {
+        int id PK
+        int expense_id FK
+        int user_id FK
+        numeric amount_owed
+        varchar split_type
+    }
+
+    settlements {
+        int id PK
+        int group_id FK
+        int payer_user_id FK
+        int payee_user_id FK
+        numeric amount
+        timestamp date_settled
+    }
+
+    shopping_lists {
+        int id PK
+        int group_id FK
+        varchar name
+        int created_by_user_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    list_items {
+        int id PK
+        int list_id FK
+        varchar name
+        varchar subtitle
+        numeric quantity
+        varchar unit
+        boolean is_in_cart
+        boolean is_purchased
+        int purchased_by_user_id FK
+    }
+
+    remember_tokens {
+        int id PK
+        int user_id FK
+        varchar selector
+        varchar token
+        int expires
+        timestamp created_at
+    }
+
+    audit_logs {
+        int id PK
+        varchar event_type
+        varchar user_email
+        varchar ip_address
+        text user_agent
+        jsonb additional_data
+        timestamp created_at
+    }
+
+    system_state {
+        timestamp last_reset
+    }
+
+    %% RELACJE %%
+
+    users ||--o{ groups : "creates"
+    users ||--o{ group_members : "is member of"
+    groups ||--o{ group_members : "has members"
+    
+    users ||--o{ expenses : "pays"
+    groups ||--o{ expenses : "contains"
+    categories ||--o{ expenses : "classifies"
+    
+    expenses ||--|{ expense_splits : "has splits"
+    users ||--o{ expense_splits : "owes"
+    
+    groups ||--o{ settlements : "tracks"
+    users ||--o{ settlements : "payer/payee"
+    
+    groups ||--o{ shopping_lists : "contains"
+    users ||--o{ shopping_lists : "creates"
+    
+    shopping_lists ||--o{ list_items : "contains"
+    users ||--o{ list_items : "purchases"
+    
+    users ||--|| remember_tokens : "has"
+```
 ---
 
 ## 🚀 Getting Started
